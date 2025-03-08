@@ -7,54 +7,48 @@ Cryptic is a powerful and modular UI library designed for Roblox developers. It 
 
 Features
 
-1. Main Window System
+1. Main Window System:
 
-Create and manage main UI windows with ease.
+- Create and manage main UI windows with ease.
 
-Supports drag-and-drop functionality.
+- Supports Many Executers (including cryptic)
 
-Customizable themes and animations.
+- Customizable themes and animations.
 
-2. Loading Screen Module
+- Script Administrator
 
-Pre-built loading screen templates.
+2. Loading Screen Module:
 
-Animated progress indicators.
+- Pre-built loading screen templates.
 
-Custom text and branding support.
+- Animated progress indicators.
 
-3. Key System Integration
+- Custom text and branding support.
 
-Secure key authentication for scripts.
+3. Key System Integration:
 
-Custom UI elements for entering and validating keys.
+- Secure key authentication for scripts.
 
-Server-side validation support.
+- Custom UI elements for entering and validating keys.
+
+- Server-side validation support.
 
 4. Component Library
 
-Collection of reusable UI components (buttons, sliders, toggles, etc.).
+- Collection of reusable UI components (buttons, sliders, toggles, etc.).
 
-Custom styling options for all components.
+- Custom styling options for all components.
 
-Event-driven interactions for seamless user experience.
+- Event-driven interactions for seamless user experience.
 
 5. Layout Manager
 
-Auto-positioning and resizing of UI elements.
+- Component Layout Sortage.
 
-Grid and flexbox-like layout systems for organized design.
+- Grid and flexbox-like layout systems for organized design.
 
-Adaptive scaling for different screen sizes.
+- Adaptive scaling for different screen sizes.
 
-Why Choose Cryptic?
+# Why Choose Cryptic?
 
-Optimized Performance: Built for smooth rendering and minimal lag.
-
-Highly Customizable: Modify styles, animations, and behaviors with ease.
-
-Developer-Friendly: Clean API for rapid UI development.
-
-Expandability: Easily extendable for future updates and new features.
-
-Cryptic is designed to be the go-to UI library for Roblox developers who want efficiency, customization, and performance in their UI systems. Stay tuned for updates and detailed documentation!
+Optimized Performance: Built for smooth rendering and minimal lag. Highly Customizable: Modify styles, animations, and behaviors with ease. Developer-Friendly: Clean API for rapid UI development. Expandability: Easily extendable for future updates and new features. Cryptic is designed to be the go-to UI library for Roblox developers who want efficiency, customization, and performance in their UI systems. Stay tuned for updates and detailed documentation!
