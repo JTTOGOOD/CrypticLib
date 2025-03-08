@@ -1,8 +1,9 @@
 # Introduction to Cryptic UI Library
 
-# Overview
-
 Cryptic is a powerful and modular UI library designed for Roblox developers. It provides a structured and efficient way to create intuitive and visually appealing user interfaces. With a focus on customization and performance, Cryptic simplifies UI development while maintaining flexibility for advanced users.
+
+
+# Overview
 
 Features
 
