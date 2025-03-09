@@ -199,6 +199,34 @@ function Cryptic:CreateWindow(config)
         MainFrame.Visible = true
     end
 
+function Cryptic:CreateButton(parent, config)
+    local ButtonName = config.Name or "Button"
+    local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
+
+    local Button = Instance.new("TextButton")
+    local success, err = pcall(function()
+        Button.Size = UDim2.new(0, 150, 0, 40)
+        Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        Button.Text = ButtonName
+        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Button.Font = Enum.Font.GothamBold
+        Button.Parent = parent
+
+        -- Add UICorner for rounded edges
+        local UICorner = Instance.new("UICorner")
+        UICorner.CornerRadius = UDim.new(0, 6)
+        UICorner.Parent = Button
+
+        -- Button Click Event
+        Button.MouseButton1Click:Connect(function()
+            pcall(ButtonScript)
+        end)
+    end)
+    debugPrint("Button: " .. ButtonName, success, err)
+
+    return Button
+end
+
     return Cryptic
 end
 
