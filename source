@@ -1,5 +1,3 @@
-warn("Report to (@MynamesJT) on Discord if you come across any issues.")
-
 -- Cryptic UI Library
 local Cryptic = {}
 
@@ -202,7 +200,11 @@ function Cryptic:CreateWindow(config)
         Tabs[tabName] = TabFrame
 
         TabButton.MouseButton1Click:Connect(function()
-            for _, tab in pairs(Tabs) do tab.Visible = false end
+            -- Hide all tabs first
+            for _, tab in pairs(Tabs) do
+                tab.Visible = false
+            end
+            -- Show the selected tab
             TabFrame.Visible = true
         end)
 
