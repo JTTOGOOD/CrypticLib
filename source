@@ -29,11 +29,11 @@ function Cryptic:CreateWindow(config)
     end)
     debugPrint("ScreenGui", success, err)
 
-    -- Create MainFrame
+    -- Create MainFrame (25% larger)
     local MainFrame = Instance.new("Frame")
     success, err = pcall(function()
-        MainFrame.Size = UDim2.new(0, 450, 0, 300)
-        MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
+        MainFrame.Size = UDim2.new(0, 562, 0, 375) -- Increased from 450x300
+        MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187) -- Adjusted position
         MainFrame.BackgroundColor3 = Theme
         MainFrame.BorderSizePixel = 0
         MainFrame.Visible = false
@@ -61,6 +61,35 @@ function Cryptic:CreateWindow(config)
         TitleLabel.Parent = MainFrame
     end)
     debugPrint("TitleLabel", success, err)
+
+    -- **Draggable Window**
+    local Dragging, DragInput, DragStart, StartPos
+
+    TitleLabel.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Dragging = true
+            DragStart = input.Position
+            StartPos = MainFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    Dragging = false
+                end
+            end)
+        end
+    end)
+
+    TitleLabel.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            DragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == DragInput and Dragging then
+            local delta = input.Position - DragStart
+            MainFrame.Position = UDim2.new(StartPos.X.Scale, StartPos.X.Offset + delta.X, StartPos.Y.Scale, StartPos.Y.Offset + delta.Y)
+        end
+    end)
 
     -- **Scrollable Tab List**
     local TabListContainer = Instance.new("Frame")
@@ -160,19 +189,6 @@ function Cryptic:CreateWindow(config)
             LoadingLabel.Parent = LoadingFrame
         end)
         debugPrint("LoadingLabel", success, err)
-
-        local SubLabel = Instance.new("TextLabel")
-        success, err = pcall(function()
-            SubLabel.Size = UDim2.new(0, 300, 0, 30)
-            SubLabel.Position = UDim2.new(0.5, -150, 0.5, 0)
-            SubLabel.BackgroundTransparency = 1
-            SubLabel.Text = LoadingSubtitle
-            SubLabel.TextSize = 16
-            SubLabel.Font = Enum.Font.Gotham
-            SubLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-            SubLabel.Parent = LoadingFrame
-        end)
-        debugPrint("SubLabel", success, err)
 
         task.spawn(function()
             wait(LoadingScreenDuration)
