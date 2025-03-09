@@ -289,7 +289,7 @@ function Cryptic:CreateTab(tabName)
         end,
 
         -- Add CreateSlider here
-CreateSlider = function(self, options)
+function Cryptic:CreateSlider(options)
     local SliderFrame = Instance.new("Frame")
     local SliderBar = Instance.new("Frame")
     local Knob = Instance.new("Frame")
