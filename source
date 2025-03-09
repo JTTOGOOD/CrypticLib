@@ -13,13 +13,13 @@ function Cryptic:CreateWindow(config)
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    -- Create the main UI window **before** the loading screen
+    -- Create the main UI window
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 450, 0, 300)
     MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
     MainFrame.BackgroundColor3 = Theme
     MainFrame.BorderSizePixel = 0
-    MainFrame.Visible = not LoadingScreenEnabled -- Initially hidden if a loading screen exists
+    MainFrame.Visible = false -- Hidden by default, will be shown later
     MainFrame.Parent = ScreenGui
 
     local UICorner = Instance.new("UICorner")
@@ -53,9 +53,8 @@ function Cryptic:CreateWindow(config)
     TabLayout.Parent = TabList
 
     -- Loading Screen (if enabled)
-    local LoadingFrame
     if LoadingScreenEnabled then
-        LoadingFrame = Instance.new("Frame")
+        local LoadingFrame = Instance.new("Frame")
         local LoadingLabel = Instance.new("TextLabel")
         local SubLabel = Instance.new("TextLabel")
 
@@ -83,12 +82,12 @@ function Cryptic:CreateWindow(config)
 
         -- Hide loading screen after the specified duration
         task.spawn(function()
-            wait(LoadingScreenDuration) -- Wait for the correct duration
-            if LoadingFrame then
-                LoadingFrame:Destroy() -- Remove the loading screen
-            end
-            MainFrame.Visible = true -- Ensure the main UI appears after loading
+            wait(LoadingScreenDuration) -- Correct duration
+            LoadingFrame:Destroy() -- Remove loading screen
+            MainFrame.Visible = true -- Show main UI
         end)
+    else
+        MainFrame.Visible = true -- Show immediately if no loading screen
     end
 
     -- Return the UI components
