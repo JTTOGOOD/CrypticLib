@@ -269,6 +269,7 @@ function Cryptic:CreateWindow(config)
 
             -- Create Slider
 -- Create Slider
+-- Create Slider
 CreateSlider = function(self, config)
     local SliderName = config.Name or "Slider"
     local Min = config.Min or 0
@@ -283,7 +284,7 @@ CreateSlider = function(self, config)
     local ValueLabel = Instance.new("TextLabel")
     
     -- Set up slider frame and components
-    success, err = pcall(function()
+    local success, err = pcall(function()
         SliderFrame.Size = UDim2.new(1, -10, 0, 40)
         SliderFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         SliderFrame.Parent = self.Frame
@@ -301,8 +302,7 @@ CreateSlider = function(self, config)
         SliderButton.Text = ""
         SliderButton.Parent = SliderFrame
     end)
-    debugPrint("Slider: " .. SliderName, success, err)
-
+    
     -- Handle dragging the slider button
     local Dragging = false
     SliderButton.MouseButton1Down:Connect(function()
