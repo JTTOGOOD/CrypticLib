@@ -1,5 +1,9 @@
--- Cryptic UI Library
+-- Cryptic UI Library Source Code
+
+-- if you come across any errors report to (@MynamesJT) in DMS. Thanks!
 local Cryptic = {}
+
+warn("Report to (@MynamesJT) on discord if you come across and issues")
 
 -- Function to create a main window with a loading screen and theme support
 function Cryptic:CreateWindow(config)
