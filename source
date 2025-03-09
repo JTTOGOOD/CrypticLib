@@ -50,14 +50,13 @@ function Cryptic:CreateWindow(config)
         SubLabel.Parent = LoadingFrame
 
         -- Hide loading screen after the specified duration
-        task.spawn(function()
-            wait(LoadingScreenDuration)
-            LoadingFrame:Destroy()
-            MainFrame.Visible = true
-        end)
-    else
-        MainFrame.Visible = true
+task.spawn(function()
+    wait(LoadingScreenDuration) -- Wait for the correct duration
+    if LoadingFrame then
+        LoadingFrame:Destroy() -- Remove the loading screen
     end
+    MainFrame.Visible = true -- Ensure the main UI appears after loading
+end)
 
     -- Main Window
     MainFrame.Size = UDim2.new(0, 450, 0, 300)
