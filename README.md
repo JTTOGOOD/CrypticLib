@@ -52,3 +52,7 @@ Features
 # Why Choose Cryptic?
 
 Optimized Performance: Built for smooth rendering and minimal lag. Highly Customizable: Modify styles, animations, and behaviors with ease. Developer-Friendly: Clean API for rapid UI development. Expandability: Easily extendable for future updates and new features. Cryptic is designed to be the go-to UI library for Roblox developers who want efficiency, customization, and performance in their UI systems. Stay tuned for updates and detailed documentation!
+
+# 
+
+# Getting Started
