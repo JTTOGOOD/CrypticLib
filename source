@@ -255,16 +255,17 @@ function Cryptic:CreateTab(tabName)
             ToggleButton.Parent = ToggleFrame
 
             -- Handle toggle clicks
-            ToggleButton.MouseButton1Click:Connect(function()
-                ToggleState = not ToggleState
-                ToggleButton.Text = ToggleState and "ON" or "OFF"
-                ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+ToggleButton.MouseButton1Click:Connect(function()
+    ToggleState = not ToggleState
+    ToggleButton.Text = ToggleState and "ON" or "OFF"
+    ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
 
-                -- Call user-defined function if exists
-                if options.Script then
-                    options.Script(ToggleState)
-                end
-            end)
+    -- Check if options.Script exists before calling it
+    if options.Script then
+        options.Script(ToggleState)
+    end
+end)
+
 
             return {
                 SetState = function(state)
