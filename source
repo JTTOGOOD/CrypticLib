@@ -22,69 +22,100 @@ function Cryptic:CreateWindow(config)
         end
     end
 
+    -- Create ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    local success, err = pcall(function()
+        ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    end)
+    debugPrint("ScreenGui", success, err)
 
+    -- Create MainFrame
     local MainFrame = Instance.new("Frame")
-    MainFrame.Size = UDim2.new(0, 450, 0, 300)
-    MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
-    MainFrame.BackgroundColor3 = Theme
-    MainFrame.BorderSizePixel = 0
-    MainFrame.Visible = false
-    MainFrame.Parent = ScreenGui
+    success, err = pcall(function()
+        MainFrame.Size = UDim2.new(0, 450, 0, 300)
+        MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
+        MainFrame.BackgroundColor3 = Theme
+        MainFrame.BorderSizePixel = 0
+        MainFrame.Visible = false
+        MainFrame.Parent = ScreenGui
+    end)
+    debugPrint("MainFrame", success, err)
 
+    -- Create UICorner
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 8)
-    UICorner.Parent = MainFrame
+    success, err = pcall(function()
+        UICorner.CornerRadius = UDim.new(0, 8)
+        UICorner.Parent = MainFrame
+    end)
+    debugPrint("UICorner", success, err)
 
+    -- Create TitleLabel
     local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Size = UDim2.new(1, 0, 0, 35)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Text = Name
-    TitleLabel.TextSize = 18
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.Parent = MainFrame
+    success, err = pcall(function()
+        TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+        TitleLabel.BackgroundTransparency = 1
+        TitleLabel.Text = Name
+        TitleLabel.TextSize = 18
+        TitleLabel.Font = Enum.Font.GothamBold
+        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TitleLabel.Parent = MainFrame
+    end)
+    debugPrint("TitleLabel", success, err)
 
     -- **Scrollable Tab List**
     local TabListContainer = Instance.new("Frame")
-    TabListContainer.Size = UDim2.new(1, 0, 0, 30)
-    TabListContainer.Position = UDim2.new(0, 0, 0, 35)
-    TabListContainer.BackgroundTransparency = 1
-    TabListContainer.ClipsDescendants = true -- Prevents overflow
-    TabListContainer.Parent = MainFrame
+    success, err = pcall(function()
+        TabListContainer.Size = UDim2.new(1, 0, 0, 30)
+        TabListContainer.Position = UDim2.new(0, 0, 0, 35)
+        TabListContainer.BackgroundTransparency = 1
+        TabListContainer.ClipsDescendants = true
+        TabListContainer.Parent = MainFrame
+    end)
+    debugPrint("TabListContainer", success, err)
 
     local TabList = Instance.new("ScrollingFrame")
-    TabList.Size = UDim2.new(1, 0, 1, 0)
-    TabList.CanvasSize = UDim2.new(0, 0, 1, 0)
-    TabList.ScrollBarThickness = 4
-    TabList.BackgroundTransparency = 1
-    TabList.Parent = TabListContainer
+    success, err = pcall(function()
+        TabList.Size = UDim2.new(1, 0, 1, 0)
+        TabList.CanvasSize = UDim2.new(0, 0, 1, 0)
+        TabList.ScrollBarThickness = 4
+        TabList.BackgroundTransparency = 1
+        TabList.Parent = TabListContainer
+    end)
+    debugPrint("TabList", success, err)
 
     local TabLayout = Instance.new("UIListLayout")
-    TabLayout.FillDirection = Enum.FillDirection.Horizontal
-    TabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-    TabLayout.Padding = UDim.new(0, 5)
-    TabLayout.Parent = TabList
+    success, err = pcall(function()
+        TabLayout.FillDirection = Enum.FillDirection.Horizontal
+        TabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+        TabLayout.Padding = UDim.new(0, 5)
+        TabLayout.Parent = TabList
+    end)
+    debugPrint("TabLayout", success, err)
 
     local Tabs = {}
 
     -- Function to create a tab
     function Cryptic:CreateTab(tabName)
         local TabButton = Instance.new("TextButton")
-        TabButton.Size = UDim2.new(0, 100, 1, 0)
-        TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        TabButton.Text = tabName
-        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TabButton.Font = Enum.Font.GothamBold
-        TabButton.Parent = TabList
+        local success, err = pcall(function()
+            TabButton.Size = UDim2.new(0, 100, 1, 0)
+            TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            TabButton.Text = tabName
+            TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            TabButton.Font = Enum.Font.GothamBold
+            TabButton.Parent = TabList
+        end)
+        debugPrint("Tab Button: " .. tabName, success, err)
 
         local TabFrame = Instance.new("Frame")
-        TabFrame.Size = UDim2.new(1, 0, 1, -65)
-        TabFrame.Position = UDim2.new(0, 0, 0, 65)
-        TabFrame.BackgroundColor3 = Theme
-        TabFrame.Visible = false
-        TabFrame.Parent = MainFrame
+        success, err = pcall(function()
+            TabFrame.Size = UDim2.new(1, 0, 1, -65)
+            TabFrame.Position = UDim2.new(0, 0, 0, 65)
+            TabFrame.BackgroundColor3 = Theme
+            TabFrame.Visible = false
+            TabFrame.Parent = MainFrame
+        end)
+        debugPrint("Tab Frame: " .. tabName, success, err)
 
         Tabs[tabName] = TabFrame
 
@@ -110,29 +141,38 @@ function Cryptic:CreateWindow(config)
     -- Loading Screen
     if LoadingScreenEnabled then
         local LoadingFrame = Instance.new("Frame")
-        LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
-        LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-        LoadingFrame.Parent = ScreenGui
+        success, err = pcall(function()
+            LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+            LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+            LoadingFrame.Parent = ScreenGui
+        end)
+        debugPrint("LoadingFrame", success, err)
 
         local LoadingLabel = Instance.new("TextLabel")
-        LoadingLabel.Size = UDim2.new(0, 300, 0, 50)
-        LoadingLabel.Position = UDim2.new(0.5, -150, 0.4, 0)
-        LoadingLabel.BackgroundTransparency = 1
-        LoadingLabel.Text = LoadingTitle
-        LoadingLabel.TextSize = 20
-        LoadingLabel.Font = Enum.Font.GothamBold
-        LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        LoadingLabel.Parent = LoadingFrame
+        success, err = pcall(function()
+            LoadingLabel.Size = UDim2.new(0, 300, 0, 50)
+            LoadingLabel.Position = UDim2.new(0.5, -150, 0.4, 0)
+            LoadingLabel.BackgroundTransparency = 1
+            LoadingLabel.Text = LoadingTitle
+            LoadingLabel.TextSize = 20
+            LoadingLabel.Font = Enum.Font.GothamBold
+            LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            LoadingLabel.Parent = LoadingFrame
+        end)
+        debugPrint("LoadingLabel", success, err)
 
         local SubLabel = Instance.new("TextLabel")
-        SubLabel.Size = UDim2.new(0, 300, 0, 30)
-        SubLabel.Position = UDim2.new(0.5, -150, 0.5, 0)
-        SubLabel.BackgroundTransparency = 1
-        SubLabel.Text = LoadingSubtitle
-        SubLabel.TextSize = 16
-        SubLabel.Font = Enum.Font.Gotham
-        SubLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-        SubLabel.Parent = LoadingFrame
+        success, err = pcall(function()
+            SubLabel.Size = UDim2.new(0, 300, 0, 30)
+            SubLabel.Position = UDim2.new(0.5, -150, 0.5, 0)
+            SubLabel.BackgroundTransparency = 1
+            SubLabel.Text = LoadingSubtitle
+            SubLabel.TextSize = 16
+            SubLabel.Font = Enum.Font.Gotham
+            SubLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+            SubLabel.Parent = LoadingFrame
+        end)
+        debugPrint("SubLabel", success, err)
 
         task.spawn(function()
             wait(LoadingScreenDuration)
