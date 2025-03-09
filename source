@@ -246,58 +246,42 @@ end)
     }
 end
 
-function Cryptic:CreateToggle(config)
-    local ToggleName = config.Name or "Toggle"
-    local ToggleState = config.ToggleState or false
-    local ToggleScript = config.Script or function(state) print(ToggleName .. " is now " .. (state and "ON" or "OFF")) end
-
-    if not self or not self.Frame then
-        warn("❌ CreateToggle must be called inside a tab! Skipping toggle creation.")
-        return
-    end
-
-    -- Create UIListLayout if it doesn't exist
-    if not self.Frame:FindFirstChild("ComponentLayout") then
-        local ComponentLayout = Instance.new("UIListLayout")
-        ComponentLayout.Name = "ComponentLayout"
-        ComponentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        ComponentLayout.Padding = UDim.new(0, 5)
-        ComponentLayout.Parent = self.Frame
-    end
-
-    -- Create Toggle Button
+function Tab:CreateToggle(options)
+    local ToggleFrame = Instance.new("Frame")
     local ToggleButton = Instance.new("TextButton")
-    local success, err = pcall(function()
-        ToggleButton.Size = UDim2.new(1, -10, 0, 40) -- Full width with margin
-        ToggleButton.Position = UDim2.new(0, 5, 0, 0)
-        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 140, 255) or Color3.fromRGB(25, 25, 25) -- Blue when ON, Dark Black when OFF
-        ToggleButton.Text = "  " .. ToggleName .. (ToggleState and " [ON]" or " [OFF]") -- Left-aligned text with ON/OFF indicator
-        ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        ToggleButton.TextXAlignment = Enum.TextXAlignment.Left
-        ToggleButton.Font = Enum.Font.GothamBold
-        ToggleButton.Parent = self.Frame
+    local ToggleState = options.ToggleState or false
 
-        -- Add UICorner for rounded edges
-        local UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 6)
-        UICorner.Parent = ToggleButton
+    -- Set up Toggle Frame
+    ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
+    ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    ToggleFrame.Parent = self.Content -- Make sure 'self.Content' exists for components
+
+    -- Set up Toggle Button
+    ToggleButton.Size = UDim2.new(0, 50, 1, 0)
+    ToggleButton.Position = UDim2.new(1, -60, 0, 0)
+    ToggleButton.Text = ToggleState and "ON" or "OFF"
+    ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+    ToggleButton.Parent = ToggleFrame
+
+    -- Handle toggle clicks
+    ToggleButton.MouseButton1Click:Connect(function()
+        ToggleState = not ToggleState
+        ToggleButton.Text = ToggleState and "ON" or "OFF"
+        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+
+        -- Call user-defined function if exists
+        if options.Script then
+            options.Script(ToggleState)
+        end
     end)
 
-    debugPrint("Toggle: " .. ToggleName, success, err)
-
-    -- Function to toggle the state
-    local function Toggle()
-        ToggleState = not ToggleState
-        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 140, 255) or Color3.fromRGB(25, 25, 25)
-        ToggleButton.Text = "  " .. ToggleName .. (ToggleState and " [ON]" or " [OFF]")
-        local success, err = pcall(function() ToggleScript(ToggleState) end)
-        if not success then warn("❌ Error in toggle script: " .. err) end
-    end
-
-    -- Toggle on click
-    ToggleButton.MouseButton1Click:Connect(Toggle)
-
-    return ToggleButton
+    return {
+        SetState = function(state)
+            ToggleState = state
+            ToggleButton.Text = ToggleState and "ON" or "OFF"
+            ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+        end
+    }
 end
 
     return Cryptic
