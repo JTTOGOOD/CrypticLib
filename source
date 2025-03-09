@@ -268,6 +268,7 @@ function Cryptic:CreateWindow(config)
             end,
 
             -- Create Slider
+-- Create Slider
 CreateSlider = function(self, config)
     local SliderName = config.Name or "Slider"
     local Min = config.Min or 0
@@ -281,6 +282,7 @@ CreateSlider = function(self, config)
     local SliderButton = Instance.new("TextButton")
     local ValueLabel = Instance.new("TextLabel")
     
+    -- Set up slider frame and components
     success, err = pcall(function()
         SliderFrame.Size = UDim2.new(1, -10, 0, 40)
         SliderFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -293,48 +295,49 @@ CreateSlider = function(self, config)
         ValueLabel.Font = Enum.Font.GothamBold
         ValueLabel.Parent = SliderFrame
 
-        SliderButton.Size = UDim2.new(0, 200, 0, 5)
-        SliderButton.Position = UDim2.new(0, 50, 0.5, -2)
+        SliderButton.Size = UDim2.new(0, 10, 0, 20)
+        SliderButton.Position = UDim2.new(0, (Current - Min) / (Max - Min) * 200, 0.5, -10)
         SliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         SliderButton.Text = ""
         SliderButton.Parent = SliderFrame
-
-        local Dragging = false
-        local SliderValue = Instance.new("TextLabel")
-        SliderValue.Text = tostring(Current)
-        SliderValue.Parent = SliderButton
-
-        SliderButton.MouseButton1Down:Connect(function()
-            Dragging = true
-        end)
-
-        game:GetService("UserInputService").InputChanged:Connect(function(input)
-            if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                -- Get the new position of the slider button
-                local SliderPosition = math.clamp(input.Position.X - SliderButton.Position.X.Offset, 0, 200)
-                
-                -- Calculate the ratio based on Min and Max
-                local SliderRatio = SliderPosition / 200
-                
-                -- Calculate the new value, ensuring it is within the Min and Max range
-                local NewValue = math.floor(Min + (Max - Min) * SliderRatio / Increasement) * Increasement
-                
-                -- Update the slider button position and value label
-                SliderButton.Position = UDim2.new(0, SliderPosition, 0.5, -2)
-                ValueLabel.Text = SliderName .. ": " .. NewValue .. Suffix
-                
-                -- Execute the slider script
-                local success, err = pcall(SliderScript, NewValue)
-                if not success then warn("❌ Error in slider script: " .. err) end
-            end
-        end)
-
-        game:GetService("UserInputService").InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                Dragging = false
-            end
-        end)
     end)
+    debugPrint("Slider: " .. SliderName, success, err)
+
+    -- Handle dragging the slider button
+    local Dragging = false
+    SliderButton.MouseButton1Down:Connect(function()
+        Dragging = true
+    end)
+
+    -- Update slider value and position when dragging
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            -- Get the new position of the slider button
+            local SliderPosition = math.clamp(input.Position.X - SliderFrame.Position.X.Offset, 0, 200)
+            
+            -- Calculate the ratio based on Min and Max
+            local SliderRatio = SliderPosition / 200
+            
+            -- Calculate the new value, ensuring it is within the Min and Max range
+            local NewValue = math.floor(Min + (Max - Min) * SliderRatio / Increasement) * Increasement
+            
+            -- Update the slider button position and value label
+            SliderButton.Position = UDim2.new(0, SliderPosition, 0.5, -10)
+            ValueLabel.Text = SliderName .. ": " .. NewValue .. Suffix
+            
+            -- Execute the slider script
+            local success, err = pcall(SliderScript, NewValue)
+            if not success then warn("❌ Error in slider script: " .. err) end
+        end
+    end)
+
+    -- Stop dragging when mouse button is released
+    game:GetService("UserInputService").InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Dragging = false
+        end
+    end)
+end
     debugPrint("Slider: " .. SliderName, success, err)
 end
         }
