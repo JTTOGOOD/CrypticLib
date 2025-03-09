@@ -334,6 +334,101 @@ function Cryptic:CreateNotification(config)
     end)
 end
 
+function Tab:CreateSlider(options)
+    local SliderName = options.Name or "Slider"
+    local Suffix = options.Suffix or ""
+    local Min = options.Min or 0
+    local Max = options.Max or 100
+    local CurrentValue = options.CurrentValue or Min
+    local Increasement = options.Increasement or 1
+    local Script = options.Script or function(value) print(SliderName .. " value:", value) end
+
+    -- Slider Frame
+    local SliderFrame = Instance.new("Frame")
+    SliderFrame.Size = UDim2.new(1, -10, 0, 40)
+    SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    SliderFrame.Parent = self.Frame
+
+    -- Slider Label
+    local SliderLabel = Instance.new("TextLabel")
+    SliderLabel.Size = UDim2.new(1, -70, 1, 0)
+    SliderLabel.Position = UDim2.new(0, 10, 0, 0)
+    SliderLabel.Text = SliderName .. ": " .. CurrentValue .. Suffix
+    SliderLabel.TextSize = 14
+    SliderLabel.Font = Enum.Font.GothamBold
+    SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SliderLabel.BackgroundTransparency = 1
+    SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+    SliderLabel.Parent = SliderFrame
+
+    -- Slider Bar
+    local SliderBar = Instance.new("Frame")
+    SliderBar.Size = UDim2.new(1, -10, 0, 5)
+    SliderBar.Position = UDim2.new(0, 5, 1, -10)
+    SliderBar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    SliderBar.Parent = SliderFrame
+
+    -- Slider Fill
+    local SliderFill = Instance.new("Frame")
+    SliderFill.Size = UDim2.new(0, (CurrentValue - Min) / (Max - Min) * (SliderBar.AbsoluteSize.X), 1, 0)
+    SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    SliderFill.Parent = SliderBar
+
+    -- Slider Drag Button
+    local DragButton = Instance.new("ImageButton")
+    DragButton.Size = UDim2.new(0, 15, 0, 15)
+    DragButton.Position = UDim2.new((CurrentValue - Min) / (Max - Min), -7, 0.5, -7)
+    DragButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    DragButton.Parent = SliderBar
+
+    -- Dragging functionality
+    local UserInputService = game:GetService("UserInputService")
+    local Dragging = false
+
+    DragButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Dragging = true
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local MouseX = input.Position.X
+            local BarStart = SliderBar.AbsolutePosition.X
+            local BarEnd = BarStart + SliderBar.AbsoluteSize.X
+            local NewValue = math.clamp(((MouseX - BarStart) / (BarEnd - BarStart)) * (Max - Min) + Min, Min, Max)
+            
+            -- Round to nearest increment
+            NewValue = math.floor(NewValue / Increasement) * Increasement
+            
+            -- Update visuals
+            SliderFill.Size = UDim2.new((NewValue - Min) / (Max - Min), 0, 1, 0)
+            DragButton.Position = UDim2.new((NewValue - Min) / (Max - Min), -7, 0.5, -7)
+            SliderLabel.Text = SliderName .. ": " .. NewValue .. Suffix
+            
+            -- Execute script
+            Script(NewValue)
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Dragging = false
+        end
+    end)
+
+    return {
+        SetValue = function(value)
+            value = math.clamp(value, Min, Max)
+            value = math.floor(value / Increasement) * Increasement
+            SliderFill.Size = UDim2.new((value - Min) / (Max - Min), 0, 1, 0)
+            DragButton.Position = UDim2.new((value - Min) / (Max - Min), -7, 0.5, -7)
+            SliderLabel.Text = SliderName .. ": " .. value .. Suffix
+            Script(value)
+        end
+    }
+end
+
     return Cryptic
 end
 
