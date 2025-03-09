@@ -393,50 +393,6 @@ function Cryptic:CreateTab(tabName)
     return Tab
 end
 
-    return Tab
-end
-
-function Cryptic:CreateNotification(config)
-    local Message = config.Message or "Notification"
-    local Duration = config.Duration or 3
-    local NotificationColor = config.Color or Color3.fromRGB(0, 170, 255) -- Default blue
-
-    -- Create Notification Frame
-    local NotificationFrame = Instance.new("Frame")
-    NotificationFrame.Size = UDim2.new(0, 250, 0, 50)
-    NotificationFrame.Position = UDim2.new(1, -260, 1, -60) -- Appears at bottom-right
-    NotificationFrame.BackgroundColor3 = NotificationColor
-    NotificationFrame.BackgroundTransparency = 0.2
-    NotificationFrame.Parent = ScreenGui
-
-    local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 8)
-    UICorner.Parent = NotificationFrame
-
-    -- Create Notification Label
-    local NotificationLabel = Instance.new("TextLabel")
-    NotificationLabel.Size = UDim2.new(1, -10, 1, -10)
-    NotificationLabel.Position = UDim2.new(0, 5, 0, 5)
-    NotificationLabel.Text = Message
-    NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    NotificationLabel.TextSize = 14
-    NotificationLabel.Font = Enum.Font.GothamBold
-    NotificationLabel.BackgroundTransparency = 1
-    NotificationLabel.TextWrapped = true
-    NotificationLabel.Parent = NotificationFrame
-
-    -- Fade out and remove after duration
-    task.spawn(function()
-        wait(Duration)
-        for i = 1, 10 do
-            NotificationFrame.BackgroundTransparency = NotificationFrame.BackgroundTransparency + 0.1
-            NotificationLabel.TextTransparency = NotificationLabel.TextTransparency + 0.1
-            wait(0.1)
-        end
-        NotificationFrame:Destroy()
-    end)
-end
-
     return Cryptic
 end
 
