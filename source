@@ -199,18 +199,26 @@ function Cryptic:CreateWindow(config)
         MainFrame.Visible = true
     end
 
-function Cryptic:CreateButton(parent, config)
+function Cryptic:CreateButton(config)
     local ButtonName = config.Name or "Button"
     local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
 
+    -- Ensure this function is called inside a tab
+    if not self or not self.Frame then
+        warn("❌ CreateButton must be called inside a tab! Skipping button creation.")
+        return
+    end
+
     local Button = Instance.new("TextButton")
     local success, err = pcall(function()
-        Button.Size = UDim2.new(0, 150, 0, 40)
+        Button.Size = UDim2.new(0.9, 0, 0, 40) -- Scales with the tab frame
+        Button.Position = UDim2.new(0.05, 0, 0, 0) -- Centers button
         Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         Button.Text = ButtonName
         Button.TextColor3 = Color3.fromRGB(255, 255, 255)
         Button.Font = Enum.Font.GothamBold
-        Button.Parent = parent
+        Button.AutoButtonColor = true
+        Button.Parent = self.Frame -- Attach button to the tab frame
 
         -- Add UICorner for rounded edges
         local UICorner = Instance.new("UICorner")
@@ -219,9 +227,13 @@ function Cryptic:CreateButton(parent, config)
 
         -- Button Click Event
         Button.MouseButton1Click:Connect(function()
-            pcall(ButtonScript)
+            local success, err = pcall(ButtonScript)
+            if not success then
+                warn("❌ Error in button script: " .. err)
+            end
         end)
     end)
+
     debugPrint("Button: " .. ButtonName, success, err)
 
     return Button
