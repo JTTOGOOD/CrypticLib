@@ -29,14 +29,14 @@ function Cryptic:CreateWindow(config)
     end)
     debugPrint("ScreenGui", success, err)
 
-    -- Create MainFrame (25% larger)
+    -- Create MainFrame
     local MainFrame = Instance.new("Frame")
     success, err = pcall(function()
         MainFrame.Size = UDim2.new(0, 562, 0, 375) -- Increased from 450x300
         MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187) -- Adjusted position
         MainFrame.BackgroundColor3 = Theme
         MainFrame.BorderSizePixel = 0
-        MainFrame.Visible = false
+        MainFrame.Visible = false -- Keep hidden until ready
         MainFrame.Parent = ScreenGui
     end)
     debugPrint("MainFrame", success, err)
@@ -61,6 +61,45 @@ function Cryptic:CreateWindow(config)
         TitleLabel.Parent = MainFrame
     end)
     debugPrint("TitleLabel", success, err)
+
+    -- Show Loading Screen (if enabled)
+    if LoadingScreenEnabled then
+        local LoadingFrame = Instance.new("Frame")
+        success, err = pcall(function()
+            LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+            LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+            LoadingFrame.Parent = ScreenGui
+        end)
+        debugPrint("LoadingFrame", success, err)
+
+        local LoadingLabel = Instance.new("TextLabel")
+        success, err = pcall(function()
+            LoadingLabel.Size = UDim2.new(1, 0, 0, 50)
+            LoadingLabel.Position = UDim2.new(0, 0, 0.5, -25)
+            LoadingLabel.Text = LoadingTitle
+            LoadingLabel.TextSize = 20
+            LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            LoadingLabel.Font = Enum.Font.GothamBold
+            LoadingLabel.Parent = LoadingFrame
+        end)
+        debugPrint("LoadingLabel", success, err)
+
+        -- Wait for loading duration
+        task.spawn(function()
+            wait(LoadingScreenDuration)
+            LoadingFrame:Destroy() -- Remove loading screen
+            MainFrame.Visible = true -- Show main UI
+        end)
+    else
+        -- No loading screen, show UI immediately
+        MainFrame.Visible = true
+    end
+
+    return {
+        ScreenGui = ScreenGui,
+        MainFrame = MainFrame
+    }
+end
 
     -- **Draggable Window**
     local Dragging, DragInput, DragStart, StartPos
