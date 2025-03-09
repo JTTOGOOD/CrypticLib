@@ -11,16 +11,48 @@ function Cryptic:CreateWindow(config)
     local Theme = config.Theme or Color3.fromRGB(25, 25, 25) -- Default dark theme
 
     local ScreenGui = Instance.new("ScreenGui")
-    local MainFrame = Instance.new("Frame")
-    local UICorner = Instance.new("UICorner")
-    local TitleLabel = Instance.new("TextLabel")
-    local TabList = Instance.new("Frame")
-    local TabLayout = Instance.new("UIListLayout")
-
-    -- Parent the GUI
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    -- Loading Screen
+    -- Create the main UI window **before** the loading screen
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Size = UDim2.new(0, 450, 0, 300)
+    MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
+    MainFrame.BackgroundColor3 = Theme
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Visible = not LoadingScreenEnabled -- Initially hidden if a loading screen exists
+    MainFrame.Parent = ScreenGui
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = MainFrame
+
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = Name
+    TitleLabel.TextSize = 18
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.Parent = MainFrame
+
+    -- Create the tab list
+    local TabList = Instance.new("Frame")
+    TabList.Size = UDim2.new(1, 0, 0, 30)
+    TabList.Position = UDim2.new(0, 0, 0, 35)
+    TabList.BackgroundColor3 = Theme:Lerp(Color3.fromRGB(40, 40, 40), 0.2)
+    TabList.Parent = MainFrame
+
+    local TabCorner = Instance.new("UICorner")
+    TabCorner.CornerRadius = UDim.new(0, 6)
+    TabCorner.Parent = TabList
+
+    local TabLayout = Instance.new("UIListLayout")
+    TabLayout.FillDirection = Enum.FillDirection.Horizontal
+    TabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    TabLayout.Padding = UDim.new(0, 5)
+    TabLayout.Parent = TabList
+
+    -- Loading Screen (if enabled)
     local LoadingFrame
     if LoadingScreenEnabled then
         LoadingFrame = Instance.new("Frame")
@@ -57,47 +89,9 @@ function Cryptic:CreateWindow(config)
             end
             MainFrame.Visible = true -- Ensure the main UI appears after loading
         end)
+    end
 
-    end -- 🛠 **This `end` was missing, closing the `if LoadingScreenEnabled then` block**
-
-    -- Main Window
-    MainFrame.Size = UDim2.new(0, 450, 0, 300)
-    MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
-    MainFrame.BackgroundColor3 = Theme
-    MainFrame.BorderSizePixel = 0
-    MainFrame.Visible = not LoadingScreenEnabled -- Show only if no loading screen
-    MainFrame.Parent = ScreenGui
-
-    -- Rounded Corners
-    UICorner.CornerRadius = UDim.new(0, 8)
-    UICorner.Parent = MainFrame
-
-    -- Title
-    TitleLabel.Size = UDim2.new(1, 0, 0, 35)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Text = Name
-    TitleLabel.TextSize = 18
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.Parent = MainFrame
-
-    -- Tab List
-    TabList.Size = UDim2.new(1, 0, 0, 30)
-    TabList.Position = UDim2.new(0, 0, 0, 35)
-    TabList.BackgroundColor3 = Theme:Lerp(Color3.fromRGB(40, 40, 40), 0.2)
-    TabList.Parent = MainFrame
-
-    -- Rounded Corners for Tab List
-    local TabCorner = Instance.new("UICorner")
-    TabCorner.CornerRadius = UDim.new(0, 6)
-    TabCorner.Parent = TabList
-
-    -- Tab Layout
-    TabLayout.FillDirection = Enum.FillDirection.Horizontal
-    TabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-    TabLayout.Padding = UDim.new(0, 5)
-    TabLayout.Parent = TabList
-
+    -- Return the UI components
     return {
         MainFrame = MainFrame,
         TabList = TabList
