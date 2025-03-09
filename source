@@ -236,6 +236,11 @@ end)
             end)
             debugPrint("Button: " .. ButtonName, success, err)
 
+ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
+end)
+
+
             return Button
         end
     }
