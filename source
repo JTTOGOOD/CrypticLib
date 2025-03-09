@@ -164,80 +164,42 @@ function Cryptic:CreateWindow(config)
             TabFrame.Visible = true
         end)
 
-        return TabFrame
+        return { Frame = TabFrame }
     end
 
-    -- Loading Screen
-    if LoadingScreenEnabled then
-        local LoadingFrame = Instance.new("Frame")
-        success, err = pcall(function()
-            LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
-            LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-            LoadingFrame.Parent = ScreenGui
-        end)
-        debugPrint("LoadingFrame", success, err)
+    -- Function to create a button inside a tab
+    function Cryptic:CreateButton(config)
+        local ButtonName = config.Name or "Button"
+        local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
 
-        local LoadingLabel = Instance.new("TextLabel")
-        success, err = pcall(function()
-            LoadingLabel.Size = UDim2.new(0, 300, 0, 50)
-            LoadingLabel.Position = UDim2.new(0.5, -150, 0.4, 0)
-            LoadingLabel.BackgroundTransparency = 1
-            LoadingLabel.Text = LoadingTitle
-            LoadingLabel.TextSize = 20
-            LoadingLabel.Font = Enum.Font.GothamBold
-            LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            LoadingLabel.Parent = LoadingFrame
-        end)
-        debugPrint("LoadingLabel", success, err)
+        if not self or not self.Frame then
+            warn("❌ CreateButton must be called inside a tab! Skipping button creation.")
+            return
+        end
 
-        task.spawn(function()
-            wait(LoadingScreenDuration)
-            LoadingFrame:Destroy()
-            MainFrame.Visible = true
+        local Button = Instance.new("TextButton")
+        local success, err = pcall(function()
+            Button.Size = UDim2.new(0.9, 0, 0, 40)
+            Button.Position = UDim2.new(0.05, 0, 0, 0)
+            Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            Button.Text = ButtonName
+            Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Button.Font = Enum.Font.GothamBold
+            Button.Parent = self.Frame
+
+            local UICorner = Instance.new("UICorner")
+            UICorner.CornerRadius = UDim.new(0, 6)
+            UICorner.Parent = Button
+
+            Button.MouseButton1Click:Connect(function()
+                local success, err = pcall(ButtonScript)
+                if not success then warn("❌ Error in button script: " .. err) end
+            end)
         end)
-    else
-        MainFrame.Visible = true
+
+        debugPrint("Button: " .. ButtonName, success, err)
+        return Button
     end
-
-function Cryptic:CreateButton(config)
-    local ButtonName = config.Name or "Button"
-    local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
-
-    -- Ensure this function is called inside a tab
-    if not self or not self.Frame then
-        warn("❌ CreateButton must be called inside a tab! Skipping button creation.")
-        return
-    end
-
-    local Button = Instance.new("TextButton")
-    local success, err = pcall(function()
-        Button.Size = UDim2.new(0.9, 0, 0, 40) -- Scales with the tab frame
-        Button.Position = UDim2.new(0.05, 0, 0, 0) -- Centers button
-        Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        Button.Text = ButtonName
-        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Button.Font = Enum.Font.GothamBold
-        Button.AutoButtonColor = true
-        Button.Parent = self.Frame -- Attach button to the tab frame
-
-        -- Add UICorner for rounded edges
-        local UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 6)
-        UICorner.Parent = Button
-
-        -- Button Click Event
-        Button.MouseButton1Click:Connect(function()
-            local success, err = pcall(ButtonScript)
-            if not success then
-                warn("❌ Error in button script: " .. err)
-            end
-        end)
-    end)
-
-    debugPrint("Button: " .. ButtonName, success, err)
-
-    return Button
-end
 
     return Cryptic
 end
