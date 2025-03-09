@@ -159,7 +159,7 @@ end)
 
     local Tabs = {}
 
- function Cryptic:CreateTab(tabName)
+function Cryptic:CreateTab(tabName)
     local TabButton = Instance.new("TextButton")
     local success, err = pcall(function()
         TabButton.Size = UDim2.new(0, 100, 1, 0)
@@ -171,7 +171,7 @@ end)
     end)
     debugPrint("Tab Button: " .. tabName, success, err)
 
-    -- Create ScrollingFrame for the Tab (instead of Frame)
+    -- Create ScrollingFrame for the Tab
     local TabFrame = Instance.new("ScrollingFrame")
     success, err = pcall(function()
         TabFrame.Size = UDim2.new(1, 0, 1, -65)
@@ -179,9 +179,9 @@ end)
         TabFrame.BackgroundColor3 = Theme
         TabFrame.Visible = false
         TabFrame.Parent = MainFrame
-        TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0) -- Expands dynamically
-        TabFrame.ScrollBarThickness = 5 -- Customize scrollbar size
-        TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y -- Enable vertical scrolling
+        TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
+        TabFrame.ScrollBarThickness = 5
+        TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
     end)
     debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
 
@@ -189,7 +189,7 @@ end)
     local ButtonLayout = Instance.new("UIListLayout")
     success, err = pcall(function()
         ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        ButtonLayout.Padding = UDim.new(0, 5) -- Spacing between buttons
+        ButtonLayout.Padding = UDim.new(0, 5)
         ButtonLayout.Parent = TabFrame
     end)
     debugPrint("ButtonLayout for: " .. tabName, success, err)
@@ -206,29 +206,27 @@ end)
         TabFrame.Visible = true
     end)
 
-    return {
+    local Tab = {
         Frame = TabFrame,
+
         CreateButton = function(self, config)
             local ButtonName = config.Name or "Button"
             local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
 
-            -- Create Button
             local Button = Instance.new("TextButton")
             success, err = pcall(function()
-                Button.Size = UDim2.new(1, -10, 0, 40) -- Full width minus a margin
+                Button.Size = UDim2.new(1, -10, 0, 40)
                 Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                Button.Text = "  " .. ButtonName -- Adds space for left alignment
+                Button.Text = "  " .. ButtonName
                 Button.TextColor3 = Color3.fromRGB(255, 255, 255)
                 Button.TextXAlignment = Enum.TextXAlignment.Left
                 Button.Font = Enum.Font.GothamBold
                 Button.Parent = self.Frame
 
-                -- Rounded edges
                 local UICorner = Instance.new("UICorner")
                 UICorner.CornerRadius = UDim.new(0, 6)
                 UICorner.Parent = Button
 
-                -- Button Click Event
                 Button.MouseButton1Click:Connect(function()
                     local success, err = pcall(ButtonScript)
                     if not success then warn("❌ Error in button script: " .. err) end
@@ -236,11 +234,10 @@ end)
             end)
             debugPrint("Button: " .. ButtonName, success, err)
 
-ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
-end)
+            return Button
+        end,
 
-  CreateToggle = function(self, options)
+        CreateToggle = function(self, options)
             local ToggleFrame = Instance.new("Frame")
             local ToggleButton = Instance.new("TextButton")
             local ToggleState = options.ToggleState or false
