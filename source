@@ -1,20 +1,15 @@
--- Cryptic UI Library Source Code
+warn("Report to (@MynamesJT) on Discord if you come across any issues.")
 
-warn("Report to (@MynamesJT) on discord if you come across and issues")
-warn("Report to (@MynamesJT) on discord if you come across and issues")
-
--- if you come across any errors report to (@MynamesJT) in DMS. Thanks!
 -- Cryptic UI Library
 local Cryptic = {}
 
--- Function to create a main window with a loading screen and theme support
 function Cryptic:CreateWindow(config)
     local Name = config.Name or "Cryptic UI"
     local LoadingScreenEnabled = config.LoadingScreen or false
-    local LoadingScreenDuration = config.LoadingScreenDuration or 2 -- Default: 2 seconds
+    local LoadingScreenDuration = config.LoadingScreenDuration or 2
     local LoadingTitle = config.LoadingTitle or "Loading..."
     local LoadingSubtitle = config.LoadingSubtitle or "Please wait"
-    local Theme = config.Theme or Color3.fromRGB(25, 25, 25) -- Default dark theme
+    local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
     local DebugMode = config.LibraryElementObservation or false
 
     local function debugPrint(elementName, success, errMsg)
@@ -27,149 +22,122 @@ function Cryptic:CreateWindow(config)
         end
     end
 
-    local ScreenGui
-    local success, err = pcall(function()
-        ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-    end)
-    debugPrint("ScreenGui", success, err)
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    -- Create the main UI window
-    local MainFrame
-    success, err = pcall(function()
-        MainFrame = Instance.new("Frame")
-        MainFrame.Size = UDim2.new(0, 450, 0, 300)
-        MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
-        MainFrame.BackgroundColor3 = Theme
-        MainFrame.BorderSizePixel = 0
-        MainFrame.Visible = false -- Hidden by default, will be shown later
-        MainFrame.Parent = ScreenGui
-    end)
-    debugPrint("MainFrame", success, err)
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Size = UDim2.new(0, 450, 0, 300)
+    MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
+    MainFrame.BackgroundColor3 = Theme
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Visible = false
+    MainFrame.Parent = ScreenGui
 
-    local UICorner
-    success, err = pcall(function()
-        UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 8)
-        UICorner.Parent = MainFrame
-    end)
-    debugPrint("UICorner", success, err)
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = MainFrame
 
-    local TitleLabel
-    success, err = pcall(function()
-        TitleLabel = Instance.new("TextLabel")
-        TitleLabel.Size = UDim2.new(1, 0, 0, 35)
-        TitleLabel.BackgroundTransparency = 1
-        TitleLabel.Text = Name
-        TitleLabel.TextSize = 18
-        TitleLabel.Font = Enum.Font.GothamBold
-        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TitleLabel.Parent = MainFrame
-    end)
-    debugPrint("TitleLabel", success, err)
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = Name
+    TitleLabel.TextSize = 18
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.Parent = MainFrame
 
-    -- Create the tab list
-    local TabList
-    success, err = pcall(function()
-        TabList = Instance.new("Frame")
-        TabList.Size = UDim2.new(1, 0, 0, 30)
-        TabList.Position = UDim2.new(0, 0, 0, 35)
-        TabList.BackgroundColor3 = Theme:Lerp(Color3.fromRGB(40, 40, 40), 0.2)
-        TabList.Parent = MainFrame
-    end)
-    debugPrint("TabList", success, err)
+    -- **Scrollable Tab List**
+    local TabListContainer = Instance.new("Frame")
+    TabListContainer.Size = UDim2.new(1, 0, 0, 30)
+    TabListContainer.Position = UDim2.new(0, 0, 0, 35)
+    TabListContainer.BackgroundTransparency = 1
+    TabListContainer.ClipsDescendants = true -- Prevents overflow
+    TabListContainer.Parent = MainFrame
 
-    local TabLayout
-    success, err = pcall(function()
-        TabLayout = Instance.new("UIListLayout")
-        TabLayout.FillDirection = Enum.FillDirection.Horizontal
-        TabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-        TabLayout.Padding = UDim.new(0, 5)
-        TabLayout.Parent = TabList
-    end)
-    debugPrint("TabLayout", success, err)
+    local TabList = Instance.new("ScrollingFrame")
+    TabList.Size = UDim2.new(1, 0, 1, 0)
+    TabList.CanvasSize = UDim2.new(0, 0, 1, 0)
+    TabList.ScrollBarThickness = 4
+    TabList.BackgroundTransparency = 1
+    TabList.Parent = TabListContainer
 
-    -- Table to store tabs
+    local TabLayout = Instance.new("UIListLayout")
+    TabLayout.FillDirection = Enum.FillDirection.Horizontal
+    TabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    TabLayout.Padding = UDim.new(0, 5)
+    TabLayout.Parent = TabList
+
     local Tabs = {}
 
     -- Function to create a tab
     function Cryptic:CreateTab(tabName)
-        local TabButton, TabFrame
-        success, err = pcall(function()
-            -- Create the tab button
-            TabButton = Instance.new("TextButton")
-            TabButton.Size = UDim2.new(0, 100, 1, 0)
-            TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            TabButton.Text = tabName
-            TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            TabButton.Font = Enum.Font.GothamBold
-            TabButton.Parent = TabList
+        local TabButton = Instance.new("TextButton")
+        TabButton.Size = UDim2.new(0, 100, 1, 0)
+        TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        TabButton.Text = tabName
+        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TabButton.Font = Enum.Font.GothamBold
+        TabButton.Parent = TabList
 
-            -- Create the tab content frame
-            TabFrame = Instance.new("Frame")
-            TabFrame.Size = UDim2.new(1, 0, 1, -65) -- Leave space for title & tabs
-            TabFrame.Position = UDim2.new(0, 0, 0, 65)
-            TabFrame.BackgroundColor3 = Theme
-            TabFrame.Visible = false
-            TabFrame.Parent = MainFrame
+        local TabFrame = Instance.new("Frame")
+        TabFrame.Size = UDim2.new(1, 0, 1, -65)
+        TabFrame.Position = UDim2.new(0, 0, 0, 65)
+        TabFrame.BackgroundColor3 = Theme
+        TabFrame.Visible = false
+        TabFrame.Parent = MainFrame
 
-            -- Store the tab
-            Tabs[tabName] = TabFrame
+        Tabs[tabName] = TabFrame
 
-            -- Tab click behavior
-            TabButton.MouseButton1Click:Connect(function()
-                -- Hide all other tabs
-                for _, tab in pairs(Tabs) do
-                    tab.Visible = false
-                end
-                -- Show this tab
-                TabFrame.Visible = true
-            end)
+        -- Update scrolling if more than 4 tabs
+        task.spawn(function()
+            wait(0.1)
+            local totalTabs = #TabList:GetChildren() - 1
+            if totalTabs > 4 then
+                TabList.CanvasSize = UDim2.new(0, totalTabs * 105, 1, 0)
+            end
         end)
-        debugPrint("Tab: " .. tabName, success, err)
+
+        TabButton.MouseButton1Click:Connect(function()
+            for _, tab in pairs(Tabs) do
+                tab.Visible = false
+            end
+            TabFrame.Visible = true
+        end)
 
         return TabFrame
     end
 
-    -- Loading Screen (if enabled)
+    -- Loading Screen
     if LoadingScreenEnabled then
-        local LoadingFrame, LoadingLabel, SubLabel
-        success, err = pcall(function()
-            LoadingFrame = Instance.new("Frame")
-            LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
-            LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-            LoadingFrame.Parent = ScreenGui
+        local LoadingFrame = Instance.new("Frame")
+        LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+        LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        LoadingFrame.Parent = ScreenGui
 
-            LoadingLabel = Instance.new("TextLabel")
-            LoadingLabel.Size = UDim2.new(0, 300, 0, 50)
-            LoadingLabel.Position = UDim2.new(0.5, -150, 0.4, 0)
-            LoadingLabel.BackgroundTransparency = 1
-            LoadingLabel.Text = LoadingTitle
-            LoadingLabel.TextSize = 20
-            LoadingLabel.Font = Enum.Font.GothamBold
-            LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            LoadingLabel.Parent = LoadingFrame
+        local LoadingLabel = Instance.new("TextLabel")
+        LoadingLabel.Size = UDim2.new(0, 300, 0, 50)
+        LoadingLabel.Position = UDim2.new(0.5, -150, 0.4, 0)
+        LoadingLabel.BackgroundTransparency = 1
+        LoadingLabel.Text = LoadingTitle
+        LoadingLabel.TextSize = 20
+        LoadingLabel.Font = Enum.Font.GothamBold
+        LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        LoadingLabel.Parent = LoadingFrame
 
-            SubLabel = Instance.new("TextLabel")
-            SubLabel.Size = UDim2.new(0, 300, 0, 30)
-            SubLabel.Position = UDim2.new(0.5, -150, 0.5, 0)
-            SubLabel.BackgroundTransparency = 1
-            SubLabel.Text = LoadingSubtitle
-            SubLabel.TextSize = 16
-            SubLabel.Font = Enum.Font.Gotham
-            SubLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-            SubLabel.Parent = LoadingFrame
-        end)
-        debugPrint("Loading Screen", success, err)
+        local SubLabel = Instance.new("TextLabel")
+        SubLabel.Size = UDim2.new(0, 300, 0, 30)
+        SubLabel.Position = UDim2.new(0.5, -150, 0.5, 0)
+        SubLabel.BackgroundTransparency = 1
+        SubLabel.Text = LoadingSubtitle
+        SubLabel.TextSize = 16
+        SubLabel.Font = Enum.Font.Gotham
+        SubLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+        SubLabel.Parent = LoadingFrame
 
-        -- Hide loading screen after the specified duration
         task.spawn(function()
             wait(LoadingScreenDuration)
-            success, err = pcall(function()
-                LoadingFrame:Destroy()
-                MainFrame.Visible = true
-            end)
-            debugPrint("LoadingScreen Cleanup", success, err)
+            LoadingFrame:Destroy()
+            MainFrame.Visible = true
         end)
     else
         MainFrame.Visible = true
