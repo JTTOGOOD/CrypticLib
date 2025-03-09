@@ -289,107 +289,106 @@ function Cryptic:CreateTab(tabName)
         end,
 
         -- Add CreateSlider here
-function Cryptic:CreateSlider(options)
-    local SliderFrame = Instance.new("Frame")
-    local SliderBar = Instance.new("Frame")
-    local Knob = Instance.new("Frame")
-    local ValueLabel = Instance.new("TextLabel")
-    local SliderState = options.Current or 0
-    local Min = options.Min or 10
-    local Max = options.Max or 100
-    local Step = options.Increasement or 1
-    local Suffix = options.Suffix or ""
-    local SliderName = options.Name or "Slider"
+        CreateSlider = function(self, options)
+            local SliderFrame = Instance.new("Frame")
+            local SliderBar = Instance.new("Frame")
+            local Knob = Instance.new("Frame")
+            local ValueLabel = Instance.new("TextLabel")
+            local SliderState = options.Current or 0
+            local Min = options.Min or 10
+            local Max = options.Max or 100
+            local Step = options.Increasement or 1
+            local Suffix = options.Suffix or ""
+            local SliderName = options.Name or "Slider"
 
-    -- Set up the slider frame
-    SliderFrame.Size = UDim2.new(1, -10, 0, 40)
-    SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    SliderFrame.Parent = self.Frame
+            -- Set up the slider frame
+            SliderFrame.Size = UDim2.new(1, -10, 0, 40)
+            SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            SliderFrame.Parent = self.Frame
 
-    -- Create Slider Label
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(1, -70, 0, 20)
-    Label.Position = UDim2.new(0, 10, 0, 0)
-    Label.Text = SliderName
-    Label.TextSize = 14
-    Label.Font = Enum.Font.GothamBold
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.BackgroundTransparency = 1
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Parent = SliderFrame
+            -- Create Slider Label
+            local Label = Instance.new("TextLabel")
+            Label.Size = UDim2.new(1, -70, 0, 20)
+            Label.Position = UDim2.new(0, 10, 0, 0)
+            Label.Text = SliderName
+            Label.TextSize = 14
+            Label.Font = Enum.Font.GothamBold
+            Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Label.BackgroundTransparency = 1
+            Label.TextXAlignment = Enum.TextXAlignment.Left
+            Label.Parent = SliderFrame
 
-    -- Create Slider Bar
-    SliderBar.Size = UDim2.new(1, -70, 0, 6)
-    SliderBar.Position = UDim2.new(0, 10, 0, 25)
-    SliderBar.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    SliderBar.Parent = SliderFrame
+            -- Create Slider Bar
+            SliderBar.Size = UDim2.new(1, -70, 0, 6)
+            SliderBar.Position = UDim2.new(0, 10, 0, 25)
+            SliderBar.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+            SliderBar.Parent = SliderFrame
 
-    -- Create Knob
-    Knob.Size = UDim2.new(0, 20, 1, 0)
-    Knob.Position = UDim2.new(math.clamp((SliderState - Min) / (Max - Min), 0, 1), 0, 0, 0)
-    Knob.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    Knob.Parent = SliderBar
+            -- Create Knob
+            Knob.Size = UDim2.new(0, 20, 1, 0)
+            Knob.Position = UDim2.new(math.clamp((SliderState - Min) / (Max - Min), 0, 1), 0, 0, 0)
+            Knob.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            Knob.Parent = SliderBar
 
-    -- Display Value
-    ValueLabel.Size = UDim2.new(0, 50, 0, 20)
-    ValueLabel.Position = UDim2.new(1, -60, 0, 15)
-    ValueLabel.BackgroundTransparency = 1
-    ValueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ValueLabel.TextSize = 14
-    ValueLabel.Text = SliderState .. Suffix
-    ValueLabel.Parent = SliderFrame
+            -- Display Value
+            ValueLabel.Size = UDim2.new(0, 50, 0, 20)
+            ValueLabel.Position = UDim2.new(1, -60, 0, 15)
+            ValueLabel.BackgroundTransparency = 1
+            ValueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ValueLabel.TextSize = 14
+            ValueLabel.Text = SliderState .. Suffix
+            ValueLabel.Parent = SliderFrame
 
-    -- Function to update the value
-    local function updateSliderValue()
-        SliderState = math.floor(Min + (Max - Min) * Knob.Position.X.Scale)
-        ValueLabel.Text = SliderState .. Suffix
-        if options.Script then
-            options.Script(SliderState)
-        end
-    end
-
-    -- Handle knob dragging
-    Knob.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local dragStart = input.Position
-            local startPos = Knob.Position
-
-            local function onDrag(input)
-                local offset = input.Position - dragStart
-                local newPos = startPos + UDim2.new(0, offset.X, 0, 0)
-
-                -- Limit the knob's movement to the slider bar
-                if newPos.X.Offset < 0 then
-                    newPos = UDim2.new(0, 0, 0, 0)
-                elseif newPos.X.Offset > SliderBar.AbsoluteSize.X - Knob.AbsoluteSize.X then
-                    newPos = UDim2.new(1, -Knob.AbsoluteSize.X, 0, 0)
+            -- Function to update the value
+            local function updateSliderValue()
+                SliderState = math.floor(Min + (Max - Min) * Knob.Position.X.Scale)
+                ValueLabel.Text = SliderState .. Suffix
+                if options.Script then
+                    options.Script(SliderState)
                 end
-
-                Knob.Position = newPos
-                updateSliderValue()
             end
 
-            -- Stop dragging
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    game:GetService("UserInputService").InputChanged:Disconnect(onDrag)
+            -- Handle knob dragging
+            Knob.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    local dragStart = input.Position
+                    local startPos = Knob.Position
+
+                    local function onDrag(input)
+                        local offset = input.Position - dragStart
+                        local newPos = startPos + UDim2.new(0, offset.X, 0, 0)
+
+                        -- Limit the knob's movement to the slider bar
+                        if newPos.X.Offset < 0 then
+                            newPos = UDim2.new(0, 0, 0, 0)
+                        elseif newPos.X.Offset > SliderBar.Size.X.Offset - Knob.Size.X.Offset then
+                            newPos = UDim2.new(1, 0, 0, 0)
+                        end
+
+                        Knob.Position = newPos
+                        updateSliderValue()
+                    end
+
+                    local function onRelease()
+                        input.Changed:Disconnect()
+                        game:GetService("UserInputService").InputChanged:Disconnect(onDrag)
+                        game:GetService("UserInputService").InputEnded:Disconnect(onRelease)
+                    end
+
+                    game:GetService("UserInputService").InputChanged:Connect(onDrag)
+                    game:GetService("UserInputService").InputEnded:Connect(onRelease)
                 end
             end)
 
-            -- Continue dragging
-            game:GetService("UserInputService").InputChanged:Connect(onDrag)
-        end
-    end)
-
-    return {
-        SetValue = function(value)
-            SliderState = math.clamp(value, Min, Max)
-            Knob.Position = UDim2.new((SliderState - Min) / (Max - Min), 0, 0, 0)
-            updateSliderValue()
+            return {
+                SetValue = function(newVal)
+                    SliderState = math.clamp(newVal, Min, Max)
+                    Knob.Position = UDim2.new((SliderState - Min) / (Max - Min), 0, 0, 0)
+                    updateSliderValue()
+                end
+            }
         end
     }
-end
-
     return Tab
 end
 
