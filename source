@@ -159,7 +159,7 @@ end)
 
     local Tabs = {}
 
-    function Cryptic:CreateTab(tabName)
+ function Cryptic:CreateTab(tabName)
     local TabButton = Instance.new("TextButton")
     local success, err = pcall(function()
         TabButton.Size = UDim2.new(0, 100, 1, 0)
@@ -171,15 +171,19 @@ end)
     end)
     debugPrint("Tab Button: " .. tabName, success, err)
 
-    local TabFrame = Instance.new("Frame")
+    -- Create ScrollingFrame for the Tab (instead of Frame)
+    local TabFrame = Instance.new("ScrollingFrame")
     success, err = pcall(function()
         TabFrame.Size = UDim2.new(1, 0, 1, -65)
         TabFrame.Position = UDim2.new(0, 0, 0, 65)
         TabFrame.BackgroundColor3 = Theme
         TabFrame.Visible = false
         TabFrame.Parent = MainFrame
+        TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0) -- Expands dynamically
+        TabFrame.ScrollBarThickness = 5 -- Customize scrollbar size
+        TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y -- Enable vertical scrolling
     end)
-    debugPrint("Tab Frame: " .. tabName, success, err)
+    debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
 
     -- Create UIListLayout for buttons
     local ButtonLayout = Instance.new("UIListLayout")
@@ -189,6 +193,11 @@ end)
         ButtonLayout.Parent = TabFrame
     end)
     debugPrint("ButtonLayout for: " .. tabName, success, err)
+
+    -- Adjust CanvasSize dynamically based on content size
+    ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
+    end)
 
     Tabs[tabName] = TabFrame
 
