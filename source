@@ -246,6 +246,60 @@ end)
     }
 end
 
+function Cryptic:CreateToggle(config)
+    local ToggleName = config.Name or "Toggle"
+    local ToggleState = config.ToggleState or false
+    local ToggleScript = config.Script or function(state) print(ToggleName .. " is now " .. (state and "ON" or "OFF")) end
+
+    if not self or not self.Frame then
+        warn("❌ CreateToggle must be called inside a tab! Skipping toggle creation.")
+        return
+    end
+
+    -- Create UIListLayout if it doesn't exist
+    if not self.Frame:FindFirstChild("ComponentLayout") then
+        local ComponentLayout = Instance.new("UIListLayout")
+        ComponentLayout.Name = "ComponentLayout"
+        ComponentLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        ComponentLayout.Padding = UDim.new(0, 5)
+        ComponentLayout.Parent = self.Frame
+    end
+
+    -- Create Toggle Button
+    local ToggleButton = Instance.new("TextButton")
+    local success, err = pcall(function()
+        ToggleButton.Size = UDim2.new(1, -10, 0, 40) -- Full width with margin
+        ToggleButton.Position = UDim2.new(0, 5, 0, 0)
+        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 140, 255) or Color3.fromRGB(25, 25, 25) -- Blue when ON, Dark Black when OFF
+        ToggleButton.Text = "  " .. ToggleName .. (ToggleState and " [ON]" or " [OFF]") -- Left-aligned text with ON/OFF indicator
+        ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ToggleButton.TextXAlignment = Enum.TextXAlignment.Left
+        ToggleButton.Font = Enum.Font.GothamBold
+        ToggleButton.Parent = self.Frame
+
+        -- Add UICorner for rounded edges
+        local UICorner = Instance.new("UICorner")
+        UICorner.CornerRadius = UDim.new(0, 6)
+        UICorner.Parent = ToggleButton
+    end)
+
+    debugPrint("Toggle: " .. ToggleName, success, err)
+
+    -- Function to toggle the state
+    local function Toggle()
+        ToggleState = not ToggleState
+        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 140, 255) or Color3.fromRGB(25, 25, 25)
+        ToggleButton.Text = "  " .. ToggleName .. (ToggleState and " [ON]" or " [OFF]")
+        local success, err = pcall(function() ToggleScript(ToggleState) end)
+        if not success then warn("❌ Error in toggle script: " .. err) end
+    end
+
+    -- Toggle on click
+    ToggleButton.MouseButton1Click:Connect(Toggle)
+
+    return ToggleButton
+end
+
     return Cryptic
 end
 
