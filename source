@@ -326,7 +326,7 @@ CreateSlider = function(self, options)
 
     -- Create Knob
     Knob.Size = UDim2.new(0, 20, 1, 0)
-    Knob.Position = UDim2.new((SliderState - Min) / (Max - Min), 0, 0, 0) -- Set the initial position based on the current value
+    Knob.Position = UDim2.new(math.clamp((SliderState - Min) / (Max - Min), 0, 1), 0, 0, 0)
     Knob.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     Knob.Parent = SliderBar
 
@@ -384,7 +384,7 @@ CreateSlider = function(self, options)
     return {
         SetValue = function(value)
             SliderState = math.clamp(value, Min, Max)
-            Knob.Position = UDim2.new((SliderState - Min) / (Max - Min), 0, 0, 0) -- Update knob position based on the new value
+            Knob.Position = UDim2.new((SliderState - Min) / (Max - Min), 0, 0, 0)
             updateSliderValue()
         end
     }
