@@ -238,43 +238,56 @@ function Cryptic:CreateTab(tabName)
         end,
 
         CreateToggle = function(self, options)
-            local ToggleFrame = Instance.new("Frame")
-            local ToggleButton = Instance.new("TextButton")
-            local ToggleState = options.ToggleState or false
+    local ToggleFrame = Instance.new("Frame")
+    local ToggleButton = Instance.new("TextButton")
+    local ToggleLabel = Instance.new("TextLabel") -- Create a label
+    local ToggleState = options.ToggleState or false
+    local ToggleName = options.Name or "Toggle" -- Default name if not provided
 
-            -- Set up Toggle Frame
-            ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
-            ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-            ToggleFrame.Parent = self.Frame
+    -- Set up Toggle Frame
+    ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
+    ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    ToggleFrame.Parent = self.Frame
 
-            -- Set up Toggle Button
-            ToggleButton.Size = UDim2.new(0, 50, 1, 0)
-            ToggleButton.Position = UDim2.new(1, -60, 0, 0)
-            ToggleButton.Text = ToggleState and "ON" or "OFF"
-            ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-            ToggleButton.Parent = ToggleFrame
+    -- Set up Toggle Label (Name of the Toggle)
+    ToggleLabel.Size = UDim2.new(1, -70, 1, 0) -- Take up space on the left
+    ToggleLabel.Position = UDim2.new(0, 10, 0, 0) -- Slight offset from the edge
+    ToggleLabel.Text = ToggleName
+    ToggleLabel.TextSize = 14
+    ToggleLabel.Font = Enum.Font.GothamBold
+    ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleLabel.BackgroundTransparency = 1
+    ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    ToggleLabel.Parent = ToggleFrame
 
-            -- Handle toggle clicks
-ToggleButton.MouseButton1Click:Connect(function()
-    ToggleState = not ToggleState
+    -- Set up Toggle Button
+    ToggleButton.Size = UDim2.new(0, 50, 1, 0)
+    ToggleButton.Position = UDim2.new(1, -60, 0, 0)
     ToggleButton.Text = ToggleState and "ON" or "OFF"
     ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+    ToggleButton.Parent = ToggleFrame
 
-    -- Check if options.Script exists before calling it
-    if options.Script then
-        options.Script(ToggleState)
-    end
-end)
+    -- Handle toggle clicks
+    ToggleButton.MouseButton1Click:Connect(function()
+        ToggleState = not ToggleState
+        ToggleButton.Text = ToggleState and "ON" or "OFF"
+        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
 
-
-            return {
-                SetState = function(state)
-                    ToggleState = state
-                    ToggleButton.Text = ToggleState and "ON" or "OFF"
-                    ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-                end
-            }
+        -- Check if options.Script exists before calling it
+        if options.Script then
+            options.Script(ToggleState)
         end
+    end)
+
+    return {
+        SetState = function(state)
+            ToggleState = state
+            ToggleButton.Text = ToggleState and "ON" or "OFF"
+            ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+        end
+    }
+end
+
     }
 
     return Tab
