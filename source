@@ -124,48 +124,87 @@ function Cryptic:CreateWindow(config)
     local Tabs = {}
 
     -- Function to create a tab
-    function Cryptic:CreateTab(tabName)
-        local TabButton = Instance.new("TextButton")
-        local success, err = pcall(function()
-            TabButton.Size = UDim2.new(0, 100, 1, 0)
-            TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            TabButton.Text = tabName
-            TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            TabButton.Font = Enum.Font.GothamBold
-            TabButton.Parent = TabList
-        end)
-        debugPrint("Tab Button: " .. tabName, success, err)
+ function Cryptic:CreateTab(tabName)
+    local TabButton = Instance.new("TextButton")
+    local success, err = pcall(function()
+        TabButton.Size = UDim2.new(0, 100, 1, 0)
+        TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        TabButton.Text = tabName
+        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TabButton.Font = Enum.Font.GothamBold
+        TabButton.Parent = TabList
+    end)
+    debugPrint("Tab Button: " .. tabName, success, err)
 
-        local TabFrame = Instance.new("Frame")
-        success, err = pcall(function()
-            TabFrame.Size = UDim2.new(1, 0, 1, -65)
-            TabFrame.Position = UDim2.new(0, 0, 0, 65)
-            TabFrame.BackgroundColor3 = Theme
-            TabFrame.Visible = false
-            TabFrame.Parent = MainFrame
-        end)
-        debugPrint("Tab Frame: " .. tabName, success, err)
+    local TabFrame = Instance.new("Frame")
+    success, err = pcall(function()
+        TabFrame.Size = UDim2.new(1, 0, 1, -65)
+        TabFrame.Position = UDim2.new(0, 0, 0, 65)
+        TabFrame.BackgroundColor3 = Theme
+        TabFrame.Visible = false
+        TabFrame.Parent = MainFrame
+    end)
+    debugPrint("Tab Frame: " .. tabName, success, err)
 
-        Tabs[tabName] = TabFrame
+    Tabs[tabName] = TabFrame
 
-        -- Update scrolling if more than 4 tabs
-        task.spawn(function()
-            wait(0.1)
-            local totalTabs = #TabList:GetChildren() - 1
-            if totalTabs > 4 then
-                TabList.CanvasSize = UDim2.new(0, totalTabs * 105, 1, 0)
-            end
-        end)
+    -- Update scrolling if more than 4 tabs
+    task.spawn(function()
+        wait(0.1)
+        local totalTabs = #TabList:GetChildren() - 1
+        if totalTabs > 4 then
+            TabList.CanvasSize = UDim2.new(0, totalTabs * 105, 1, 0)
+        end
+    end)
 
-        TabButton.MouseButton1Click:Connect(function()
-            for _, tab in pairs(Tabs) do
-                tab.Visible = false
-            end
-            TabFrame.Visible = true
-        end)
+    TabButton.MouseButton1Click:Connect(function()
+        for _, tab in pairs(Tabs) do
+            tab.Visible = false
+        end
+        TabFrame.Visible = true
+    end)
 
-        return { Frame = TabFrame }
-    end
+    -- **Return a table representing the tab**
+    local TabObject = {
+        Frame = TabFrame,
+        CreateButton = function(self, config)
+            local ButtonName = config.Name or "Button"
+            local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
+
+            local Button = Instance.new("TextButton")
+            local success, err = pcall(function()
+                Button.Size = UDim2.new(0.9, 0, 0, 40)
+                Button.Position = UDim2.new(0.05, 0, 0, 0)
+                Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                Button.Text = ButtonName
+                Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+                Button.Font = Enum.Font.GothamBold
+                Button.AutoButtonColor = true
+                Button.Parent = self.Frame
+
+                -- Add UICorner for rounded edges
+                local UICorner = Instance.new("UICorner")
+                UICorner.CornerRadius = UDim.new(0, 6)
+                UICorner.Parent = Button
+
+                -- Button Click Event
+                Button.MouseButton1Click:Connect(function()
+                    local success, err = pcall(ButtonScript)
+                    if not success then
+                        warn("❌ Error in button script: " .. err)
+                    end
+                end)
+            end)
+
+            debugPrint("Button: " .. ButtonName, success, err)
+
+            return Button
+        end
+    }
+
+    return TabObject
+end
+
 
     -- Function to create a button inside a tab
     function Cryptic:CreateButton(config)
