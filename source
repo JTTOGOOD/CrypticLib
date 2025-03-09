@@ -238,57 +238,160 @@ function Cryptic:CreateTab(tabName)
         end,
 
         CreateToggle = function(self, options)
-    local ToggleFrame = Instance.new("Frame")
-    local ToggleButton = Instance.new("TextButton")
-    local ToggleLabel = Instance.new("TextLabel") -- Create a label
-    local ToggleState = options.ToggleState or false
-    local ToggleName = options.Name or "Toggle" -- Default name if not provided
+            local ToggleFrame = Instance.new("Frame")
+            local ToggleButton = Instance.new("TextButton")
+            local ToggleLabel = Instance.new("TextLabel") -- Create a label
+            local ToggleState = options.ToggleState or false
+            local ToggleName = options.Name or "Toggle" -- Default name if not provided
 
-    -- Set up Toggle Frame
-    ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
-    ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    ToggleFrame.Parent = self.Frame
+            -- Set up Toggle Frame
+            ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
+            ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            ToggleFrame.Parent = self.Frame
 
-    -- Set up Toggle Label (Name of the Toggle)
-    ToggleLabel.Size = UDim2.new(1, -70, 1, 0) -- Take up space on the left
-    ToggleLabel.Position = UDim2.new(0, 10, 0, 0) -- Slight offset from the edge
-    ToggleLabel.Text = ToggleName
-    ToggleLabel.TextSize = 14
-    ToggleLabel.Font = Enum.Font.GothamBold
-    ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleLabel.BackgroundTransparency = 1
-    ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    ToggleLabel.Parent = ToggleFrame
+            -- Set up Toggle Label (Name of the Toggle)
+            ToggleLabel.Size = UDim2.new(1, -70, 1, 0) -- Take up space on the left
+            ToggleLabel.Position = UDim2.new(0, 10, 0, 0) -- Slight offset from the edge
+            ToggleLabel.Text = ToggleName
+            ToggleLabel.TextSize = 14
+            ToggleLabel.Font = Enum.Font.GothamBold
+            ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleLabel.BackgroundTransparency = 1
+            ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            ToggleLabel.Parent = ToggleFrame
 
-    -- Set up Toggle Button
-    ToggleButton.Size = UDim2.new(0, 50, 1, 0)
-    ToggleButton.Position = UDim2.new(1, -60, 0, 0)
-    ToggleButton.Text = ToggleState and "ON" or "OFF"
-    ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-    ToggleButton.Parent = ToggleFrame
-
-    -- Handle toggle clicks
-    ToggleButton.MouseButton1Click:Connect(function()
-        ToggleState = not ToggleState
-        ToggleButton.Text = ToggleState and "ON" or "OFF"
-        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-
-        -- Check if options.Script exists before calling it
-        if options.Script then
-            options.Script(ToggleState)
-        end
-    end)
-
-    return {
-        SetState = function(state)
-            ToggleState = state
+            -- Set up Toggle Button
+            ToggleButton.Size = UDim2.new(0, 50, 1, 0)
+            ToggleButton.Position = UDim2.new(1, -60, 0, 0)
             ToggleButton.Text = ToggleState and "ON" or "OFF"
             ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+            ToggleButton.Parent = ToggleFrame
+
+            -- Handle toggle clicks
+            ToggleButton.MouseButton1Click:Connect(function()
+                ToggleState = not ToggleState
+                ToggleButton.Text = ToggleState and "ON" or "OFF"
+                ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+
+                -- Check if options.Script exists before calling it
+                if options.Script then
+                    options.Script(ToggleState)
+                end
+            end)
+
+            return {
+                SetState = function(state)
+                    ToggleState = state
+                    ToggleButton.Text = ToggleState and "ON" or "OFF"
+                    ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+                end
+            }
+        end,
+
+        -- Add CreateSlider here
+        CreateSlider = function(self, options)
+            local SliderFrame = Instance.new("Frame")
+            local SliderBar = Instance.new("Frame")
+            local Knob = Instance.new("Frame")
+            local ValueLabel = Instance.new("TextLabel")
+            local SliderState = options.Current or 0
+            local Min = options.Min or 0
+            local Max = options.Max or 100
+            local Step = options.Increasement or 1
+            local Suffix = options.Suffix or ""
+            local SliderName = options.Name or "Slider"
+
+            -- Set up the slider frame
+            SliderFrame.Size = UDim2.new(1, -10, 0, 40)
+            SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            SliderFrame.Parent = self.Frame
+
+            -- Create Slider Label
+            local Label = Instance.new("TextLabel")
+            Label.Size = UDim2.new(1, -70, 0, 20)
+            Label.Position = UDim2.new(0, 10, 0, 0)
+            Label.Text = SliderName
+            Label.TextSize = 14
+            Label.Font = Enum.Font.GothamBold
+            Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Label.BackgroundTransparency = 1
+            Label.TextXAlignment = Enum.TextXAlignment.Left
+            Label.Parent = SliderFrame
+
+            -- Create Slider Bar
+            SliderBar.Size = UDim2.new(1, -70, 0, 6)
+            SliderBar.Position = UDim2.new(0, 10, 0, 25)
+            SliderBar.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+            SliderBar.Parent = SliderFrame
+
+            -- Create Knob
+            Knob.Size = UDim2.new(0, 20, 1, 0)
+            Knob.Position = UDim2.new(SliderState / Max, 0, 0, 0)
+            Knob.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            Knob.Parent = SliderBar
+
+            -- Display Value
+            ValueLabel.Size = UDim2.new(0, 50, 0, 20)
+            ValueLabel.Position = UDim2.new(1, -60, 0, 15)
+            ValueLabel.BackgroundTransparency = 1
+            ValueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ValueLabel.TextSize = 14
+            ValueLabel.Text = SliderState .. Suffix
+            ValueLabel.Parent = SliderFrame
+
+            -- Function to update the value
+            local function updateSliderValue()
+                SliderState = math.floor(Min + (Max - Min) * Knob.Position.X.Scale)
+                ValueLabel.Text = SliderState .. Suffix
+                if options.Script then
+                    options.Script(SliderState)
+                end
+            end
+
+            -- Handle knob dragging
+            Knob.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    local dragStart = input.Position
+                    local startPos = Knob.Position
+
+                    local function onDrag(input)
+                        local offset = input.Position - dragStart
+                        local newPos = startPos + UDim2.new(0, offset.X, 0, 0)
+
+                        if newPos.X.Offset < 0 then
+                            newPos = UDim2.new(0, 0, 0, 0)
+                        elseif newPos.X.Offset > SliderBar.AbsoluteSize.X - Knob.AbsoluteSize.X then
+                            newPos = UDim2.new(1, -Knob.AbsoluteSize.X, 0, 0)
+                        end
+
+                        Knob.Position = newPos
+                        updateSliderValue()
+                    end
+
+                    -- Stop dragging
+                    input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            game:GetService("UserInputService").InputChanged:Disconnect(onDrag)
+                        end
+                    end)
+
+                    -- Continue dragging
+                    game:GetService("UserInputService").InputChanged:Connect(onDrag)
+                end
+            end)
+
+            return {
+                SetValue = function(value)
+                    SliderState = math.clamp(value, Min, Max)
+                    Knob.Position = UDim2.new(SliderState / Max, 0, 0, 0)
+                    updateSliderValue()
+                end
+            }
         end
     }
-end
 
-    }
+    return Tab
+end
 
     return Tab
 end
@@ -332,101 +435,6 @@ function Cryptic:CreateNotification(config)
         end
         NotificationFrame:Destroy()
     end)
-end
-
-function Tab:CreateSlider(options)
-    local SliderName = options.Name or "Slider"
-    local Suffix = options.Suffix or ""
-    local Min = options.Min or 0
-    local Max = options.Max or 100
-    local CurrentValue = options.CurrentValue or Min
-    local Increasement = options.Increasement or 1
-    local Script = options.Script or function(value) print(SliderName .. " value:", value) end
-
-    -- Slider Frame
-    local SliderFrame = Instance.new("Frame")
-    SliderFrame.Size = UDim2.new(1, -10, 0, 40)
-    SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    SliderFrame.Parent = self.Frame
-
-    -- Slider Label
-    local SliderLabel = Instance.new("TextLabel")
-    SliderLabel.Size = UDim2.new(1, -70, 1, 0)
-    SliderLabel.Position = UDim2.new(0, 10, 0, 0)
-    SliderLabel.Text = SliderName .. ": " .. CurrentValue .. Suffix
-    SliderLabel.TextSize = 14
-    SliderLabel.Font = Enum.Font.GothamBold
-    SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SliderLabel.BackgroundTransparency = 1
-    SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-    SliderLabel.Parent = SliderFrame
-
-    -- Slider Bar
-    local SliderBar = Instance.new("Frame")
-    SliderBar.Size = UDim2.new(1, -10, 0, 5)
-    SliderBar.Position = UDim2.new(0, 5, 1, -10)
-    SliderBar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    SliderBar.Parent = SliderFrame
-
-    -- Slider Fill
-    local SliderFill = Instance.new("Frame")
-    SliderFill.Size = UDim2.new(0, (CurrentValue - Min) / (Max - Min) * (SliderBar.AbsoluteSize.X), 1, 0)
-    SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-    SliderFill.Parent = SliderBar
-
-    -- Slider Drag Button
-    local DragButton = Instance.new("ImageButton")
-    DragButton.Size = UDim2.new(0, 15, 0, 15)
-    DragButton.Position = UDim2.new((CurrentValue - Min) / (Max - Min), -7, 0.5, -7)
-    DragButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    DragButton.Parent = SliderBar
-
-    -- Dragging functionality
-    local UserInputService = game:GetService("UserInputService")
-    local Dragging = false
-
-    DragButton.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            Dragging = true
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local MouseX = input.Position.X
-            local BarStart = SliderBar.AbsolutePosition.X
-            local BarEnd = BarStart + SliderBar.AbsoluteSize.X
-            local NewValue = math.clamp(((MouseX - BarStart) / (BarEnd - BarStart)) * (Max - Min) + Min, Min, Max)
-            
-            -- Round to nearest increment
-            NewValue = math.floor(NewValue / Increasement) * Increasement
-            
-            -- Update visuals
-            SliderFill.Size = UDim2.new((NewValue - Min) / (Max - Min), 0, 1, 0)
-            DragButton.Position = UDim2.new((NewValue - Min) / (Max - Min), -7, 0.5, -7)
-            SliderLabel.Text = SliderName .. ": " .. NewValue .. Suffix
-            
-            -- Execute script
-            Script(NewValue)
-        end
-    end)
-
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            Dragging = false
-        end
-    end)
-
-    return {
-        SetValue = function(value)
-            value = math.clamp(value, Min, Max)
-            value = math.floor(value / Increasement) * Increasement
-            SliderFill.Size = UDim2.new((value - Min) / (Max - Min), 0, 1, 0)
-            DragButton.Position = UDim2.new((value - Min) / (Max - Min), -7, 0.5, -7)
-            SliderLabel.Text = SliderName .. ": " .. value .. Suffix
-            Script(value)
-        end
-    }
 end
 
     return Cryptic
