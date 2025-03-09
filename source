@@ -79,14 +79,6 @@ function Cryptic:CreateWindow(config)
     end)
     debugPrint("TabList", success, err)
 
-    local TabCorner
-    success, err = pcall(function()
-        TabCorner = Instance.new("UICorner")
-        TabCorner.CornerRadius = UDim.new(0, 6)
-        TabCorner.Parent = TabList
-    end)
-    debugPrint("TabCorner", success, err)
-
     local TabLayout
     success, err = pcall(function()
         TabLayout = Instance.new("UIListLayout")
@@ -96,6 +88,48 @@ function Cryptic:CreateWindow(config)
         TabLayout.Parent = TabList
     end)
     debugPrint("TabLayout", success, err)
+
+    -- Table to store tabs
+    local Tabs = {}
+
+    -- Function to create a tab
+    function Cryptic:CreateTab(tabName)
+        local TabButton, TabFrame
+        success, err = pcall(function()
+            -- Create the tab button
+            TabButton = Instance.new("TextButton")
+            TabButton.Size = UDim2.new(0, 100, 1, 0)
+            TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            TabButton.Text = tabName
+            TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            TabButton.Font = Enum.Font.GothamBold
+            TabButton.Parent = TabList
+
+            -- Create the tab content frame
+            TabFrame = Instance.new("Frame")
+            TabFrame.Size = UDim2.new(1, 0, 1, -65) -- Leave space for title & tabs
+            TabFrame.Position = UDim2.new(0, 0, 0, 65)
+            TabFrame.BackgroundColor3 = Theme
+            TabFrame.Visible = false
+            TabFrame.Parent = MainFrame
+
+            -- Store the tab
+            Tabs[tabName] = TabFrame
+
+            -- Tab click behavior
+            TabButton.MouseButton1Click:Connect(function()
+                -- Hide all other tabs
+                for _, tab in pairs(Tabs) do
+                    tab.Visible = false
+                end
+                -- Show this tab
+                TabFrame.Visible = true
+            end)
+        end)
+        debugPrint("Tab: " .. tabName, success, err)
+
+        return TabFrame
+    end
 
     -- Loading Screen (if enabled)
     if LoadingScreenEnabled then
@@ -141,11 +175,7 @@ function Cryptic:CreateWindow(config)
         MainFrame.Visible = true
     end
 
-    -- Return the UI components
-    return {
-        MainFrame = MainFrame,
-        TabList = TabList
-    }
+    return Cryptic
 end
 
 return Cryptic
