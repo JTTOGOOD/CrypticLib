@@ -205,6 +205,51 @@ end)
         }
     end
 
+function Cryptic:CreateButton(config)
+    local ButtonName = config.Name or "Button"
+    local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
+
+    if not self or not self.Frame then
+        warn("❌ CreateButton must be called inside a tab! Skipping button creation.")
+        return
+    end
+
+    -- Create UIListLayout if it doesn't exist
+    if not self.Frame:FindFirstChild("ButtonLayout") then
+        local ButtonLayout = Instance.new("UIListLayout")
+        ButtonLayout.Name = "ButtonLayout"
+        ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        ButtonLayout.Padding = UDim.new(0, 5) -- Spacing between buttons
+        ButtonLayout.Parent = self.Frame
+    end
+
+    local Button = Instance.new("TextButton")
+    local success, err = pcall(function()
+        Button.Size = UDim2.new(1, -10, 0, 40) -- Full width with small margin
+        Button.Position = UDim2.new(0, 5, 0, 0) -- Slight offset for cleaner look
+        Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        Button.Text = "  " .. ButtonName -- Adds spacing to push text to the left
+        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Button.TextXAlignment = Enum.TextXAlignment.Left -- Align text to the left
+        Button.Font = Enum.Font.GothamBold
+        Button.Parent = self.Frame
+
+        -- Add UICorner for rounded edges
+        local UICorner = Instance.new("UICorner")
+        UICorner.CornerRadius = UDim.new(0, 6)
+        UICorner.Parent = Button
+
+        -- Button Click Event
+        Button.MouseButton1Click:Connect(function()
+            local success, err = pcall(ButtonScript)
+            if not success then warn("❌ Error in button script: " .. err) end
+        end)
+    end)
+
+    debugPrint("Button: " .. ButtonName, success, err)
+    return Button
+end
+
     return Cryptic
 end
 
