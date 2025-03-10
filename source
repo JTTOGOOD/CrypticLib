@@ -376,6 +376,78 @@ unction Cryptic:CreateTab(tabName)
             end
         }
 
+function Tab:CreateSlider(options)
+    local Slider = Instance.new("Frame")
+    local Title = Instance.new("TextLabel")
+    local SlideBar = Instance.new("Frame")
+    local Fill = Instance.new("Frame")
+    local Draggable = Instance.new("TextButton")
+    
+    -- Set properties
+    Slider.Name = options.Name
+    Slider.Parent = self.MainFrame
+    Slider.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Slider.Size = UDim2.new(0, 300, 0, 40)
+    Slider.BorderSizePixel = 0
+
+    Title.Parent = Slider
+    Title.Text = options.Name
+    Title.Size = UDim2.new(0, 100, 0, 20)
+    Title.Position = UDim2.new(0, 10, 0, 10)
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.BackgroundTransparency = 1
+    Title.Font = Enum.Font.Gotham
+    Title.TextSize = 14
+
+    SlideBar.Parent = Slider
+    SlideBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    SlideBar.Size = UDim2.new(0, 180, 0, 5)
+    SlideBar.Position = UDim2.new(0, 110, 0, 17)
+
+    Fill.Parent = SlideBar
+    Fill.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+    Fill.Size = UDim2.new((options.CurrentValue - options.Min) / (options.Max - options.Min), 0, 1, 0)
+
+    Draggable.Parent = Fill
+    Draggable.BackgroundTransparency = 1
+    Draggable.Size = UDim2.new(1, 0, 1, 0)
+    Draggable.Text = ""
+
+    -- Function to update value
+    local function UpdateSlider(input)
+        local MousePos = input.Position.X
+        local BarStart = SlideBar.AbsolutePosition.X
+        local BarEnd = BarStart + SlideBar.AbsoluteSize.X
+        local Percent = math.clamp((MousePos - BarStart) / (BarEnd - BarStart), 0, 1)
+        local NewValue = math.floor(options.Min + (options.Max - options.Min) * Percent)
+
+        Fill.Size = UDim2.new(Percent, 0, 1, 0)
+        if options.Script then
+            options.Script(NewValue)
+        end
+    end
+
+    -- Dragging behavior
+    Draggable.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            local Move, End
+            Move = game:GetService("UserInputService").InputChanged:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseMovement then
+                    UpdateSlider(input)
+                end
+            end)
+            End = game:GetService("UserInputService").InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    Move:Disconnect()
+                    End:Disconnect()
+                end
+            end)
+        end
+    end)
+    
+    return Slider
+end
+
         return Tab
     end
 
