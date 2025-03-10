@@ -157,7 +157,7 @@ function Cryptic:CreateWindow(config)
 
     local Tabs = {}
 
-unction Cryptic:CreateTab(tabName)
+function Cryptic:CreateTab(tabName)
         local TabButton = Instance.new("TextButton")
         local success, err = pcall(function()
             TabButton.Size = UDim2.new(0, 100, 1, 0)
