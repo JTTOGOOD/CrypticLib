@@ -283,98 +283,98 @@ function Cryptic:CreateTab(tabName)
                 }
             end,
 
-   CreateSlider = function(self, options)
-        local SliderName = options.Name or "Slider"
-        local Suffix = options.Suffix or ""
-        local Min = options.Min or 0
-        local Max = options.Max or 100
-        local CurrentValue = options.Current or Min
-        local Increasement = options.Increasement or 1
-        local Script = options.Script or function(value) print(SliderName .. " value:", value) end
+Tab.CreateSlider = function(self, options)
+    local SliderName = options.Name or "Slider"
+    local Suffix = options.Suffix or ""
+    local Min = options.Min or 0
+    local Max = options.Max or 100
+    local CurrentValue = options.Current or Min
+    local Increasement = options.Increasement or 1
+    local Script = options.Script or function(value) print(SliderName .. " value:", value) end
 
-        -- Slider container
-        local SliderFrame = Instance.new("Frame")
-        SliderFrame.Size = UDim2.new(1, -10, 0, 40)
-        SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        SliderFrame.Parent = self.Frame
+    -- Slider container
+    local SliderFrame = Instance.new("Frame")
+    SliderFrame.Size = UDim2.new(1, -10, 0, 40)
+    SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    SliderFrame.Parent = self.Frame
 
-        -- Slider label (name + current value)
-        local SliderLabel = Instance.new("TextLabel")
-        SliderLabel.Size = UDim2.new(1, -70, 1, 0)
-        SliderLabel.Position = UDim2.new(0, 10, 0, 0)
-        SliderLabel.Text = SliderName .. ": " .. CurrentValue .. Suffix
-        SliderLabel.TextSize = 14
-        SliderLabel.Font = Enum.Font.GothamBold
-        SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        SliderLabel.BackgroundTransparency = 1
-        SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-        SliderLabel.Parent = SliderFrame
+    -- Slider label (name + current value)
+    local SliderLabel = Instance.new("TextLabel")
+    SliderLabel.Size = UDim2.new(1, -70, 1, 0)
+    SliderLabel.Position = UDim2.new(0, 10, 0, 0)
+    SliderLabel.Text = SliderName .. ": " .. CurrentValue .. Suffix
+    SliderLabel.TextSize = 14
+    SliderLabel.Font = Enum.Font.GothamBold
+    SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SliderLabel.BackgroundTransparency = 1
+    SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+    SliderLabel.Parent = SliderFrame
 
-        -- Slider bar
-        local SliderBar = Instance.new("Frame")
-        SliderBar.Size = UDim2.new(1, -10, 0, 5)
-        SliderBar.Position = UDim2.new(0, 5, 1, -10)
-        SliderBar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        SliderBar.Parent = SliderFrame
+    -- Slider bar
+    local SliderBar = Instance.new("Frame")
+    SliderBar.Size = UDim2.new(1, -10, 0, 5)
+    SliderBar.Position = UDim2.new(0, 5, 1, -10)
+    SliderBar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    SliderBar.Parent = SliderFrame
 
-        -- Slider fill
-        local SliderFill = Instance.new("Frame")
-        SliderFill.Size = UDim2.new((CurrentValue - Min) / (Max - Min), 0, 1, 0)
-        SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-        SliderFill.Parent = SliderBar
+    -- Slider fill
+    local SliderFill = Instance.new("Frame")
+    SliderFill.Size = UDim2.new((CurrentValue - Min) / (Max - Min), 0, 1, 0)
+    SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    SliderFill.Parent = SliderBar
 
-        -- Draggable thumb (slider knob)
-        local Thumb = Instance.new("ImageButton")
-        Thumb.Size = UDim2.new(0, 15, 0, 15)
-        Thumb.Position = UDim2.new((CurrentValue - Min) / (Max - Min), -7, 0.5, -7)
-        Thumb.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        Thumb.Parent = SliderBar
+    -- Draggable thumb (slider knob)
+    local Thumb = Instance.new("ImageButton")
+    Thumb.Size = UDim2.new(0, 15, 0, 15)
+    Thumb.Position = UDim2.new((CurrentValue - Min) / (Max - Min), -7, 0.5, -7)
+    Thumb.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Thumb.Parent = SliderBar
 
-        -- Drag behavior
-        local UserInputService = game:GetService("UserInputService")
-        local dragging = false
+    -- Drag behavior
+    local UserInputService = game:GetService("UserInputService")
+    local dragging = false
 
-        Thumb.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = true
-            end
-        end)
+    Thumb.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+        end
+    end)
 
-        UserInputService.InputChanged:Connect(function(input)
-            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                local MouseX = input.Position.X
-                local BarX = SliderBar.AbsolutePosition.X
-                local BarWidth = SliderBar.AbsoluteSize.X
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local MouseX = input.Position.X
+            local BarX = SliderBar.AbsolutePosition.X
+            local BarWidth = SliderBar.AbsoluteSize.X
 
-                local ratio = math.clamp((MouseX - BarX) / BarWidth, 0, 1)
-                local newValue = Min + math.floor((ratio * (Max - Min)) / Increasement) * Increasement
-                newValue = math.clamp(newValue, Min, Max)
+            local ratio = math.clamp((MouseX - BarX) / BarWidth, 0, 1)
+            local newValue = Min + math.floor((ratio * (Max - Min)) / Increasement) * Increasement
+            newValue = math.clamp(newValue, Min, Max)
 
-                SliderFill.Size = UDim2.new((newValue - Min) / (Max - Min), 0, 1, 0)
-                Thumb.Position = UDim2.new((newValue - Min) / (Max - Min), -7, 0.5, -7)
-                SliderLabel.Text = SliderName .. ": " .. newValue .. Suffix
-                Script(newValue)
-            end
-        end)
+            SliderFill.Size = UDim2.new((newValue - Min) / (Max - Min), 0, 1, 0)
+            Thumb.Position = UDim2.new((newValue - Min) / (Max - Min), -7, 0.5, -7)
+            SliderLabel.Text = SliderName .. ": " .. newValue .. Suffix
+            Script(newValue)
+        end
+    end)
 
-        UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = false
-            end
-        end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
 
-     return {
+    return {
         SetValue = function(value)
             value = math.clamp(value, Min, Max)
-            SliderFill.Size = UDim2.new((value - Min) / (Max - Min), 0, 1, 0)
-            Thumb.Position = UDim2.new((value - Min) / (Max - Min), -7, 0.5, -7)
+            value = math.floor(value / Increasement) * Increasement
+            local ratio = (value - Min) / (Max - Min)
+            SliderFill.Size = UDim2.new(ratio, 0, 1, 0)
+            Thumb.Position = UDim2.new(ratio, -7, 0.5, -7)
             SliderLabel.Text = SliderName .. ": " .. value .. Suffix
             Script(value)
         end
     }
 end
-
-}
 
 return Tab
 
