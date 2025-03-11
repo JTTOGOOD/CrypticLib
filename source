@@ -155,22 +155,18 @@ function Cryptic:CreateWindow(config)
         TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
     end)
 
-local Tabs = {}
+    local Tabs = {}
 
-function Cryptic:CreateTab(tabName)
-    local TabButton = Instance.new("TextButton")
-    local success, err = pcall(function()
-        TabButton.Size = UDim2.new(0, 100, 1, 0)
+    function Cryptic:CreateTab(tabName)
+        local TabButton = Instance.new("TextButton")
+        TabButton.Size = UDim2.new(0, 100, 0, 30)
         TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         TabButton.Text = tabName
         TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         TabButton.Font = Enum.Font.GothamBold
-        TabButton.Parent = TabList
-    end)
-    debugPrint("Tab Button: " .. tabName, success, err)
+        TabButton.Parent = MainFrame
 
-    local TabFrame = Instance.new("ScrollingFrame")
-    success, err = pcall(function()
+        local TabFrame = Instance.new("ScrollingFrame")
         TabFrame.Size = UDim2.new(1, 0, 1, -65)
         TabFrame.Position = UDim2.new(0, 0, 0, 65)
         TabFrame.BackgroundColor3 = Theme
@@ -178,31 +174,22 @@ function Cryptic:CreateTab(tabName)
         TabFrame.Parent = MainFrame
         TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
         TabFrame.ScrollBarThickness = 5
-        TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
-    end)
-    debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
 
-    local ButtonLayout = Instance.new("UIListLayout")
-    success, err = pcall(function()
-        ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        ButtonLayout.Padding = UDim.new(0, 5)
-        ButtonLayout.Parent = TabFrame
-    end)
-    debugPrint("ButtonLayout for: " .. tabName, success, err)
+        Tabs[tabName] = TabFrame
 
-    ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
-    end)
+        TabButton.MouseButton1Click:Connect(function()
+            for _, tab in pairs(Tabs) do
+                tab.Visible = false
+            end
+            TabFrame.Visible = true
+        end)
 
-    Tabs[tabName] = TabFrame
+        local Tab = {
+            Frame = TabFrame
+        }
 
-    TabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(Tabs) do tab.Visible = false end
-        TabFrame.Visible = true
-    end)
-
-    local Tab = {
-        Frame = TabFrame,
+        return Tab
+    end
 
         CreateButton = function(self, config)
             local ButtonName = config.Name or "Button"
