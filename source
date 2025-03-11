@@ -376,6 +376,14 @@ Tab.CreateSlider = function(self, options)
     }
 end
 
+print("Creating Slider:", SliderName)
+print("Slider Parent:", SliderFrame.Parent)
+print("Slider Size:", SliderFrame.Size)
+task.wait(1) -- Give it time to render
+print("Slider Position:", SliderFrame.AbsolutePosition)
+print("Slider Visible:", SliderFrame.Visible)
+
+
 return Tab
 
 end
