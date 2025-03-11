@@ -155,210 +155,184 @@ function Cryptic:CreateWindow(config)
         TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
     end)
 
-    local Tabs = {}
+local Tabs = {}
 
 function Cryptic:CreateTab(tabName)
-        local TabButton = Instance.new("TextButton")
-        local success, err = pcall(function()
-            TabButton.Size = UDim2.new(0, 100, 1, 0)
-            TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            TabButton.Text = tabName
-            TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            TabButton.Font = Enum.Font.GothamBold
-            TabButton.Parent = TabList
-        end)
-        debugPrint("Tab Button: " .. tabName, success, err)
+    local TabButton = Instance.new("TextButton")
+    local success, err = pcall(function()
+        TabButton.Size = UDim2.new(0, 100, 1, 0)
+        TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        TabButton.Text = tabName
+        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TabButton.Font = Enum.Font.GothamBold
+        TabButton.Parent = TabList
+    end)
+    debugPrint("Tab Button: " .. tabName, success, err)
 
-        -- Create ScrollingFrame for the Tab
-        local TabFrame = Instance.new("ScrollingFrame")
-        success, err = pcall(function()
-            TabFrame.Size = UDim2.new(1, 0, 1, -65)
-            TabFrame.Position = UDim2.new(0, 0, 0, 65)
-            TabFrame.BackgroundColor3 = Theme
-            TabFrame.Visible = false
-            TabFrame.Parent = MainFrame
-            TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
-            TabFrame.ScrollBarThickness = 5
-            TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
-        end)
-        debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
+    local TabFrame = Instance.new("ScrollingFrame")
+    success, err = pcall(function()
+        TabFrame.Size = UDim2.new(1, 0, 1, -65)
+        TabFrame.Position = UDim2.new(0, 0, 0, 65)
+        TabFrame.BackgroundColor3 = Theme
+        TabFrame.Visible = false
+        TabFrame.Parent = MainFrame
+        TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
+        TabFrame.ScrollBarThickness = 5
+        TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+    end)
+    debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
 
-        -- Create UIListLayout for components in the Tab
-        local ButtonLayout = Instance.new("UIListLayout")
-        success, err = pcall(function()
-            ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            ButtonLayout.Padding = UDim.new(0, 5)
-            ButtonLayout.Parent = TabFrame
-        end)
-        debugPrint("ButtonLayout for: " .. tabName, success, err)
+    local ButtonLayout = Instance.new("UIListLayout")
+    success, err = pcall(function()
+        ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        ButtonLayout.Padding = UDim.new(0, 5)
+        ButtonLayout.Parent = TabFrame
+    end)
+    debugPrint("ButtonLayout for: " .. tabName, success, err)
 
-        -- Adjust CanvasSize dynamically based on content size
-        ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
-        end)
+    ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
+    end)
 
-        Tabs[tabName] = TabFrame
+    Tabs[tabName] = TabFrame
 
-        TabButton.MouseButton1Click:Connect(function()
-            for _, tab in pairs(Tabs) do tab.Visible = false end
-            TabFrame.Visible = true
-        end)
+    TabButton.MouseButton1Click:Connect(function()
+        for _, tab in pairs(Tabs) do tab.Visible = false end
+        TabFrame.Visible = true
+    end)
 
-        local Tab = {
-            Frame = TabFrame,
+    local Tab = {
+        Frame = TabFrame,
 
-            CreateButton = function(self, config)
-                local ButtonName = config.Name or "Button"
-                local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
+        CreateButton = function(self, config)
+            local ButtonName = config.Name or "Button"
+            local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
 
-                local Button = Instance.new("TextButton")
-                success, err = pcall(function()
-                    Button.Size = UDim2.new(1, -10, 0, 40)
-                    Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                    Button.Text = "  " .. ButtonName
-                    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    Button.TextXAlignment = Enum.TextXAlignment.Left
-                    Button.Font = Enum.Font.GothamBold
-                    Button.Parent = self.Frame
+            local Button = Instance.new("TextButton")
+            success, err = pcall(function()
+                Button.Size = UDim2.new(1, -10, 0, 40)
+                Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                Button.Text = "  " .. ButtonName
+                Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+                Button.TextXAlignment = Enum.TextXAlignment.Left
+                Button.Font = Enum.Font.GothamBold
+                Button.Parent = self.Frame
 
-                    local UICorner = Instance.new("UICorner")
-                    UICorner.CornerRadius = UDim.new(0, 6)
-                    UICorner.Parent = Button
+                local UICorner = Instance.new("UICorner")
+                UICorner.CornerRadius = UDim.new(0, 6)
+                UICorner.Parent = Button
 
-                    Button.MouseButton1Click:Connect(function()
-                        local success, err = pcall(ButtonScript)
-                        if not success then warn("❌ Error in button script: " .. err) end
-                    end)
+                Button.MouseButton1Click:Connect(function()
+                    local success, err = pcall(ButtonScript)
+                    if not success then warn("❌ Error in button script: " .. err) end
                 end)
-                debugPrint("Button: " .. ButtonName, success, err)
-                return Button
-            end,
+            end)
+            debugPrint("Button: " .. ButtonName, success, err)
+            return Button
+        end,
 
-            CreateToggle = function(self, options)
-                local ToggleFrame = Instance.new("Frame")
-                local ToggleButton = Instance.new("TextButton")
-                local ToggleLabel = Instance.new("TextLabel")
-                local ToggleState = options.ToggleState or false
-                local ToggleName = options.Name or "Toggle"
+        CreateToggle = function(self, options)
+            local ToggleFrame = Instance.new("Frame")
+            local ToggleButton = Instance.new("TextButton")
+            local ToggleLabel = Instance.new("TextLabel")
+            local ToggleState = options.ToggleState or false
+            local ToggleName = options.Name or "Toggle"
 
-                -- Set up Toggle Frame
-                ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
-                ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-                ToggleFrame.Parent = self.Frame
+            ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
+            ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            ToggleFrame.Parent = self.Frame
 
-                -- Set up Toggle Label (Name)
-                ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
-                ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
-                ToggleLabel.Text = ToggleName
-                ToggleLabel.TextSize = 14
-                ToggleLabel.Font = Enum.Font.GothamBold
-                ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                ToggleLabel.BackgroundTransparency = 1
-                ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-                ToggleLabel.Parent = ToggleFrame
+            ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
+            ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+            ToggleLabel.Text = ToggleName
+            ToggleLabel.TextSize = 14
+            ToggleLabel.Font = Enum.Font.GothamBold
+            ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleLabel.BackgroundTransparency = 1
+            ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            ToggleLabel.Parent = ToggleFrame
 
-                -- Set up Toggle Button
-                ToggleButton.Size = UDim2.new(0, 50, 1, 0)
-                ToggleButton.Position = UDim2.new(1, -60, 0, 0)
+            ToggleButton.Size = UDim2.new(0, 50, 1, 0)
+            ToggleButton.Position = UDim2.new(1, -60, 0, 0)
+            ToggleButton.Text = ToggleState and "ON" or "OFF"
+            ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+            ToggleButton.Parent = ToggleFrame
+
+            ToggleButton.MouseButton1Click:Connect(function()
+                ToggleState = not ToggleState
                 ToggleButton.Text = ToggleState and "ON" or "OFF"
                 ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-                ToggleButton.Parent = ToggleFrame
+                if options.Script then
+                    options.Script(ToggleState)
+                end
+            end)
 
-                -- Handle toggle clicks
-                ToggleButton.MouseButton1Click:Connect(function()
-                    ToggleState = not ToggleState
+            return {
+                SetState = function(state)
+                    ToggleState = state
                     ToggleButton.Text = ToggleState and "ON" or "OFF"
                     ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-                    if options.Script then
-                        options.Script(ToggleState)
-                    end
-                end)
+                end
+            }
+        end,
 
-                return {
-                    SetState = function(state)
-                        ToggleState = state
-                        ToggleButton.Text = ToggleState and "ON" or "OFF"
-                        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-                    end
-                }
-            end,
+        CreateSlider = function(self, Slider)
+            local UIS = game:GetService("UserInputService")
 
-local UIS = game:GetService("UserInputService")
-local function CreateSlider(Slider)
-    local SliderFrame = Instance.new("Frame")
-    local SliderBar = Instance.new("Frame")
-    local SliderButton = Instance.new("TextButton")
-    local ValueDisplay = Instance.new("TextLabel")
-    
-    -- Properties
-    SliderFrame.Size = UDim2.new(0, 200, 0, 50)
-    SliderFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    
-    SliderBar.Parent = SliderFrame
-    SliderBar.Size = UDim2.new(0, 180, 0, 10)
-    SliderBar.Position = UDim2.new(0, 10, 0.5, -5)
-    SliderBar.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-    
-    SliderButton.Parent = SliderBar
-    SliderButton.Size = UDim2.new(0, 10, 1, 0)
-    SliderButton.BackgroundColor3 = Color3.fromRGB(100, 100, 250)
-    
-    ValueDisplay.Parent = SliderFrame
-    ValueDisplay.Size = UDim2.new(0, 50, 0, 20)
-    ValueDisplay.Position = UDim2.new(1, -60, 0, 5)
-    ValueDisplay.BackgroundTransparency = 1
-    ValueDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
-    
-    local Min, Max = Slider.Min or 0, Slider.Max or 100
-    local Step = Slider.Increasement or 1
-    local Current = math.clamp(Slider.Current or Min, Min, Max)
-    
-    local function UpdateValue(Input)
-        local RelativeX = math.clamp((Input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
-        local NewValue = math.floor((Min + (Max - Min) * RelativeX) / Step) * Step
-        
-        if NewValue ~= Current then
-            Current = NewValue
-            SliderButton.Position = UDim2.new(RelativeX, -5, 0, 0)
-            ValueDisplay.Text = tostring(Current) .. (Slider.Suffix or "")
-            
-            if Slider.Script then
-                Slider.Script(Current)
+            local SliderFrame = Instance.new("Frame")
+            local SliderBar = Instance.new("Frame")
+            local SliderButton = Instance.new("TextButton")
+            local ValueDisplay = Instance.new("TextLabel")
+
+            SliderFrame.Size = UDim2.new(1, -10, 0, 50)
+            SliderFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            SliderFrame.Parent = self.Frame
+
+            SliderBar.Size = UDim2.new(0, 180, 0, 10)
+            SliderBar.Position = UDim2.new(0, 10, 0.5, -5)
+            SliderBar.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            SliderBar.Parent = SliderFrame
+
+            SliderButton.Size = UDim2.new(0, 10, 1, 0)
+            SliderButton.BackgroundColor3 = Color3.fromRGB(100, 100, 250)
+            SliderButton.Parent = SliderBar
+
+            ValueDisplay.Size = UDim2.new(0, 50, 0, 20)
+            ValueDisplay.Position = UDim2.new(1, -60, 0, 5)
+            ValueDisplay.BackgroundTransparency = 1
+            ValueDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ValueDisplay.Parent = SliderFrame
+
+            local Min, Max = Slider.Min or 0, Slider.Max or 100
+            local Step = Slider.Increasement or 1
+            local Current = math.clamp(Slider.Current or Min, Min, Max)
+
+            local function UpdateValue(Input)
+                local RelativeX = math.clamp((Input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
+                local NewValue = math.floor((Min + (Max - Min) * RelativeX) / Step) * Step
+
+                if NewValue ~= Current then
+                    Current = NewValue
+                    SliderButton.Position = UDim2.new(RelativeX, -5, 0, 0)
+                    ValueDisplay.Text = tostring(Current) .. (Slider.Suffix or "")
+
+                    if Slider.Script then
+                        Slider.Script(Current)
+                    end
+                end
             end
-        end
-    end
-    
-    SliderButton.InputBegan:Connect(function(Input)
-        if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-            UpdateValue(Input)
-            local MoveConnection
-            local ReleaseConnection
-            
-            MoveConnection = UIS.InputChanged:Connect(function(Input)
-                if Input.UserInputType == Enum.UserInputType.MouseMovement then
+
+            SliderButton.InputBegan:Connect(function(Input)
+                if Input.UserInputType == Enum.UserInputType.MouseButton1 then
                     UpdateValue(Input)
                 end
             end)
-            
-            ReleaseConnection = UIS.InputEnded:Connect(function(Input)
-                if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    MoveConnection:Disconnect()
-                    ReleaseConnection:Disconnect()
-                end
-            end)
+
+            return SliderFrame
         end
-    end)
-    
-    UpdateValue({ Position = Vector3.new(SliderBar.AbsolutePosition.X + (SliderBar.AbsoluteSize.X * ((Current - Min) / (Max - Min))), 0, 0) })
-    
-    return SliderFrame
-end
     }
-end
 
-
-return Tab
-
+    return Tab
 end
 
 return Cryptic
