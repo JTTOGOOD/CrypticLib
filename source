@@ -378,7 +378,6 @@ end
 
 return Tab
 
-    return Cryptic
 end
 
 return Cryptic
