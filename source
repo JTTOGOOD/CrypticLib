@@ -164,51 +164,58 @@ function Cryptic:CreateTab(tabName)
     TabButton.Text = tabName
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
-    TabButton.Parent = TabList -- FIX: Now correctly inside TabList, not MainFrame
+    TabButton.Parent = MainFrame
 
     local TabFrame = Instance.new("ScrollingFrame")
     TabFrame.Size = UDim2.new(1, 0, 1, -65)
     TabFrame.Position = UDim2.new(0, 0, 0, 65)
     TabFrame.BackgroundColor3 = Theme
-    TabFrame.Visible = false -- FIX: Hide by default
+    TabFrame.Visible = false
     TabFrame.Parent = MainFrame
     TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
     TabFrame.ScrollBarThickness = 5
 
     Tabs[tabName] = TabFrame
 
-    -- Handle Tab Button Click
     TabButton.MouseButton1Click:Connect(function()
         for _, tab in pairs(Tabs) do
-            tab.Visible = false -- Hide other tabs
+            tab.Visible = false
         end
-        TabFrame.Visible = true -- Show selected tab
+        TabFrame.Visible = true
     end)
 
-    -- Return the tab functions
+    -- Create a table to store tab functions
     local Tab = { Frame = TabFrame }
 
     function Tab:CreateButton(config)
+        local ButtonName = config.Name or "Button"
+        local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
+
         local Button = Instance.new("TextButton")
         Button.Size = UDim2.new(1, -10, 0, 40)
         Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        Button.Text = "  " .. (config.Name or "Button")
+        Button.Text = "  " .. ButtonName
         Button.TextColor3 = Color3.fromRGB(255, 255, 255)
         Button.TextXAlignment = Enum.TextXAlignment.Left
         Button.Font = Enum.Font.GothamBold
-        Button.Parent = self.Frame
+        Button.Parent = Tab.Frame
 
         local UICorner = Instance.new("UICorner")
         UICorner.CornerRadius = UDim.new(0, 6)
         UICorner.Parent = Button
 
         Button.MouseButton1Click:Connect(function()
-            local success, err = pcall(config.Script or function() print(Button.Text .. " clicked!") end)
+            local success, err = pcall(ButtonScript)
             if not success then warn("❌ Error in button script: " .. err) end
         end)
 
         return Button
     end
+
+    -- RETURN THE TAB OBJECT (Fixes the error)
+    return Tab
+end
+
 
     function Tab:CreateToggle(options)
         local ToggleFrame = Instance.new("Frame")
