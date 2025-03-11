@@ -363,18 +363,17 @@ function Cryptic:CreateTab(tabName)
             end
         end)
 
-        return {
-            SetValue = function(value)
-                value = math.clamp(value, Min, Max)
-                value = math.floor(value / Increasement) * Increasement
-                local ratio = (value - Min) / (Max - Min)
-                SliderFill.Size = UDim2.new(ratio, 0, 1, 0)
-                Thumb.Position = UDim2.new(ratio, -7, 0.5, -7)
-                SliderLabel.Text = SliderName .. ": " .. value .. Suffix
-                Script(value)
-            end
-        }
-    end
+     return {
+        SetValue = function(value)
+            value = math.clamp(value, Min, Max)
+            SliderFill.Size = UDim2.new((value - Min) / (Max - Min), 0, 1, 0)
+            Thumb.Position = UDim2.new((value - Min) / (Max - Min), -7, 0.5, -7)
+            SliderLabel.Text = SliderName .. ": " .. value .. Suffix
+            Script(value)
+        end
+    }
+end
+
 }
 
 return Tab
