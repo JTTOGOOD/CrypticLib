@@ -148,7 +148,7 @@ function Cryptic:CreateTab(tabName)
     TabFrame.Size = UDim2.new(1, 0, 1, -65)
     TabFrame.Position = UDim2.new(0, 0, 0, 65)
     TabFrame.BackgroundColor3 = Theme
-    TabFrame.Visible = false
+    TabFrame.Visible = true -- Force the new tab to be shown
     TabFrame.Parent = MainFrame
     TabFrame.ScrollBarThickness = 5
     TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
