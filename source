@@ -307,6 +307,7 @@ end
 SliderButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         UpdateSlider(input)
+
         local moveConnection
         local releaseConnection
         moveConnection = game:GetService("UserInputService").InputChanged:Connect(function(moveInput)
@@ -314,14 +315,16 @@ SliderButton.InputBegan:Connect(function(input)
                 UpdateSlider(moveInput)
             end
         end)
+
         releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(releaseInput)
             if releaseInput.UserInputType == Enum.UserInputType.MouseButton1 then
-                if moveConnection then moveConnection:Disconnect() end
-                if releaseConnection then releaseConnection:Disconnect() end
+                moveConnection:Disconnect()
+                releaseConnection:Disconnect()
             end
         end)
     end
 end)
+
 
 
             return {
