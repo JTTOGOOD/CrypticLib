@@ -132,26 +132,29 @@ function Cryptic:CreateWindow(config)
 
 function Cryptic:CreateTab(tabName)
     local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(0, 100, 1, 0)
-    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = tabName  -- Ensure the tab name is displayed
-    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TabButton.Font = Enum.Font.GothamBold
-    TabButton.Parent = TabList
-    TabButton.Size = UDim2.new(0, 150, 1, 0) -- Increase size
-    TabButton.TextScaled = false
-    TabButton.TextSize = 16 -- Make sure text is readable
-    print("Tab Created: " .. tabName)
+    local success, err = pcall(function()
+        TabButton.Size = UDim2.new(0, 100, 1, 0)
+        TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        TabButton.Text = tabName
+        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TabButton.Font = Enum.Font.GothamBold
+        TabButton.Parent = TabList
+    end)
+    debugPrint("Tab Button: " .. tabName, success, err)
 
-
+    -- Create ScrollingFrame for the Tab
     local TabFrame = Instance.new("ScrollingFrame")
-    TabFrame.Size = UDim2.new(1, 0, 1, -65)
-    TabFrame.Position = UDim2.new(0, 0, 0, 65)
-    TabFrame.BackgroundColor3 = Theme
-    TabFrame.Visible = true -- Force the new tab to be shown
-    TabFrame.Parent = MainFrame
-    TabFrame.ScrollBarThickness = 5
-    TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+    success, err = pcall(function()
+        TabFrame.Size = UDim2.new(1, 0, 1, -65)
+        TabFrame.Position = UDim2.new(0, 0, 0, 65)
+        TabFrame.BackgroundColor3 = Theme
+        TabFrame.Visible = false
+        TabFrame.Parent = MainFrame
+        TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
+        TabFrame.ScrollBarThickness = 5
+        TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+    end)
+    debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
 
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
