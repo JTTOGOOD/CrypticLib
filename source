@@ -134,7 +134,7 @@ function Cryptic:CreateTab(tabName)
     local TabButton = Instance.new("TextButton")
     TabButton.Size = UDim2.new(0, 100, 1, 0)
     TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = tabName or "Tab" -- Ensure tab name is set
+    TabButton.Text = tabName  -- Ensure the tab name is displayed
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
     TabButton.Parent = TabList
