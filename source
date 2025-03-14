@@ -142,11 +142,23 @@ function Cryptic:CreateTab(tabName)
     end)
     debugPrint("Tab Button: " .. tabName, success, err)
 
-    -- Create ScrollingFrame for the Tab
+    -- **Tab Name Label (Separate from ScrollingFrame)**
+    local TabLabel = Instance.new("TextLabel")
+    TabLabel.Size = UDim2.new(1, 0, 0, 30) -- Full width, fixed height
+    TabLabel.Position = UDim2.new(0, 0, 0, 65) -- Below TabList, above content
+    TabLabel.BackgroundTransparency = 1
+    TabLabel.Text = tabName
+    TabLabel.TextSize = 16
+    TabLabel.Font = Enum.Font.GothamBold
+    TabLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TabLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TabLabel.Parent = MainFrame -- Parent to MainFrame, not TabFrame
+
+    -- **Tab Content ScrollingFrame**
     local TabFrame = Instance.new("ScrollingFrame")
     success, err = pcall(function()
-        TabFrame.Size = UDim2.new(1, 0, 1, -65)
-        TabFrame.Position = UDim2.new(0, 0, 0, 65)
+        TabFrame.Size = UDim2.new(1, 0, 1, -100) -- Adjusted to not overlap label
+        TabFrame.Position = UDim2.new(0, 0, 0, 95) -- Below TabLabel
         TabFrame.BackgroundColor3 = Theme
         TabFrame.Visible = false
         TabFrame.Parent = MainFrame
@@ -156,24 +168,9 @@ function Cryptic:CreateTab(tabName)
     end)
     debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
 
-    -- **Tab Name Label**
-    local TabLabel = Instance.new("TextLabel")
-    TabLabel.Size = UDim2.new(1, 0, 0, 30)
-    TabLabel.Position = UDim2.new(0, 0, 0, 0)
-    TabLabel.BackgroundTransparency = 1
-    TabLabel.Text = tabName
-    TabLabel.TextSize = 16
-    TabLabel.Font = Enum.Font.GothamBold
-    TabLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TabLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TabLabel.Parent = TabFrame
-
-    -- Adjust TabFrame size to prevent overlap with label
-    TabFrame.CanvasSize = UDim2.new(0, 0, 0, 40)
-
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
-    ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder -- Ensure order follows script order
+    ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
     -- Ensure ScrollingFrame resizes properly
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -182,7 +179,7 @@ function Cryptic:CreateTab(tabName)
 
     Tabs[tabName] = TabFrame
 
-    -- Tab switching logic
+    -- **Tab Switching Logic**
     TabButton.MouseButton1Click:Connect(function()
         for _, tab in pairs(Tabs) do tab.Visible = false end
         TabFrame.Visible = true
