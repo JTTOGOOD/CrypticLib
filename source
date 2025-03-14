@@ -156,6 +156,21 @@ function Cryptic:CreateTab(tabName)
     end)
     debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
 
+    -- **Tab Name Label**
+    local TabLabel = Instance.new("TextLabel")
+    TabLabel.Size = UDim2.new(1, 0, 0, 30)
+    TabLabel.Position = UDim2.new(0, 0, 0, 0)
+    TabLabel.BackgroundTransparency = 1
+    TabLabel.Text = tabName
+    TabLabel.TextSize = 16
+    TabLabel.Font = Enum.Font.GothamBold
+    TabLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TabLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TabLabel.Parent = TabFrame
+
+    -- Adjust TabFrame size to prevent overlap with label
+    TabFrame.CanvasSize = UDim2.new(0, 0, 0, 40)
+
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
     ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder -- Ensure order follows script order
