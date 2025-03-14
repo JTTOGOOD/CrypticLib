@@ -170,6 +170,13 @@ function Cryptic:CreateTab(tabName)
         TabFrame.Visible = true
     end)
 
+    Tabs[tabName] = TabFrame
+
+    TabButton.MouseButton1Click:Connect(function()
+        for _, tab in pairs(Tabs) do tab.Visible = false end
+        TabFrame.Visible = true
+    end)
+
     local Tab = {
         Frame = TabFrame,
 
