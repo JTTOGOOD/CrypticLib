@@ -131,6 +131,11 @@ function Cryptic:CreateWindow(config)
     local Tabs = {}
 
 function Cryptic:CreateTab(tabName)
+    if not TabList then
+        warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
+        return
+    end
+
     local TabButton = Instance.new("TextButton")
     local success, err = pcall(function()
         TabButton.Size = UDim2.new(0, 100, 1, 0)
@@ -144,21 +149,21 @@ function Cryptic:CreateTab(tabName)
 
     -- **Tab Name Label (Separate from ScrollingFrame)**
     local TabLabel = Instance.new("TextLabel")
-    TabLabel.Size = UDim2.new(1, 0, 0, 30) -- Full width, fixed height
-    TabLabel.Position = UDim2.new(0, 0, 0, 65) -- Below TabList, above content
+    TabLabel.Size = UDim2.new(1, 0, 0, 30)
+    TabLabel.Position = UDim2.new(0, 0, 0, 65)
     TabLabel.BackgroundTransparency = 1
     TabLabel.Text = tabName
     TabLabel.TextSize = 16
     TabLabel.Font = Enum.Font.GothamBold
     TabLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TabLabel.Parent = MainFrame -- Parent to MainFrame, not TabFrame
+    TabLabel.Parent = MainFrame
 
     -- **Tab Content ScrollingFrame**
     local TabFrame = Instance.new("ScrollingFrame")
     success, err = pcall(function()
-        TabFrame.Size = UDim2.new(1, 0, 1, -100) -- Adjusted to not overlap label
-        TabFrame.Position = UDim2.new(0, 0, 0, 95) -- Below TabLabel
+        TabFrame.Size = UDim2.new(1, 0, 1, -100)
+        TabFrame.Position = UDim2.new(0, 0, 0, 95)
         TabFrame.BackgroundColor3 = Theme
         TabFrame.Visible = false
         TabFrame.Parent = MainFrame
@@ -171,6 +176,7 @@ function Cryptic:CreateTab(tabName)
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
     ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    ButtonLayout.Padding = UDim.new(0, 5) -- Adds spacing between buttons
 
     -- Ensure ScrollingFrame resizes properly
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -188,13 +194,19 @@ function Cryptic:CreateTab(tabName)
     local Tab = {
         Frame = TabFrame,
 
-        -- Create Button Function
+        -- **Create Button Function**
         CreateButton = function(self, config)
             local Button = Instance.new("TextButton")
             Button.Size = UDim2.new(1, -10, 0, 40)
             Button.Text = "  " .. (config.Name or "Button")
+            Button.Font = Enum.Font.GothamBold
+            Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             Button.Parent = self.Frame
-            Button.LayoutOrder = #self.Frame:GetChildren() -- Ensures order follows script
+
+            local ButtonCorner = Instance.new("UICorner")
+            ButtonCorner.CornerRadius = UDim.new(0, 6)
+            ButtonCorner.Parent = Button
 
             Button.MouseButton1Click:Connect(function()
                 if config.Script then config.Script() end
@@ -203,7 +215,7 @@ function Cryptic:CreateTab(tabName)
             return Button
         end,
 
-        -- Create Toggle Function
+        -- **Create Toggle Function**
         CreateToggle = function(self, config)
             local ToggleState = config.ToggleState or false
             local ToggleName = config.Name or "Toggle"
@@ -213,9 +225,7 @@ function Cryptic:CreateTab(tabName)
             ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
             ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
             ToggleFrame.Parent = self.Frame
-            ToggleFrame.LayoutOrder = #self.Frame:GetChildren()
 
-            -- Add UICorner
             local FrameCorner = Instance.new("UICorner")
             FrameCorner.CornerRadius = UDim.new(0, 6)
             FrameCorner.Parent = ToggleFrame
@@ -241,26 +251,25 @@ function Cryptic:CreateTab(tabName)
             ToggleButton.TextSize = 14
             ToggleButton.Parent = ToggleFrame
 
-            -- Add UICorner
             local ButtonCorner = Instance.new("UICorner")
             ButtonCorner.CornerRadius = UDim.new(0, 6)
             ButtonCorner.Parent = ToggleButton
 
-            -- Toggle Click Logic
-            ToggleButton.MouseButton1Click:Connect(function()
-                ToggleState = not ToggleState
+            -- **Toggle Click Logic**
+            local function UpdateToggle(state)
+                ToggleState = state
                 ToggleButton.Text = ToggleState and "ON" or "OFF"
                 ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
                 pcall(ToggleScript, ToggleState)
+            end
+
+            ToggleButton.MouseButton1Click:Connect(function()
+                UpdateToggle(not ToggleState)
             end)
 
             return {
                 Frame = ToggleFrame,
-                SetState = function(state)
-                    ToggleState = state
-                    ToggleButton.Text = ToggleState and "ON" or "OFF"
-                    ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-                end
+                SetState = UpdateToggle
             }
         end
     }
