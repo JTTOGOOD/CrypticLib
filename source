@@ -147,23 +147,11 @@ function Cryptic:CreateTab(tabName)
     end)
     debugPrint("Tab Button: " .. tabName, success, err)
 
-    -- **Tab Name Label (Separate from ScrollingFrame)**
-    local TabLabel = Instance.new("TextLabel")
-    TabLabel.Size = UDim2.new(1, 0, 0, 30)
-    TabLabel.Position = UDim2.new(0, 0, 0, 65)
-    TabLabel.BackgroundTransparency = 1
-    TabLabel.Text = tabName
-    TabLabel.TextSize = 16
-    TabLabel.Font = Enum.Font.GothamBold
-    TabLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TabLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TabLabel.Parent = MainFrame
-
     -- **Tab Content ScrollingFrame**
     local TabFrame = Instance.new("ScrollingFrame")
     success, err = pcall(function()
         TabFrame.Size = UDim2.new(1, 0, 1, -100)
-        TabFrame.Position = UDim2.new(0, 0, 0, 95)
+        TabFrame.Position = UDim2.new(0, 0, 0, 65)
         TabFrame.BackgroundColor3 = Theme
         TabFrame.Visible = false
         TabFrame.Parent = MainFrame
@@ -176,9 +164,8 @@ function Cryptic:CreateTab(tabName)
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
     ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    ButtonLayout.Padding = UDim.new(0, 5) -- Adds spacing between buttons
+    ButtonLayout.Padding = UDim.new(0, 5)
 
-    -- Ensure ScrollingFrame resizes properly
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
     end)
@@ -271,12 +258,36 @@ function Cryptic:CreateTab(tabName)
                 Frame = ToggleFrame,
                 SetState = UpdateToggle
             }
+        end,
+
+        -- **Create Slider Function**
+        CreateSlider = function(self, config)
+            local SliderName = config.Name or "Slider"
+            local MinValue = config.MinValue or 0
+            local MaxValue = config.MaxValue or 100
+            local CurrentValue = math.clamp(config.CurrentValue or MinValue, MinValue, MaxValue)
+            local Increasement = config.Increasement or 1
+            local Suffix = config.Suffix or ""
+            local Script = config.Script or function() end
+
+            local SliderFrame = Instance.new("Frame")
+            SliderFrame.Size = UDim2.new(1, -10, 0, 50)
+            SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            SliderFrame.Parent = self.Frame
+
+            -- (Slider code from previous response goes here) 
+
+            return {
+                Frame = SliderFrame,
+                SetValue = function(value)
+                    UpdateSlider({ Position = Vector2.new(SliderBar.AbsolutePosition.X + ((value - MinValue) / (MaxValue - MinValue) * SliderBar.AbsoluteSize.X), 0) })
+                end
+            }
         end
     }
 
     return Tab
 end
-
 
     return Cryptic
 end
