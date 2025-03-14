@@ -136,34 +136,29 @@ function Cryptic:CreateTab(tabName)
         return
     end
 
+    -- **Create Tab Button**
     local TabButton = Instance.new("TextButton")
     local success, err = pcall(function()
         TabButton.Size = UDim2.new(0, 100, 1, 0)
         TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         TabButton.Text = tabName
-        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TabButton.TextSize = 14
         TabButton.Font = Enum.Font.GothamBold
+        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         TabButton.Parent = TabList
     end)
     debugPrint("Tab Button: " .. tabName, success, err)
 
-    -- **Tab Name Label (Separate from ScrollingFrame)**
-    local TabLabel = Instance.new("TextLabel")
-    TabLabel.Size = UDim2.new(1, 0, 0, 30)
-    TabLabel.Position = UDim2.new(0, 0, 0, 65)
-    TabLabel.BackgroundTransparency = 1
-    TabLabel.Text = tabName
-    TabLabel.TextSize = 16
-    TabLabel.Font = Enum.Font.GothamBold
-    TabLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TabLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TabLabel.Parent = MainFrame
+    -- Add UICorner for Rounded Buttons
+    local ButtonCorner = Instance.new("UICorner")
+    ButtonCorner.CornerRadius = UDim.new(0, 6)
+    ButtonCorner.Parent = TabButton
 
-    -- **Tab Content ScrollingFrame**
+    -- **Create Tab Content ScrollingFrame**
     local TabFrame = Instance.new("ScrollingFrame")
     success, err = pcall(function()
-        TabFrame.Size = UDim2.new(1, 0, 1, -100)
-        TabFrame.Position = UDim2.new(0, 0, 0, 95)
+        TabFrame.Size = UDim2.new(1, 0, 1, -50) -- Adjusted height to fit better
+        TabFrame.Position = UDim2.new(0, 0, 0, 50) -- Directly below the tab buttons
         TabFrame.BackgroundColor3 = Theme
         TabFrame.Visible = false
         TabFrame.Parent = MainFrame
@@ -176,7 +171,7 @@ function Cryptic:CreateTab(tabName)
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
     ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    ButtonLayout.Padding = UDim.new(0, 5) -- Adds spacing between buttons
+    ButtonLayout.Padding = UDim.new(0, 5)
 
     -- Ensure ScrollingFrame resizes properly
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
