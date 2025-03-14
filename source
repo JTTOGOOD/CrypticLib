@@ -138,10 +138,9 @@ function Cryptic:CreateTab(tabName)
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
     TabButton.Parent = TabList
-    TabButton.TextScaled = true
-    TabButton.BackgroundTransparency = 0
-    TabButton.TextTransparency = 0
-    TabButton.ZIndex = 2
+    TabButton.Size = UDim2.new(0, 150, 1, 0) -- Increase size
+    TabButton.TextScaled = false
+    TabButton.TextSize = 16 -- Make sure text is readable
     print("Tab Created: " .. tabName)
 
 
