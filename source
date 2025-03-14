@@ -264,7 +264,7 @@ function Cryptic:CreateTab(tabName)
             local SliderLabel = Instance.new("TextLabel")
             SliderLabel.Size = UDim2.new(1, -10, 0, 20)
             SliderLabel.Position = UDim2.new(0, 5, 0, 0)
-            SliderLabel.Text = SliderName .. ":  " .. CurrentValue .. Suffix
+            SliderLabel.Text = SliderName .. ":  " .. CurrentValue  .. Suffix
             SliderLabel.Font = Enum.Font.GothamBold
             SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             SliderLabel.BackgroundTransparency = 1
