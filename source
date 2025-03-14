@@ -299,10 +299,14 @@ function Cryptic:CreateTab(tabName)
 
     SliderFill.Size = UDim2.new(Position, 0, 1, 0)
     SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
-    SliderLabel.Text = SliderName .. ": " .. NewValue .. " " .. Suffix  -- Added space before suffix
+    SliderLabel.Text = SliderName .. ": " .. NewValue .. " " .. Suffix  
 
-    pcall(Script, NewValue)
+    -- Ensure Script is not nil before calling it
+    if Script then
+        pcall(Script, NewValue)
+    end
 end
+
 
 SliderButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
