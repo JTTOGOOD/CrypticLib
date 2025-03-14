@@ -138,6 +138,12 @@ function Cryptic:CreateTab(tabName)
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
     TabButton.Parent = TabList
+    TabButton.TextScaled = true
+    TabButton.BackgroundTransparency = 0
+    TabButton.TextTransparency = 0
+    TabButton.ZIndex = 2
+    print("Tab Created: " .. tabName)
+
 
     local TabFrame = Instance.new("ScrollingFrame")
     TabFrame.Size = UDim2.new(1, 0, 1, -65)
