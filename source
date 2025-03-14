@@ -32,8 +32,8 @@ function Cryptic:CreateWindow(config)
     -- Create MainFrame
     local MainFrame = Instance.new("Frame")
     success, err = pcall(function()
-        MainFrame.Size = UDim2.new(0, 562, 0, 375) -- UI Size
-        MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187) -- Centered
+        MainFrame.Size = UDim2.new(0, 562, 0, 375)
+        MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187)
         MainFrame.BackgroundColor3 = Theme
         MainFrame.BorderSizePixel = 0
         MainFrame.Visible = false
@@ -43,46 +43,34 @@ function Cryptic:CreateWindow(config)
 
     -- Create UICorner for rounded edges
     local UICorner = Instance.new("UICorner")
-    success, err = pcall(function()
-        UICorner.CornerRadius = UDim.new(0, 8)
-        UICorner.Parent = MainFrame
-    end)
-    debugPrint("UICorner", success, err)
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = MainFrame
 
     -- Create Title Label
     local TitleLabel = Instance.new("TextLabel")
-    success, err = pcall(function()
-        TitleLabel.Size = UDim2.new(1, 0, 0, 35)
-        TitleLabel.BackgroundTransparency = 1
-        TitleLabel.Text = Name
-        TitleLabel.TextSize = 18
-        TitleLabel.Font = Enum.Font.GothamBold
-        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TitleLabel.Parent = MainFrame
-    end)
-    debugPrint("TitleLabel", success, err)
+    TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = Name
+    TitleLabel.TextSize = 18
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.Parent = MainFrame
 
     -- Show Loading Screen (if enabled)
     if LoadingScreenEnabled then
         local LoadingFrame = Instance.new("Frame")
-        success, err = pcall(function()
-            LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
-            LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-            LoadingFrame.Parent = ScreenGui
-        end)
-        debugPrint("LoadingFrame", success, err)
+        LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+        LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        LoadingFrame.Parent = ScreenGui
 
         local LoadingLabel = Instance.new("TextLabel")
-        success, err = pcall(function()
-            LoadingLabel.Size = UDim2.new(1, 0, 0, 50)
-            LoadingLabel.Position = UDim2.new(0, 0, 0.5, -25)
-            LoadingLabel.Text = LoadingTitle
-            LoadingLabel.TextSize = 20
-            LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            LoadingLabel.Font = Enum.Font.GothamBold
-            LoadingLabel.Parent = LoadingFrame
-        end)
-        debugPrint("LoadingLabel", success, err)
+        LoadingLabel.Size = UDim2.new(1, 0, 0, 50)
+        LoadingLabel.Position = UDim2.new(0, 0, 0.5, -25)
+        LoadingLabel.Text = LoadingTitle
+        LoadingLabel.TextSize = 20
+        LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        LoadingLabel.Font = Enum.Font.GothamBold
+        LoadingLabel.Parent = LoadingFrame
 
         task.spawn(function()
             wait(LoadingScreenDuration)
@@ -122,79 +110,47 @@ function Cryptic:CreateWindow(config)
         end
     end)
 
-    -- **Tab List**
-    local TabListContainer = Instance.new("Frame")
-    success, err = pcall(function()
-        TabListContainer.Size = UDim2.new(1, 0, 0, 30)
-        TabListContainer.Position = UDim2.new(0, 0, 0, 35)
-        TabListContainer.BackgroundTransparency = 1
-        TabListContainer.Parent = MainFrame
-    end)
-    debugPrint("TabListContainer", success, err)
-
-local TabList = Instance.new("ScrollingFrame")
-success, err = pcall(function()
-    TabList.Size = UDim2.new(1, 0, 1, 0)
-    TabList.CanvasSize = UDim2.new(0, 0, 1, 0) -- Start small, expand dynamically
+    -- **Tab System**
+    local TabList = Instance.new("ScrollingFrame")
+    TabList.Size = UDim2.new(1, 0, 0, 30)
+    TabList.Position = UDim2.new(0, 0, 0, 35)
     TabList.ScrollBarThickness = 4
-    TabList.ScrollingDirection = Enum.ScrollingDirection.X -- Enable horizontal scrolling
+    TabList.ScrollingDirection = Enum.ScrollingDirection.X
     TabList.BackgroundTransparency = 1
-    TabList.Parent = TabListContainer
-end)
-debugPrint("TabList", success, err)
+    TabList.Parent = MainFrame
 
-local TabLayout = Instance.new("UIListLayout")
-success, err = pcall(function()
+    local TabLayout = Instance.new("UIListLayout")
     TabLayout.FillDirection = Enum.FillDirection.Horizontal
-    TabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
     TabLayout.Padding = UDim.new(0, 5)
     TabLayout.Parent = TabList
-end)
-debugPrint("TabLayout", success, err)
 
--- Dynamically update CanvasSize when tabs are added
-TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
-end)
+    TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
+    end)
 
     local Tabs = {}
 
 function Cryptic:CreateTab(tabName)
     local TabButton = Instance.new("TextButton")
-    local success, err = pcall(function()
-        TabButton.Size = UDim2.new(0, 100, 1, 0)
-        TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        TabButton.Text = tabName
-        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TabButton.Font = Enum.Font.GothamBold
-        TabButton.Parent = TabList
-    end)
-    debugPrint("Tab Button: " .. tabName, success, err)
+    TabButton.Size = UDim2.new(0, 100, 1, 0)
+    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    TabButton.Text = tabName
+    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TabButton.Font = Enum.Font.GothamBold
+    TabButton.Parent = TabList
 
-    -- Create ScrollingFrame for the Tab
     local TabFrame = Instance.new("ScrollingFrame")
-    success, err = pcall(function()
-        TabFrame.Size = UDim2.new(1, 0, 1, -65)
-        TabFrame.Position = UDim2.new(0, 0, 0, 65)
-        TabFrame.BackgroundColor3 = Theme
-        TabFrame.Visible = false
-        TabFrame.Parent = MainFrame
-        TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
-        TabFrame.ScrollBarThickness = 5
-        TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
-    end)
-    debugPrint("Tab ScrollingFrame: " .. tabName, success, err)
+    TabFrame.Size = UDim2.new(1, 0, 1, -65)
+    TabFrame.Position = UDim2.new(0, 0, 0, 65)
+    TabFrame.BackgroundColor3 = Theme
+    TabFrame.Visible = false
+    TabFrame.Parent = MainFrame
+    TabFrame.ScrollBarThickness = 5
+    TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 
-    -- Create UIListLayout for buttons
     local ButtonLayout = Instance.new("UIListLayout")
-    success, err = pcall(function()
-        ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        ButtonLayout.Padding = UDim.new(0, 5)
-        ButtonLayout.Parent = TabFrame
-    end)
-    debugPrint("ButtonLayout for: " .. tabName, success, err)
+    ButtonLayout.Parent = TabFrame
 
-    -- Adjust CanvasSize dynamically based on content size
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
     end)
@@ -209,85 +165,80 @@ function Cryptic:CreateTab(tabName)
     local Tab = {
         Frame = TabFrame,
 
-CreateButton = function(self, config)
-    local ButtonName = config.Name or "Button"
-    local ButtonScript = config.Script or function() print(ButtonName .. " clicked!") end
+        -- Create Button Function
+        CreateButton = function(self, config)
+            local Button = Instance.new("TextButton")
+            Button.Size = UDim2.new(1, -10, 0, 40)
+            Button.Text = "  " .. (config.Name or "Button")
+            Button.Parent = self.Frame
 
-    local Button = Instance.new("TextButton")
-    local success, err = pcall(function()
-        Button.Size = UDim2.new(1, -10, 0, 40)
-        Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        Button.Text = "  " .. ButtonName
-        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Button.TextXAlignment = Enum.TextXAlignment.Left
-        Button.Font = Enum.Font.GothamBold
-        Button.Parent = self.Frame
+            Button.MouseButton1Click:Connect(function()
+                if config.Script then config.Script() end
+            end)
 
-        local UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 6)
-        UICorner.Parent = Button
+            return Button
+        end,
 
-        Button.MouseButton1Click:Connect(function()
-            local success, err = pcall(ButtonScript)
-            if not success then warn("❌ Error in button script: " .. err) end
-        end)
-    end)
-    debugPrint("Button: " .. ButtonName, success, err)
+        -- Create Toggle Function
+        CreateToggle = function(self, config)
+            local ToggleState = config.ToggleState or false
+            local ToggleName = config.Name or "Toggle"
+            local ToggleScript = config.Script or function() end
 
-    return Button -- Make sure to return the button!
-end,
+            local ToggleFrame = Instance.new("Frame")
+            ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
+            ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            ToggleFrame.Parent = self.Frame
 
-CreateToggle = function(self, options)
-    local ToggleFrame = Instance.new("Frame")
-    local ToggleButton = Instance.new("TextButton")
-    local ToggleLabel = Instance.new("TextLabel") -- Create a label
-    local ToggleState = options.ToggleState or false
-    local ToggleName = options.Name or "Toggle" -- Default name if not provided
+            -- Add UICorner
+            local FrameCorner = Instance.new("UICorner")
+            FrameCorner.CornerRadius = UDim.new(0, 6)
+            FrameCorner.Parent = ToggleFrame
 
-    -- Set up Toggle Frame
-    ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
-    ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    ToggleFrame.Parent = self.Frame
+            local ToggleLabel = Instance.new("TextLabel")
+            ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
+            ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+            ToggleLabel.Text = ToggleName
+            ToggleLabel.TextSize = 14
+            ToggleLabel.Font = Enum.Font.GothamBold
+            ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleLabel.BackgroundTransparency = 1
+            ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            ToggleLabel.Parent = ToggleFrame
 
-    -- Set up Toggle Label (Name of the Toggle)
-    ToggleLabel.Size = UDim2.new(1, -70, 1, 0) -- Take up space on the left
-    ToggleLabel.Position = UDim2.new(0, 10, 0, 0) -- Slight offset from the edge
-    ToggleLabel.Text = ToggleName
-    ToggleLabel.TextSize = 14
-    ToggleLabel.Font = Enum.Font.GothamBold
-    ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleLabel.BackgroundTransparency = 1
-    ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    ToggleLabel.Parent = ToggleFrame
-
-    -- Set up Toggle Button
-    ToggleButton.Size = UDim2.new(0, 50, 1, 0)
-    ToggleButton.Position = UDim2.new(1, -60, 0, 0)
-    ToggleButton.Text = ToggleState and "ON" or "OFF"
-    ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-    ToggleButton.Parent = ToggleFrame
-
-    -- Handle toggle clicks
-    ToggleButton.MouseButton1Click:Connect(function()
-        ToggleState = not ToggleState
-        ToggleButton.Text = ToggleState and "ON" or "OFF"
-        ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-
-        -- Check if options.Script exists before calling it
-        if options.Script then
-            options.Script(ToggleState)
-        end
-    end)
-
-    return {
-        Frame = ToggleFrame, -- Return the frame object
-        SetState = function(state)
-            ToggleState = state
+            local ToggleButton = Instance.new("TextButton")
+            ToggleButton.Size = UDim2.new(0, 50, 0.8, 0)
+            ToggleButton.Position = UDim2.new(1, -60, 0.1, 0)
             ToggleButton.Text = ToggleState and "ON" or "OFF"
             ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+            ToggleButton.Font = Enum.Font.GothamBold
+            ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleButton.TextSize = 14
+            ToggleButton.Parent = ToggleFrame
+
+            -- Add UICorner
+            local ButtonCorner = Instance.new("UICorner")
+            ButtonCorner.CornerRadius = UDim.new(0, 6)
+            ButtonCorner.Parent = ToggleButton
+
+            -- Toggle Click Logic
+            ToggleButton.MouseButton1Click:Connect(function()
+                ToggleState = not ToggleState
+                ToggleButton.Text = ToggleState and "ON" or "OFF"
+                ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+                pcall(ToggleScript, ToggleState)
+            end)
+
+            return {
+                Frame = ToggleFrame,
+                SetState = function(state)
+                    ToggleState = state
+                    ToggleButton.Text = ToggleState and "ON" or "OFF"
+                    ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+                end
+            }
         end
     }
-end,
 
     return Tab
 end
