@@ -234,22 +234,24 @@ CreateButton = function(self, config)
     end)
     debugPrint("Button: " .. ButtonName, success, err)
 
-    return Button -- Now it returns the button instance
-end
+    return Button -- Make sure to return the button!
+end,
 
-  CreateToggle = function(self, options)
+CreateToggle = function(self, options)
     local ToggleFrame = Instance.new("Frame")
     local ToggleButton = Instance.new("TextButton")
-    local ToggleLabel = Instance.new("TextLabel")
+    local ToggleLabel = Instance.new("TextLabel") -- Create a label
     local ToggleState = options.ToggleState or false
-    local ToggleName = options.Name or "Toggle"
+    local ToggleName = options.Name or "Toggle" -- Default name if not provided
 
+    -- Set up Toggle Frame
     ToggleFrame.Size = UDim2.new(1, -10, 0, 30)
     ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     ToggleFrame.Parent = self.Frame
 
-    ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
-    ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+    -- Set up Toggle Label (Name of the Toggle)
+    ToggleLabel.Size = UDim2.new(1, -70, 1, 0) -- Take up space on the left
+    ToggleLabel.Position = UDim2.new(0, 10, 0, 0) -- Slight offset from the edge
     ToggleLabel.Text = ToggleName
     ToggleLabel.TextSize = 14
     ToggleLabel.Font = Enum.Font.GothamBold
@@ -258,33 +260,34 @@ end
     ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
     ToggleLabel.Parent = ToggleFrame
 
+    -- Set up Toggle Button
     ToggleButton.Size = UDim2.new(0, 50, 1, 0)
     ToggleButton.Position = UDim2.new(1, -60, 0, 0)
     ToggleButton.Text = ToggleState and "ON" or "OFF"
     ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
     ToggleButton.Parent = ToggleFrame
 
+    -- Handle toggle clicks
     ToggleButton.MouseButton1Click:Connect(function()
         ToggleState = not ToggleState
         ToggleButton.Text = ToggleState and "ON" or "OFF"
         ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
 
+        -- Check if options.Script exists before calling it
         if options.Script then
             options.Script(ToggleState)
         end
     end)
 
     return {
-        Button = ToggleButton, -- Return the Toggle button itself
+        Frame = ToggleFrame, -- Return the frame object
         SetState = function(state)
             ToggleState = state
             ToggleButton.Text = ToggleState and "ON" or "OFF"
             ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
         end
     }
-end
-
-    }
+end,
 
     return Tab
 end
