@@ -134,7 +134,7 @@ function Cryptic:CreateTab(tabName)
     local TabButton = Instance.new("TextButton")
     TabButton.Size = UDim2.new(0, 100, 1, 0)
     TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = tabName
+    TabButton.Text = tabName or "Tab" -- Ensure tab name is set
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
     TabButton.Parent = TabList
@@ -150,13 +150,16 @@ function Cryptic:CreateTab(tabName)
 
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
+    ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder -- Ensure order follows script order
 
+    -- Ensure ScrollingFrame resizes properly
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
     end)
 
     Tabs[tabName] = TabFrame
 
+    -- Tab switching logic
     TabButton.MouseButton1Click:Connect(function()
         for _, tab in pairs(Tabs) do tab.Visible = false end
         TabFrame.Visible = true
@@ -171,6 +174,7 @@ function Cryptic:CreateTab(tabName)
             Button.Size = UDim2.new(1, -10, 0, 40)
             Button.Text = "  " .. (config.Name or "Button")
             Button.Parent = self.Frame
+            Button.LayoutOrder = #self.Frame:GetChildren() -- Ensures order follows script
 
             Button.MouseButton1Click:Connect(function()
                 if config.Script then config.Script() end
@@ -189,6 +193,7 @@ function Cryptic:CreateTab(tabName)
             ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
             ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
             ToggleFrame.Parent = self.Frame
+            ToggleFrame.LayoutOrder = #self.Frame:GetChildren()
 
             -- Add UICorner
             local FrameCorner = Instance.new("UICorner")
@@ -242,6 +247,7 @@ function Cryptic:CreateTab(tabName)
 
     return Tab
 end
+
 
     return Cryptic
 end
