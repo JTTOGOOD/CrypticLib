@@ -294,34 +294,35 @@ function Cryptic:CreateTab(tabName)
             ButtonCorner.Parent = SliderButton
 
             local function UpdateSlider(input)
-                local Position = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
-                local NewValue = math.floor((MinValue + (MaxValue - MinValue) * Position) / Increment) * Increment
+    local Position = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
+    local NewValue = math.floor((MinValue + (MaxValue - MinValue) * Position) / Increment) * Increment
 
-                SliderFill.Size = UDim2.new(Position, 0, 1, 0)
-                SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
-                SliderLabel.Text = SliderName .. ": " .. NewValue .. Suffix
+    SliderFill.Size = UDim2.new(Position, 0, 1, 0)
+    SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
+    SliderLabel.Text = SliderName .. ": " .. NewValue .. " " .. Suffix  -- Added space before suffix
 
-                pcall(Script, NewValue)
+    pcall(Script, NewValue)
+end
+
+SliderButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        UpdateSlider(input)
+        local moveConnection
+        local releaseConnection
+        moveConnection = game:GetService("UserInputService").InputChanged:Connect(function(moveInput)
+            if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
+                UpdateSlider(moveInput)
             end
+        end)
+        releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(releaseInput)
+            if releaseInput.UserInputType == Enum.UserInputType.MouseButton1 then
+                if moveConnection then moveConnection:Disconnect() end
+                if releaseConnection then releaseConnection:Disconnect() end
+            end
+        end)
+    end
+end)
 
-            SliderButton.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    UpdateSlider(input)
-                    local moveConnection
-                    local releaseConnection
-                    moveConnection = game:GetService("UserInputService").InputChanged:Connect(function(moveInput)
-                        if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
-                            UpdateSlider(moveInput)
-                        end
-                    end)
-                    releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(releaseInput)
-                        if releaseInput.UserInputType == Enum.UserInputType.MouseButton1 then
-                            moveConnection:Disconnect()
-                            releaseConnection:Disconnect()
-                        end
-                    end)
-                end
-            end)
 
             return {
                 Frame = SliderFrame,
