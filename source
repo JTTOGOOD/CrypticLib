@@ -8,64 +8,45 @@ function Cryptic:CreateWindow(config)
     local LoadingScreenEnabled = config.LoadingScreen or false
     local LoadingScreenDuration = config.LoadingScreenDuration or 2
     local LoadingTitle = config.LoadingTitle or "Loading..."
+    local LoadingSubtitle = config.LoadingSubtitle or "Please wait"
     local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
-    
+    local DebugMode = config.LibraryElementObservation or false
+
     local Player = game:GetService("Players").LocalPlayer
-    local CoreGui = game:GetService("CoreGui") -- Use CoreGui to persist after reset
+    local PlayerGui = Player:WaitForChild("PlayerGui")
 
-    -- Check if UI already exists
-    local ScreenGui = CoreGui:FindFirstChild("CrypticUI")
-    if not ScreenGui then
-        ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Name = "CrypticUI"
-        ScreenGui.ResetOnSpawn = false -- **Prevents UI from being removed on reset**
-        ScreenGui.Parent = CoreGui
-    end
+    -- **Visibility Storage (to persist after reset)**
+    local VisibilityStorage = PlayerGui:FindFirstChild("CrypticVisibility") or Instance.new("BoolValue")
+    VisibilityStorage.Name = "CrypticVisibility"
+    VisibilityStorage.Parent = PlayerGui
 
-    -- Create MainFrame (or find existing one)
-    local MainFrame = ScreenGui:FindFirstChild("MainFrame") or Instance.new("Frame")
+    -- Create ScreenGui
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Parent = PlayerGui
+
+    -- Create MainFrame
+    local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 562, 0, 375)
     MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187)
     MainFrame.BackgroundColor3 = Theme
     MainFrame.BorderSizePixel = 0
+    MainFrame.Visible = VisibilityStorage.Value  -- Apply stored visibility
     MainFrame.Parent = ScreenGui
 
     -- Create UICorner for rounded edges
-    if not MainFrame:FindFirstChild("UICorner") then
-        local UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 8)
-        UICorner.Parent = MainFrame
-    end
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = MainFrame
 
-    -- Create Title Label (Only add if it doesn’t exist)
-    if not MainFrame:FindFirstChild("TitleLabel") then
-        local TitleLabel = Instance.new("TextLabel")
-        TitleLabel.Name = "TitleLabel"
-        TitleLabel.Size = UDim2.new(1, 0, 0, 35)
-        TitleLabel.BackgroundTransparency = 1
-        TitleLabel.Text = Name
-        TitleLabel.TextSize = 18
-        TitleLabel.Font = Enum.Font.GothamBold
-        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TitleLabel.Parent = MainFrame
-    end
-
-    -- **Visibility State Storage**
-    local UIVisible = true  -- Default is visible
-
-    -- **CreateOpener Function (Now Uses CoreGui UI)**
-    function Cryptic:CreateOpener(Keybind)
-        Keybind = Keybind or "LeftControl"
-        local UIS = game:GetService("UserInputService")
-
-        UIS.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            if input.KeyCode == Enum.KeyCode[Keybind] then
-                UIVisible = not UIVisible
-                MainFrame.Visible = UIVisible
-            end
-        end)
-    end
+    -- Create Title Label
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = Name
+    TitleLabel.TextSize = 18
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.Parent = MainFrame
 
     -- **Show Loading Screen (if enabled)**
     if LoadingScreenEnabled then
@@ -86,10 +67,23 @@ function Cryptic:CreateWindow(config)
         task.spawn(function()
             wait(LoadingScreenDuration)
             LoadingFrame:Destroy()
-            MainFrame.Visible = UIVisible
+            MainFrame.Visible = true
+            VisibilityStorage.Value = true  -- Ensure visibility persists
         end)
-    else
-        MainFrame.Visible = UIVisible
+    end
+
+    -- **CreateOpener Function (Now Stores Visibility State)**
+    function Cryptic:CreateOpener(Keybind)
+        Keybind = Keybind or "LeftControl"  -- Default keybind
+        local UIS = game:GetService("UserInputService")
+
+        UIS.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            if input.KeyCode == Enum.KeyCode[Keybind] then
+                MainFrame.Visible = not MainFrame.Visible
+                VisibilityStorage.Value = MainFrame.Visible  -- Save state
+            end
+        end)
     end
 
     local Tabs = {}
