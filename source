@@ -25,7 +25,7 @@ function Cryptic:CreateWindow(config)
     -- Create ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
     local success, err = pcall(function()
-        ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+        ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     end)
     debugPrint("ScreenGui", success, err)
 
