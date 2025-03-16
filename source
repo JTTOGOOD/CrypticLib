@@ -12,21 +12,6 @@ function Cryptic:CreateWindow(config)
     local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
     local DebugMode = config.LibraryElementObservation or false
 
-    function Cryptic:CreateOpener(Keybind)
-    Keybind = Keybind or "LeftControl"  -- Correct key name
-
-    local UIS = game:GetService("UserInputService")
-
-    UIS.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.KeyCode == Enum.KeyCode[Keybind] then
-            MainFrame.Visible = not MainFrame.Visible
-        end
-    end)
-end
-
-
-
     local function debugPrint(elementName, success, errMsg)
         if DebugMode then
             if success then
@@ -142,6 +127,20 @@ end
     TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
     end)
+
+    -- **CreateOpener Function (Moved Below MainFrame Creation)**
+    function Cryptic:CreateOpener(Keybind)
+        Keybind = Keybind or "LeftControl"  -- Default keybind
+
+        local UIS = game:GetService("UserInputService")
+
+        UIS.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            if input.KeyCode == Enum.KeyCode[Keybind] then
+                MainFrame.Visible = not MainFrame.Visible
+            end
+        end)
+    end
 
     local Tabs = {}
 
