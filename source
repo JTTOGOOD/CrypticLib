@@ -8,66 +8,55 @@ function Cryptic:CreateWindow(config)
     local LoadingScreenEnabled = config.LoadingScreen or false
     local LoadingScreenDuration = config.LoadingScreenDuration or 2
     local LoadingTitle = config.LoadingTitle or "Loading..."
+    local LoadingSubtitle = config.LoadingSubtitle or "Please wait"
     local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
-    
-    local Player = game:GetService("Players").LocalPlayer
-    local CoreGui = game:GetService("CoreGui") -- Use CoreGui to persist after reset
+    local DebugMode = config.LibraryElementObservation or false
 
-    -- Check if UI already exists
-    local ScreenGui = CoreGui:FindFirstChild("CrypticUI")
-    if not ScreenGui then
-        ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Name = "CrypticUI"
-        ScreenGui.ResetOnSpawn = false -- **Prevents UI from being removed on reset**
-        ScreenGui.Parent = CoreGui
+    local function debugPrint(elementName, success, errMsg)
+        if DebugMode then
+            if success then
+                print("✅ " .. elementName .. " passed!")
+            else
+                warn("❌ Error with " .. elementName .. ": " .. errMsg)
+            end
+        end
     end
 
-    -- Create MainFrame (or find existing one)
-    local MainFrame = ScreenGui:FindFirstChild("MainFrame") or Instance.new("Frame")
-    MainFrame.Size = UDim2.new(0, 562, 0, 375)
-    MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187)
-    MainFrame.BackgroundColor3 = Theme
-    MainFrame.BorderSizePixel = 0
-    MainFrame.Parent = ScreenGui
+    -- Create ScreenGui
+    local ScreenGui = Instance.new("ScreenGui")
+    local success, err = pcall(function()
+        ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    end)
+    debugPrint("ScreenGui", success, err)
+
+    -- Create MainFrame
+    local MainFrame = Instance.new("Frame")
+    success, err = pcall(function()
+        MainFrame.Size = UDim2.new(0, 562, 0, 375)
+        MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187)
+        MainFrame.BackgroundColor3 = Theme
+        MainFrame.BorderSizePixel = 0
+        MainFrame.Visible = false
+        MainFrame.Parent = ScreenGui
+    end)
+    debugPrint("MainFrame", success, err)
 
     -- Create UICorner for rounded edges
-    if not MainFrame:FindFirstChild("UICorner") then
-        local UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 8)
-        UICorner.Parent = MainFrame
-    end
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = MainFrame
 
-    -- Create Title Label (Only add if it doesn’t exist)
-    if not MainFrame:FindFirstChild("TitleLabel") then
-        local TitleLabel = Instance.new("TextLabel")
-        TitleLabel.Name = "TitleLabel"
-        TitleLabel.Size = UDim2.new(1, 0, 0, 35)
-        TitleLabel.BackgroundTransparency = 1
-        TitleLabel.Text = Name
-        TitleLabel.TextSize = 18
-        TitleLabel.Font = Enum.Font.GothamBold
-        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TitleLabel.Parent = MainFrame
-    end
+    -- Create Title Label
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = Name
+    TitleLabel.TextSize = 18
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.Parent = MainFrame
 
-    -- **Visibility State Storage**
-    local UIVisible = true  -- Default is visible
-
-    -- **CreateOpener Function (Now Uses CoreGui UI)**
-    function Cryptic:CreateOpener(Keybind)
-        Keybind = Keybind or "LeftControl"
-        local UIS = game:GetService("UserInputService")
-
-        UIS.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            if input.KeyCode == Enum.KeyCode[Keybind] then
-                UIVisible = not UIVisible
-                MainFrame.Visible = UIVisible
-            end
-        end)
-    end
-
-    -- **Show Loading Screen (if enabled)**
+    -- Show Loading Screen (if enabled)
     if LoadingScreenEnabled then
         local LoadingFrame = Instance.new("Frame")
         LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -86,10 +75,10 @@ function Cryptic:CreateWindow(config)
         task.spawn(function()
             wait(LoadingScreenDuration)
             LoadingFrame:Destroy()
-            MainFrame.Visible = UIVisible
+            MainFrame.Visible = true
         end)
     else
-        MainFrame.Visible = UIVisible
+        MainFrame.Visible = true
     end
 
     -- **Draggable Window**
