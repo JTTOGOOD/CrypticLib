@@ -12,6 +12,20 @@ function Cryptic:CreateWindow(config)
     local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
     local DebugMode = config.LibraryElementObservation or false
 
+    function Cryptic:CreateOpener(Keybind)
+    Keybind = Keybind or "LeftCtrl"
+
+    local UIS = game:GetService("UserInputService")
+
+    UIS.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.KeyCode == Enum.KeyCode[Keybind] then
+            MainFrame.Visible = not MainFrame.Visible
+        end
+    end)
+end
+
+
     local function debugPrint(elementName, success, errMsg)
         if DebugMode then
             if success then
