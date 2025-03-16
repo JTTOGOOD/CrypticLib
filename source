@@ -13,7 +13,7 @@ function Cryptic:CreateWindow(config)
     local DebugMode = config.LibraryElementObservation or false
 
     function Cryptic:CreateOpener(Keybind)
-    Keybind = Keybind or "LeftCtrl"
+    Keybind = Keybind or "LeftControl"  -- Correct key name
 
     local UIS = game:GetService("UserInputService")
 
@@ -24,6 +24,7 @@ function Cryptic:CreateWindow(config)
         end
     end)
 end
+
 
 
     local function debugPrint(elementName, success, errMsg)
