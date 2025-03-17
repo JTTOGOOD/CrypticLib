@@ -119,7 +119,7 @@ function Cryptic:Notify(settings)
 
     -- Create the Notification UI
     local NotificationFrame = Instance.new("Frame")
-    NotificationFrame.Size = UDim2.new(0, 250, 0, 80)
+    NotificationFrame.Size = UDim2.new(0, 375, 0, 125) -- Increased by 25%
     NotificationFrame.Position = UDim2.new(1, -260, 1, -90) -- Bottom-right corner
     NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     NotificationFrame.BackgroundTransparency = 0.1
@@ -128,14 +128,14 @@ function Cryptic:Notify(settings)
     -- Title Label
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Text = Title
-    TitleLabel.Size = UDim2.new(1, -10, 0, 20)
+    TitleLabel.Size = UDim2.new(1, -10, 0, 30) -- Increased height
+    TitleLabel.TextSize = 20 -- Slightly bigger text
     TitleLabel.Position = UDim2.new(0, 5, 0, 5)
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLabel.TextSize = 16
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Parent = NotificationFrame
-    TitleLabel.Size = UDim2.new(1, -10, 0, 25) -- Stays within the frame
     TitleLabel.TextScaled = false
     TitleLabel.TextWrapped = true
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -147,10 +147,10 @@ function Cryptic:Notify(settings)
     -- Description Label
     local DescLabel = Instance.new("TextLabel")
     DescLabel.Text = Description
-    DescLabel.Size = UDim2.new(1, -10, 0, 40)
     DescLabel.Position = UDim2.new(0, 5, 0, 25)
     DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    DescLabel.TextSize = 14
+    DescLabel.Size = UDim2.new(1, -10, 0, 62) -- Increased height
+    DescLabel.TextSize = 18
     DescLabel.TextWrapped = true
     DescLabel.BackgroundTransparency = 1
     DescLabel.Font = Enum.Font.Gotham
@@ -169,8 +169,8 @@ function Cryptic:Notify(settings)
     if CloseButton then
         CloseBtn = Instance.new("TextButton")
         CloseBtn.Text = ButtonText
-        CloseBtn.Size = UDim2.new(0.5, 0, 0, 20)
-        CloseBtn.Position = UDim2.new(0.25, 0, 1, -25)
+        CloseBtn.Position = UDim2.new(0.5, 0, 1, -10) -- Moves down slightly
+        CloseBtn.Size = UDim2.new(0.9, 0, 0, 30) -- Increased height
         CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         CloseBtn.Parent = NotificationFrame
