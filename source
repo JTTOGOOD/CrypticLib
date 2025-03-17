@@ -119,8 +119,8 @@ function Cryptic:Notify(settings)
 
     -- Create the Notification UI
     local NotificationFrame = Instance.new("Frame")
-    NotificationFrame.Size = UDim2.new(0, 375, 0, 125) -- Increased by 25%
-    NotificationFrame.Position = UDim2.new(1, -260, 1, -90) -- Bottom-right corner
+    NotificationFrame.Size = UDim2.new(0, 468, 0, 156) -- Increased by 25%
+    NotificationFrame.Position = UDim2.new(1, -325, 1, -112) -- Adjusted position
     NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     NotificationFrame.BackgroundTransparency = 0.1
     NotificationFrame.Parent = game.Players.LocalPlayer.PlayerGui.ScreenGui -- Parent to GUI
@@ -128,11 +128,10 @@ function Cryptic:Notify(settings)
     -- Title Label
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Text = Title
-    TitleLabel.Size = UDim2.new(1, -10, 0, 30) -- Increased height
-    TitleLabel.TextSize = 20 -- Slightly bigger text
-    TitleLabel.Position = UDim2.new(0, 5, 0, 5)
+    TitleLabel.Size = UDim2.new(1, -12, 0, 37) -- Increased height
+    TitleLabel.TextSize = 25 -- Slightly bigger text
+    TitleLabel.Position = UDim2.new(0, 6, 0, 6) -- Adjusted position
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.TextSize = 16
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Parent = NotificationFrame
@@ -140,37 +139,31 @@ function Cryptic:Notify(settings)
     TitleLabel.TextWrapped = true
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
     TitleLabel.TextYAlignment = Enum.TextYAlignment.Top
-    TitleLabel.ClipsDescendants = true -- Prevents text from overflowing
-
-
+    TitleLabel.ClipsDescendants = true -- Prevents text overflow
 
     -- Description Label
     local DescLabel = Instance.new("TextLabel")
     DescLabel.Text = Description
-    DescLabel.Position = UDim2.new(0, 5, 0, 25)
+    DescLabel.Position = UDim2.new(0, 6, 0, 43) -- Adjusted position
     DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    DescLabel.Size = UDim2.new(1, -10, 0, 62) -- Increased height
-    DescLabel.TextSize = 18
+    DescLabel.Size = UDim2.new(1, -12, 0, 78) -- Increased height
+    DescLabel.TextSize = 20 -- Slightly bigger text
     DescLabel.TextWrapped = true
     DescLabel.BackgroundTransparency = 1
     DescLabel.Font = Enum.Font.Gotham
     DescLabel.Parent = NotificationFrame
-    DescLabel.Size = UDim2.new(1, -10, 0, 50) -- Adjust this height if needed
     DescLabel.TextScaled = false
-    DescLabel.TextWrapped = true
     DescLabel.TextXAlignment = Enum.TextXAlignment.Left
     DescLabel.TextYAlignment = Enum.TextYAlignment.Top
     DescLabel.ClipsDescendants = true
-
-
 
     -- Close Button (if enabled)
     local CloseBtn
     if CloseButton then
         CloseBtn = Instance.new("TextButton")
         CloseBtn.Text = ButtonText
-        CloseBtn.Position = UDim2.new(0.5, 0, 1, -10) -- Moves down slightly
-        CloseBtn.Size = UDim2.new(0.9, 0, 0, 30) -- Increased height
+        CloseBtn.Position = UDim2.new(0.5, 0, 1, -12) -- Moves down slightly
+        CloseBtn.Size = UDim2.new(0.9, 0, 0, 37) -- Increased height
         CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         CloseBtn.Parent = NotificationFrame
@@ -205,6 +198,7 @@ function Cryptic:Notify(settings)
         NotificationFrame:Destroy()
     end
 end
+
 
     -- **Tab System**
     local TabList = Instance.new("ScrollingFrame")
