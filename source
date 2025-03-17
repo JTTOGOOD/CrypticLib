@@ -110,7 +110,7 @@ function Cryptic:CreateWindow(config)
         end
     end)
 
-function CrypticLib:Notify(settings)
+function Cryptic:Notify(settings)
     local Title = settings.Title or "Notification"
     local Description = settings.Description or ""
     local Duration = settings.Duration or 5
