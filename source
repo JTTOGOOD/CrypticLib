@@ -110,6 +110,20 @@ function Cryptic:CreateWindow(config)
         end
     end)
 
+
+local Themes = {
+    Ocean = {
+        Background = Color3.fromRGB(10, 25, 50),  -- Dark Blue (Main UI Background)
+        Accent = Color3.fromRGB(20, 50, 100),    -- Medium Blue (Header, Selected Tab)
+        Button = Color3.fromRGB(15, 40, 80),     -- Button Background
+        ButtonHover = Color3.fromRGB(25, 60, 120), -- Button Hover Effect
+        Text = Color3.fromRGB(200, 220, 255),    -- Light Blue (Text)
+        Slider = Color3.fromRGB(30, 70, 150),    -- Slider Bar
+        Toggle = Color3.fromRGB(20, 60, 130),    -- Toggle Background
+        Notification = Color3.fromRGB(15, 50, 110), -- Notification Background
+    }
+}
+
 function Cryptic:Notify(settings)
     local Title = settings.Title or "Notification"
     local Description = settings.Description or ""
