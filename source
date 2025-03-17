@@ -123,7 +123,7 @@ function Cryptic:Notify(settings)
     NotificationFrame.Position = UDim2.new(0.75, 0, 0.75, 0)
     NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     NotificationFrame.BackgroundTransparency = 0.1
-    NotificationFrame.Parent = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui
+    NotificationFrame.Parent = game.Players.LocalPlayer.PlayerGui.ScreenGui
 
     -- Title Label
     local TitleLabel = Instance.new("TextLabel")
