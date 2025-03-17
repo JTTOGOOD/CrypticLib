@@ -120,7 +120,7 @@ function Cryptic:Notify(settings)
     -- Create the Notification UI
     local NotificationFrame = Instance.new("Frame")
     NotificationFrame.Size = UDim2.new(0, 468, 17, 156) -- Increased by 25%
-    NotificationFrame.Position = UDim2.new(0.75, 0, 0.75, 0)
+    NotificationFrame.Position = UDim2.new(0.5, -234, 0.5, -78
     NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     NotificationFrame.BackgroundTransparency = 0.1
     NotificationFrame.Parent = game.Players.LocalPlayer.PlayerGui.ScreenGui
