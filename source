@@ -135,6 +135,12 @@ function Cryptic:Notify(settings)
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Parent = NotificationFrame
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left -- Align text to the left
+    TitleLabel.TextYAlignment = Enum.TextYAlignment.Top  -- Align text to the top
+    TitleLabel.TextWrapped = true  -- Wrap text inside the label
+    TitleLabel.ClipsDescendants = true -- Prevents text from overflowing
+    TitleLabel.AutomaticSize = Enum.AutomaticSize.Y -- Adjust height dynamically
+
 
     -- Description Label
     local DescLabel = Instance.new("TextLabel")
@@ -147,6 +153,12 @@ function Cryptic:Notify(settings)
     DescLabel.BackgroundTransparency = 1
     DescLabel.Font = Enum.Font.Gotham
     DescLabel.Parent = NotificationFrame
+    DescLabel.TextXAlignment = Enum.TextXAlignment.Left
+    DescLabel.TextYAlignment = Enum.TextYAlignment.Top
+    DescLabel.TextWrapped = true
+    DescLabel.ClipsDescendants = true
+    DescLabel.AutomaticSize = Enum.AutomaticSize.Y
+
 
     -- Close Button (if enabled)
     local CloseBtn
