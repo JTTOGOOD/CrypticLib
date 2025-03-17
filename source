@@ -110,6 +110,86 @@ function Cryptic:CreateWindow(config)
         end
     end)
 
+function CrypticLib:Notify(settings)
+    local Title = settings.Title or "Notification"
+    local Description = settings.Description or ""
+    local Duration = settings.Duration or 5
+    local CloseButton = settings.CloseButton or false
+    local ButtonText = settings.ButtonText or "Close"
+
+    -- Create the Notification UI
+    local NotificationFrame = Instance.new("Frame")
+    NotificationFrame.Size = UDim2.new(0, 250, 0, 80)
+    NotificationFrame.Position = UDim2.new(1, -260, 1, -90) -- Bottom-right corner
+    NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    NotificationFrame.BackgroundTransparency = 0.1
+    NotificationFrame.Parent = game.Players.LocalPlayer.PlayerGui.ScreenGui -- Parent to GUI
+
+    -- Title Label
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Text = Title
+    TitleLabel.Size = UDim2.new(1, -10, 0, 20)
+    TitleLabel.Position = UDim2.new(0, 5, 0, 5)
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.TextSize = 16
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.Parent = NotificationFrame
+
+    -- Description Label
+    local DescLabel = Instance.new("TextLabel")
+    DescLabel.Text = Description
+    DescLabel.Size = UDim2.new(1, -10, 0, 40)
+    DescLabel.Position = UDim2.new(0, 5, 0, 25)
+    DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    DescLabel.TextSize = 14
+    DescLabel.TextWrapped = true
+    DescLabel.BackgroundTransparency = 1
+    DescLabel.Font = Enum.Font.Gotham
+    DescLabel.Parent = NotificationFrame
+
+    -- Close Button (if enabled)
+    local CloseBtn
+    if CloseButton then
+        CloseBtn = Instance.new("TextButton")
+        CloseBtn.Text = ButtonText
+        CloseBtn.Size = UDim2.new(0.5, 0, 0, 20)
+        CloseBtn.Position = UDim2.new(0.25, 0, 1, -25)
+        CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        CloseBtn.Parent = NotificationFrame
+
+        CloseBtn.MouseButton1Click:Connect(function()
+            NotificationFrame:Destroy()
+        end)
+    end
+
+    -- Tween Animation (Fade In)
+    NotificationFrame.BackgroundTransparency = 1
+    TitleLabel.TextTransparency = 1
+    DescLabel.TextTransparency = 1
+    if CloseButton then CloseBtn.TextTransparency = 1 end
+
+    local TweenService = game:GetService("TweenService")
+    local TweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+    TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 0.1}):Play()
+    TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 0}):Play()
+    TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 0}):Play()
+    if CloseButton then TweenService:Create(CloseBtn, TweenInfo, {TextTransparency = 0}):Play() end
+
+    -- Auto-destroy if CloseButton is false
+    if not CloseButton then
+        task.wait(Duration)
+        TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 1}):Play()
+        TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 1}):Play()
+        TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 1}):Play()
+        if CloseButton then TweenService:Create(CloseBtn, TweenInfo, {TextTransparency = 1}):Play() end
+        task.wait(0.5)
+        NotificationFrame:Destroy()
+    end
+end
+
     -- **Tab System**
     local TabList = Instance.new("ScrollingFrame")
     TabList.Size = UDim2.new(1, 0, 0, 30)
