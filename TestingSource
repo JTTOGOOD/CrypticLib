@@ -1,6 +1,5 @@
 warn("Report to (@MynamesJT) on Discord if you come across any issues.")
 
--- Cryptic UI Library
 local Cryptic = {}
 
 function Cryptic:CreateWindow(config)
@@ -22,14 +21,14 @@ function Cryptic:CreateWindow(config)
         end
     end
 
-    -- Create ScreenGui
+
     local ScreenGui = Instance.new("ScreenGui")
     local success, err = pcall(function()
         ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     end)
     debugPrint("ScreenGui", success, err)
 
-    -- Create MainFrame
+
     local MainFrame = Instance.new("Frame")
     success, err = pcall(function()
         MainFrame.Size = UDim2.new(0, 562, 0, 375)
@@ -41,12 +40,12 @@ function Cryptic:CreateWindow(config)
     end)
     debugPrint("MainFrame", success, err)
 
-    -- Create UICorner for rounded edges
+
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 8)
     UICorner.Parent = MainFrame
 
-    -- Create Title Label
+
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Size = UDim2.new(1, 0, 0, 35)
     TitleLabel.BackgroundTransparency = 1
@@ -56,7 +55,7 @@ function Cryptic:CreateWindow(config)
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLabel.Parent = MainFrame
 
-    -- Show Loading Screen (if enabled)
+
     if LoadingScreenEnabled then
         local LoadingFrame = Instance.new("Frame")
         LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -81,7 +80,7 @@ function Cryptic:CreateWindow(config)
         MainFrame.Visible = true
     end
 
-    -- **Draggable Window**
+
     local Dragging, DragInput, DragStart, StartPos
 
     TitleLabel.InputBegan:Connect(function(input)
@@ -152,8 +151,8 @@ function Cryptic:Notify(settings)
     DescLabel.TextYAlignment = Enum.TextYAlignment.Top
     DescLabel.Parent = NotificationFrame
 
-    -- Resize Notification Frame dynamically based on text size
-    task.wait(0.05) -- Small delay to let UI calculate text size
+
+    task.wait(0.05) 
     local textSize = game:GetService("TextService"):GetTextSize(Description, 18, Enum.Font.Gotham, Vector2.new(440, math.huge))
     local newHeight = math.clamp(textSize.Y + 50, 80, 200) -- Ensure it's not too small or too large
     NotificationFrame.Size = UDim2.new(0, 468, 0, newHeight)
@@ -174,7 +173,7 @@ function Cryptic:Notify(settings)
         end)
     end
 
-    -- Tween Animation (Fade In)
+
     NotificationFrame.BackgroundTransparency = 1
     TitleLabel.TextTransparency = 1
     DescLabel.TextTransparency = 1
@@ -186,7 +185,7 @@ function Cryptic:Notify(settings)
     TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 0}):Play()
     TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 0}):Play()
 
-    -- Auto-destroy if CloseButton is false
+
     if not CloseButton then
         task.wait(Duration)
         TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 1}):Play()
@@ -197,8 +196,6 @@ function Cryptic:Notify(settings)
     end
 end
 
-
-    -- **Tab System**
     local TabList = Instance.new("ScrollingFrame")
     TabList.Size = UDim2.new(1, 0, 0, 30)
     TabList.Position = UDim2.new(0, 0, 0, 35)
@@ -439,89 +436,6 @@ end)
             }
         end
     }
-
-function Tab:CreateKeybind(config)
-    -- Create Keybind UI Frame
-    local KeybindFrame = Instance.new("Frame")
-    KeybindFrame.Size = UDim2.new(1, 0, 0, 40)
-    KeybindFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    KeybindFrame.Parent = self.MainFrame  -- Attach to the Tab UI
-
-    -- Label (Left side)
-    local KeybindLabel = Instance.new("TextLabel")
-    KeybindLabel.Text = config.Name or "Keybind"
-    KeybindLabel.Size = UDim2.new(0.5, 0, 1, 0) -- Left half of the frame
-    KeybindLabel.Position = UDim2.new(0, 10, 0, 0) -- Add padding
-    KeybindLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    KeybindLabel.BackgroundTransparency = 1
-    KeybindLabel.Font = Enum.Font.Gotham
-    KeybindLabel.TextSize = 16
-    KeybindLabel.TextXAlignment = Enum.TextXAlignment.Left
-    KeybindLabel.Parent = KeybindFrame
-
-    -- Status Label (Shows "Enabled" when toggled)
-    local StatusLabel = Instance.new("TextLabel")
-    StatusLabel.Text = ""
-    StatusLabel.Size = UDim2.new(0.2, 0, 1, 0) -- Small space next to keybind button
-    StatusLabel.Position = UDim2.new(0.5, 10, 0, 0) -- Between label and keybind button
-    StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 0) -- Green when active
-    StatusLabel.BackgroundTransparency = 1
-    StatusLabel.Font = Enum.Font.Gotham
-    StatusLabel.TextSize = 16
-    StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
-    StatusLabel.Parent = KeybindFrame
-
-    -- Keybind Button (Right side)
-    local KeybindButton = Instance.new("TextButton")
-    KeybindButton.Text = config.Keybind or "F"
-    KeybindButton.Size = UDim2.new(0.3, 0, 1, 0) -- Right part of the frame
-    KeybindButton.Position = UDim2.new(0.7, -10, 0, 0) -- Adjusted position
-    KeybindButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    KeybindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    KeybindButton.Font = Enum.Font.GothamBold
-    KeybindButton.TextSize = 14
-    KeybindButton.Parent = KeybindFrame
-
-    -- Default Keybind State
-    local KeybindState = config.KeybindState or false
-    local keybindEnum = Enum.KeyCode[config.Keybind or "F"]
-
-    local function ToggleKeybind()
-        KeybindState = not KeybindState
-        StatusLabel.Text = KeybindState and "Enabled" or ""
-        if config.script then
-            config.script(KeybindState)
-        end
-    end
-
-    -- Detect Key Press
-    local UserInputService = game:GetService("UserInputService")
-
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if not gameProcessed and input.KeyCode == keybindEnum then
-            ToggleKeybind()
-        end
-    end)
-
-    -- Changing Keybind (Clicking the button to change key)
-    local awaitingKey = false
-    KeybindButton.MouseButton1Click:Connect(function()
-        if awaitingKey then return end
-        awaitingKey = true
-        KeybindButton.Text = "..."
-
-        local connection
-        connection = UserInputService.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Keyboard then
-                local newKey = input.KeyCode.Name
-                KeybindButton.Text = newKey
-                keybindEnum = Enum.KeyCode[newKey]
-                awaitingKey = false
-                connection:Disconnect()
-            end
-        end)
-    end)
-end
 
     return Tab
 end 
