@@ -1,1 +1,534 @@
+warn("Report to (@MynamesJT) on Discord if you come across any issues.")
 
+-- Cryptic UI Library
+local Cryptic = {}
+
+function Cryptic:CreateWindow(config)
+    local Name = config.Name or "Cryptic UI"
+    local LoadingScreenEnabled = config.LoadingScreen or false
+    local LoadingScreenDuration = config.LoadingScreenDuration or 2
+    local LoadingTitle = config.LoadingTitle or "Loading..."
+    local LoadingSubtitle = config.LoadingSubtitle or "Please wait"
+    local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
+    local DebugMode = config.LibraryElementObservation or false
+
+    local function debugPrint(elementName, success, errMsg)
+        if DebugMode then
+            if success then
+                print("✅ " .. elementName .. " passed!")
+            else
+                warn("❌ Error with " .. elementName .. ": " .. errMsg)
+            end
+        end
+    end
+
+    -- Create ScreenGui
+    local ScreenGui = Instance.new("ScreenGui")
+    local success, err = pcall(function()
+        ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    end)
+    debugPrint("ScreenGui", success, err)
+
+    -- Create MainFrame
+    local MainFrame = Instance.new("Frame")
+    success, err = pcall(function()
+        MainFrame.Size = UDim2.new(0, 562, 0, 375)
+        MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187)
+        MainFrame.BackgroundColor3 = Theme
+        MainFrame.BorderSizePixel = 0
+        MainFrame.Visible = false
+        MainFrame.Parent = ScreenGui
+    end)
+    debugPrint("MainFrame", success, err)
+
+    -- Create UICorner for rounded edges
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = MainFrame
+
+    -- Create Title Label
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = Name
+    TitleLabel.TextSize = 18
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.Parent = MainFrame
+
+    -- Show Loading Screen (if enabled)
+    if LoadingScreenEnabled then
+        local LoadingFrame = Instance.new("Frame")
+        LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+        LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        LoadingFrame.Parent = ScreenGui
+
+        local LoadingLabel = Instance.new("TextLabel")
+        LoadingLabel.Size = UDim2.new(1, 0, 0, 50)
+        LoadingLabel.Position = UDim2.new(0, 0, 0.5, -25)
+        LoadingLabel.Text = LoadingTitle
+        LoadingLabel.TextSize = 20
+        LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        LoadingLabel.Font = Enum.Font.GothamBold
+        LoadingLabel.Parent = LoadingFrame
+
+        task.spawn(function()
+            wait(LoadingScreenDuration)
+            LoadingFrame:Destroy()
+            MainFrame.Visible = true
+        end)
+    else
+        MainFrame.Visible = true
+    end
+
+    -- **Draggable Window**
+    local Dragging, DragInput, DragStart, StartPos
+
+    TitleLabel.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Dragging = true
+            DragStart = input.Position
+            StartPos = MainFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    Dragging = false
+                end
+            end)
+        end
+    end)
+
+    TitleLabel.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            DragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == DragInput and Dragging then
+            local delta = input.Position - DragStart
+            MainFrame.Position = UDim2.new(StartPos.X.Scale, StartPos.X.Offset + delta.X, StartPos.Y.Scale, StartPos.Y.Offset + delta.Y)
+        end
+    end)
+
+function Cryptic:Notify(settings)
+    local Title = settings.Title or "Notification"
+    local Description = settings.Description or ""
+    local Duration = settings.Duration or 5
+    local CloseButton = settings.CloseButton or false
+    local ButtonText = settings.ButtonText or "Close"
+
+    -- Create the Notification UI
+    local NotificationFrame = Instance.new("Frame")
+    NotificationFrame.Size = UDim2.new(0, 468, 17, 156) -- Increased by 25%
+    NotificationFrame.Position = UDim2.new(0.75, 0, 0.75, 0)
+    NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    NotificationFrame.BackgroundTransparency = 0.1
+    NotificationFrame.Parent = game.Players.LocalPlayer.PlayerGui.ScreenGui
+
+    -- Title Label
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Text = Title
+    TitleLabel.Size = UDim2.new(1, -12, 0, 37) -- Increased height
+    TitleLabel.TextSize = 25 -- Slightly bigger text
+    TitleLabel.Position = UDim2.new(0, 6, 0, 6) -- Adjusted position
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.Parent = NotificationFrame
+    TitleLabel.TextScaled = false
+    TitleLabel.TextWrapped = true
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLabel.TextYAlignment = Enum.TextYAlignment.Top
+    TitleLabel.ClipsDescendants = true -- Prevents text overflow
+
+    -- Description Label
+    local DescLabel = Instance.new("TextLabel")
+    DescLabel.Text = Description
+    DescLabel.Position = UDim2.new(0, 6, 0, 43) -- Adjusted position
+    DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    DescLabel.Size = UDim2.new(1, -12, 0, 78) -- Increased height
+    DescLabel.TextSize = 20 -- Slightly bigger text
+    DescLabel.TextWrapped = true
+    DescLabel.BackgroundTransparency = 1
+    DescLabel.Font = Enum.Font.Gotham
+    DescLabel.Parent = NotificationFrame
+    DescLabel.TextScaled = false
+    DescLabel.TextXAlignment = Enum.TextXAlignment.Left
+    DescLabel.TextYAlignment = Enum.TextYAlignment.Top
+    DescLabel.ClipsDescendants = true
+
+    -- Close Button (if enabled)
+    local CloseBtn
+    if CloseButton then
+        CloseBtn = Instance.new("TextButton")
+        CloseBtn.Text = ButtonText
+        CloseBtn.Position = UDim2.new(0.5, 0, 1, -12) -- Moves down slightly
+        CloseBtn.Size = UDim2.new(0.9, 0, 0, 37) -- Increased height
+        CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        CloseBtn.Parent = NotificationFrame
+
+        CloseBtn.MouseButton1Click:Connect(function()
+            NotificationFrame:Destroy()
+        end)
+    end
+
+    -- Tween Animation (Fade In)
+    NotificationFrame.BackgroundTransparency = 1
+    TitleLabel.TextTransparency = 1
+    DescLabel.TextTransparency = 1
+    if CloseButton then CloseBtn.TextTransparency = 1 end
+
+    local TweenService = game:GetService("TweenService")
+    local TweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+    TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 0.1}):Play()
+    TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 0}):Play()
+    TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 0}):Play()
+    if CloseButton then TweenService:Create(CloseBtn, TweenInfo, {TextTransparency = 0}):Play() end
+
+    -- Auto-destroy if CloseButton is false
+    if not CloseButton then
+        task.wait(Duration)
+        TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 1}):Play()
+        TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 1}):Play()
+        TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 1}):Play()
+        if CloseButton then TweenService:Create(CloseBtn, TweenInfo, {TextTransparency = 1}):Play() end
+        task.wait(0.5)
+        NotificationFrame:Destroy()
+    end
+end
+
+
+    -- **Tab System**
+    local TabList = Instance.new("ScrollingFrame")
+    TabList.Size = UDim2.new(1, 0, 0, 30)
+    TabList.Position = UDim2.new(0, 0, 0, 35)
+    TabList.ScrollBarThickness = 4
+    TabList.ScrollingDirection = Enum.ScrollingDirection.X
+    TabList.BackgroundTransparency = 1
+    TabList.Parent = MainFrame
+
+    local TabLayout = Instance.new("UIListLayout")
+    TabLayout.FillDirection = Enum.FillDirection.Horizontal
+    TabLayout.Padding = UDim.new(0, 5)
+    TabLayout.Parent = TabList
+
+    TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
+    end)
+
+    -- **CreateOpener Function (Moved Below MainFrame Creation)**
+    function Cryptic:CreateOpener(Keybind)
+        Keybind = Keybind or "LeftControl"  -- Default keybind
+
+        local UIS = game:GetService("UserInputService")
+
+        UIS.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            if input.KeyCode == Enum.KeyCode[Keybind] then
+                MainFrame.Visible = not MainFrame.Visible
+            end
+        end)
+    end
+
+    local Tabs = {}
+
+function Cryptic:CreateTab(tabName)
+    if not TabList then
+        warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
+        return
+    end
+
+    local TabButton = Instance.new("TextButton")
+    TabButton.Size = UDim2.new(0, 100, 1, 0)
+    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    TabButton.Text = tabName
+    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TabButton.Font = Enum.Font.GothamBold
+    TabButton.Parent = TabList
+
+    local TabFrame = Instance.new("ScrollingFrame")
+    TabFrame.Size = UDim2.new(1, 0, 1, -100)
+    TabFrame.Position = UDim2.new(0, 0, 0, 65)
+    TabFrame.BackgroundColor3 = Theme
+    TabFrame.Visible = false
+    TabFrame.Parent = MainFrame
+    TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
+    TabFrame.ScrollBarThickness = 5
+    TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+
+    local ButtonLayout = Instance.new("UIListLayout")
+    ButtonLayout.Parent = TabFrame
+    ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    ButtonLayout.Padding = UDim.new(0, 5)
+
+    ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
+    end)
+
+    Tabs[tabName] = TabFrame
+
+    TabButton.MouseButton1Click:Connect(function()
+        for _, tab in pairs(Tabs) do tab.Visible = false end
+        TabFrame.Visible = true
+    end)
+
+    local Tab = {
+        Frame = TabFrame,
+
+        CreateButton = function(self, config)
+            local Button = Instance.new("TextButton")
+            Button.Size = UDim2.new(1, -10, 0, 40)
+            Button.Text = "  " .. (config.Name or "Button")
+            Button.Font = Enum.Font.GothamBold
+            Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            Button.Parent = self.Frame
+
+            local ButtonCorner = Instance.new("UICorner")
+            ButtonCorner.CornerRadius = UDim.new(0, 6)
+            ButtonCorner.Parent = Button
+
+            Button.MouseButton1Click:Connect(function()
+                if config.Script then config.Script() end
+            end)
+
+            return Button
+        end,
+
+        CreateToggle = function(self, config)
+            local ToggleState = config.ToggleState or false
+            local ToggleName = config.Name or "Toggle"
+            local ToggleScript = config.Script or function() end
+
+            local ToggleFrame = Instance.new("Frame")
+            ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
+            ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            ToggleFrame.Parent = self.Frame
+
+            local FrameCorner = Instance.new("UICorner")
+            FrameCorner.CornerRadius = UDim.new(0, 6)
+            FrameCorner.Parent = ToggleFrame
+
+            local ToggleLabel = Instance.new("TextLabel")
+            ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
+            ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+            ToggleLabel.Text = ToggleName
+            ToggleLabel.Font = Enum.Font.GothamBold
+            ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleLabel.BackgroundTransparency = 1
+            ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            ToggleLabel.Parent = ToggleFrame
+
+            local ToggleButton = Instance.new("TextButton")
+            ToggleButton.Size = UDim2.new(0, 50, 0.8, 0)
+            ToggleButton.Position = UDim2.new(1, -60, 0.1, 0)
+            ToggleButton.Text = ToggleState and "ON" or "OFF"
+            ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+            ToggleButton.Font = Enum.Font.GothamBold
+            ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleButton.Parent = ToggleFrame
+
+            local ButtonCorner = Instance.new("UICorner")
+            ButtonCorner.CornerRadius = UDim.new(0, 6)
+            ButtonCorner.Parent = ToggleButton
+
+            local function UpdateToggle(state)
+                ToggleState = state
+                ToggleButton.Text = ToggleState and "ON" or "OFF"
+                ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+                pcall(ToggleScript, ToggleState)
+            end
+
+            ToggleButton.MouseButton1Click:Connect(function()
+                UpdateToggle(not ToggleState)
+            end)
+
+            return {
+                Frame = ToggleFrame,
+                SetState = UpdateToggle
+            }
+        end,
+
+        CreateSlider = function(self, config)
+            local SliderName = config.Name or "Slider"
+            local MinValue = config.MinValue or 0
+            local MaxValue = config.MaxValue or 100
+            local CurrentValue = math.clamp(config.CurrentValue or MinValue, MinValue, MaxValue)
+            local Increment = config.Increasement or 1
+            local Suffix = config.Suffix or ""
+            local Script = config.Script or function() end
+
+            local SliderFrame = Instance.new("Frame")
+            SliderFrame.Size = UDim2.new(1, -10, 0, 50)
+            SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            SliderFrame.Parent = self.Frame
+
+            local SliderLabel = Instance.new("TextLabel")
+            SliderLabel.Size = UDim2.new(1, -10, 0, 20)
+            SliderLabel.Position = UDim2.new(0, 5, 0, 0)
+            SliderLabel.Text = SliderName .. ": " .. CurrentValue .. Suffix
+            SliderLabel.Font = Enum.Font.GothamBold
+            SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            SliderLabel.BackgroundTransparency = 1
+            SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+            SliderLabel.Parent = SliderFrame
+
+            local SliderBar = Instance.new("Frame")
+            SliderBar.Size = UDim2.new(1, -10, 0, 8)
+            SliderBar.Position = UDim2.new(0, 5, 0, 25)
+            SliderBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            SliderBar.Parent = SliderFrame
+
+            local SliderFill = Instance.new("Frame")
+            SliderFill.Size = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), 0, 1, 0)
+            SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+            SliderFill.Parent = SliderBar
+
+            local SliderButton = Instance.new("TextButton")
+            SliderButton.Size = UDim2.new(0, 15, 1.5, 0)
+            SliderButton.Position = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), -7, -0.25, 0)
+            SliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            SliderButton.Text = ""
+            SliderButton.Parent = SliderBar
+
+            local ButtonCorner = Instance.new("UICorner")
+            ButtonCorner.CornerRadius = UDim.new(1, 0)
+            ButtonCorner.Parent = SliderButton
+
+            local function UpdateSlider(input)
+    local Position = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
+    local NewValue = math.floor((MinValue + (MaxValue - MinValue) * Position) / Increment) * Increment
+
+    SliderFill.Size = UDim2.new(Position, 0, 1, 0)
+    SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
+    SliderLabel.Text = SliderName .. ": " .. NewValue .. " " .. Suffix  -- Added space before suffix
+
+    pcall(Script, NewValue)
+end
+
+SliderButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        UpdateSlider(input)
+        local moveConnection
+        local releaseConnection
+        moveConnection = game:GetService("UserInputService").InputChanged:Connect(function(moveInput)
+            if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
+                UpdateSlider(moveInput)
+            end
+        end)
+        releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(releaseInput)
+            if releaseInput.UserInputType == Enum.UserInputType.MouseButton1 then
+                if moveConnection then moveConnection:Disconnect() end
+                if releaseConnection then releaseConnection:Disconnect() end
+            end
+        end)
+    end
+end)
+
+
+            return {
+                Frame = SliderFrame,
+                SetValue = function(value)
+                    local ClampedValue = math.clamp(value, MinValue, MaxValue)
+                    local Position = (ClampedValue - MinValue) / (MaxValue - MinValue)
+                    SliderFill.Size = UDim2.new(Position, 0, 1, 0)
+                    SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
+                    SliderLabel.Text = SliderName .. ": " .. ClampedValue .. Suffix
+                    pcall(Script, ClampedValue)
+                end
+            }
+        end
+    }
+
+function Tab:CreateKeybind(config)
+    -- Create Keybind UI Frame
+    local KeybindFrame = Instance.new("Frame")
+    KeybindFrame.Size = UDim2.new(1, 0, 0, 40)
+    KeybindFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    KeybindFrame.Parent = self.MainFrame  -- Attach to the Tab UI
+
+    -- Label (Left side)
+    local KeybindLabel = Instance.new("TextLabel")
+    KeybindLabel.Text = config.Name or "Keybind"
+    KeybindLabel.Size = UDim2.new(0.5, 0, 1, 0) -- Left half of the frame
+    KeybindLabel.Position = UDim2.new(0, 10, 0, 0) -- Add padding
+    KeybindLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeybindLabel.BackgroundTransparency = 1
+    KeybindLabel.Font = Enum.Font.Gotham
+    KeybindLabel.TextSize = 16
+    KeybindLabel.TextXAlignment = Enum.TextXAlignment.Left
+    KeybindLabel.Parent = KeybindFrame
+
+    -- Status Label (Shows "Enabled" when toggled)
+    local StatusLabel = Instance.new("TextLabel")
+    StatusLabel.Text = ""
+    StatusLabel.Size = UDim2.new(0.2, 0, 1, 0) -- Small space next to keybind button
+    StatusLabel.Position = UDim2.new(0.5, 10, 0, 0) -- Between label and keybind button
+    StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 0) -- Green when active
+    StatusLabel.BackgroundTransparency = 1
+    StatusLabel.Font = Enum.Font.Gotham
+    StatusLabel.TextSize = 16
+    StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+    StatusLabel.Parent = KeybindFrame
+
+    -- Keybind Button (Right side)
+    local KeybindButton = Instance.new("TextButton")
+    KeybindButton.Text = config.Keybind or "F"
+    KeybindButton.Size = UDim2.new(0.3, 0, 1, 0) -- Right part of the frame
+    KeybindButton.Position = UDim2.new(0.7, -10, 0, 0) -- Adjusted position
+    KeybindButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    KeybindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeybindButton.Font = Enum.Font.GothamBold
+    KeybindButton.TextSize = 14
+    KeybindButton.Parent = KeybindFrame
+
+    -- Default Keybind State
+    local KeybindState = config.KeybindState or false
+    local keybindEnum = Enum.KeyCode[config.Keybind or "F"]
+
+    local function ToggleKeybind()
+        KeybindState = not KeybindState
+        StatusLabel.Text = KeybindState and "Enabled" or ""
+        if config.script then
+            config.script(KeybindState)
+        end
+    end
+
+    -- Detect Key Press
+    local UserInputService = game:GetService("UserInputService")
+
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == keybindEnum then
+            ToggleKeybind()
+        end
+    end)
+
+    -- Changing Keybind (Clicking the button to change key)
+    local awaitingKey = false
+    KeybindButton.MouseButton1Click:Connect(function()
+        if awaitingKey then return end
+        awaitingKey = true
+        KeybindButton.Text = "..."
+
+        local connection
+        connection = UserInputService.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Keyboard then
+                local newKey = input.KeyCode.Name
+                KeybindButton.Text = newKey
+                keybindEnum = Enum.KeyCode[newKey]
+                awaitingKey = false
+                connection:Disconnect()
+            end
+        end)
+    end)
+end
+
+    return Tab
+end 
+
+    return Cryptic
+end
+
+return Cryptic
