@@ -442,6 +442,89 @@ end)
         end
     }
 
+function Tab:CreateKeybind(config)
+    -- Create Keybind UI Frame
+    local KeybindFrame = Instance.new("Frame")
+    KeybindFrame.Size = UDim2.new(1, 0, 0, 40)
+    KeybindFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    KeybindFrame.Parent = self.MainFrame  -- Attach to the Tab UI
+
+    -- Label (Left side)
+    local KeybindLabel = Instance.new("TextLabel")
+    KeybindLabel.Text = config.Name or "Keybind"
+    KeybindLabel.Size = UDim2.new(0.5, 0, 1, 0) -- Left half of the frame
+    KeybindLabel.Position = UDim2.new(0, 10, 0, 0) -- Add padding
+    KeybindLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeybindLabel.BackgroundTransparency = 1
+    KeybindLabel.Font = Enum.Font.Gotham
+    KeybindLabel.TextSize = 16
+    KeybindLabel.TextXAlignment = Enum.TextXAlignment.Left
+    KeybindLabel.Parent = KeybindFrame
+
+    -- Status Label (Shows "Enabled" when toggled)
+    local StatusLabel = Instance.new("TextLabel")
+    StatusLabel.Text = ""
+    StatusLabel.Size = UDim2.new(0.2, 0, 1, 0) -- Small space next to keybind button
+    StatusLabel.Position = UDim2.new(0.5, 10, 0, 0) -- Between label and keybind button
+    StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 0) -- Green when active
+    StatusLabel.BackgroundTransparency = 1
+    StatusLabel.Font = Enum.Font.Gotham
+    StatusLabel.TextSize = 16
+    StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+    StatusLabel.Parent = KeybindFrame
+
+    -- Keybind Button (Right side)
+    local KeybindButton = Instance.new("TextButton")
+    KeybindButton.Text = config.Keybind or "F"
+    KeybindButton.Size = UDim2.new(0.3, 0, 1, 0) -- Right part of the frame
+    KeybindButton.Position = UDim2.new(0.7, -10, 0, 0) -- Adjusted position
+    KeybindButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    KeybindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeybindButton.Font = Enum.Font.GothamBold
+    KeybindButton.TextSize = 14
+    KeybindButton.Parent = KeybindFrame
+
+    -- Default Keybind State
+    local KeybindState = config.KeybindState or false
+    local keybindEnum = Enum.KeyCode[config.Keybind or "F"]
+
+    local function ToggleKeybind()
+        KeybindState = not KeybindState
+        StatusLabel.Text = KeybindState and "Enabled" or ""
+        if config.script then
+            config.script(KeybindState)
+        end
+    end
+
+    -- Detect Key Press
+    local UserInputService = game:GetService("UserInputService")
+
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == keybindEnum then
+            ToggleKeybind()
+        end
+    end)
+
+    -- Changing Keybind (Clicking the button to change key)
+    local awaitingKey = false
+    KeybindButton.MouseButton1Click:Connect(function()
+        if awaitingKey then return end
+        awaitingKey = true
+        KeybindButton.Text = "..."
+
+        local connection
+        connection = UserInputService.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Keyboard then
+                local newKey = input.KeyCode.Name
+                KeybindButton.Text = newKey
+                keybindEnum = Enum.KeyCode[newKey]
+                awaitingKey = false
+                connection:Disconnect()
+            end
+        end)
+    end)
+end
+
     return Tab
 end 
 
