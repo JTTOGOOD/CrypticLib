@@ -117,9 +117,9 @@ function Cryptic:Notify(settings)
     local CloseButton = settings.CloseButton or false
     local ButtonText = settings.ButtonText or "Close"
 
-    -- Create the Notification UI
+    -- Create Notification UI
     local NotificationFrame = Instance.new("Frame")
-    NotificationFrame.Size = UDim2.new(0, 468, 17, 156) -- Increased by 25%
+    NotificationFrame.Size = UDim2.new(0, 468, 0, 80) -- Default height, will increase if needed
     NotificationFrame.Position = UDim2.new(0.75, 0, 0.75, 0)
     NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     NotificationFrame.BackgroundTransparency = 0.1
@@ -128,42 +128,43 @@ function Cryptic:Notify(settings)
     -- Title Label
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Text = Title
-    TitleLabel.Size = UDim2.new(1, -12, 0, 37) -- Increased height
-    TitleLabel.TextSize = 25 -- Slightly bigger text
-    TitleLabel.Position = UDim2.new(0, 6, 0, 6) -- Adjusted position
+    TitleLabel.Size = UDim2.new(1, -12, 0, 30) -- Height for title only
+    TitleLabel.Position = UDim2.new(0, 6, 0, 6) 
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.Parent = NotificationFrame
-    TitleLabel.TextScaled = false
-    TitleLabel.TextWrapped = true
+    TitleLabel.TextSize = 20
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.TextYAlignment = Enum.TextYAlignment.Top
-    TitleLabel.ClipsDescendants = true -- Prevents text overflow
+    TitleLabel.TextWrapped = true
+    TitleLabel.Parent = NotificationFrame
 
     -- Description Label
     local DescLabel = Instance.new("TextLabel")
     DescLabel.Text = Description
-    DescLabel.Position = UDim2.new(0, 6, 0, 43) -- Adjusted position
+    DescLabel.Position = UDim2.new(0, 6, 0, 36) -- Starts below title
     DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    DescLabel.Size = UDim2.new(1, -12, 0, 78) -- Increased height
-    DescLabel.TextSize = 20 -- Slightly bigger text
+    DescLabel.Size = UDim2.new(1, -12, 0, 40) -- Initial height, will expand
+    DescLabel.TextSize = 18
     DescLabel.TextWrapped = true
     DescLabel.BackgroundTransparency = 1
     DescLabel.Font = Enum.Font.Gotham
-    DescLabel.Parent = NotificationFrame
-    DescLabel.TextScaled = false
     DescLabel.TextXAlignment = Enum.TextXAlignment.Left
     DescLabel.TextYAlignment = Enum.TextYAlignment.Top
-    DescLabel.ClipsDescendants = true
+    DescLabel.Parent = NotificationFrame
+
+    -- Resize Notification Frame dynamically based on text size
+    task.wait(0.05) -- Small delay to let UI calculate text size
+    local textSize = game:GetService("TextService"):GetTextSize(Description, 18, Enum.Font.Gotham, Vector2.new(440, math.huge))
+    local newHeight = math.clamp(textSize.Y + 50, 80, 200) -- Ensure it's not too small or too large
+    NotificationFrame.Size = UDim2.new(0, 468, 0, newHeight)
+    DescLabel.Size = UDim2.new(1, -12, 0, newHeight - 50)
 
     -- Close Button (if enabled)
-    local CloseBtn
     if CloseButton then
-        CloseBtn = Instance.new("TextButton")
+        local CloseBtn = Instance.new("TextButton")
         CloseBtn.Text = ButtonText
-        CloseBtn.Position = UDim2.new(0.5, 0, 1, -12) -- Moves down slightly
-        CloseBtn.Size = UDim2.new(0.9, 0, 0, 37) -- Increased height
+        CloseBtn.Position = UDim2.new(0.5, -40, 1, -30)
+        CloseBtn.Size = UDim2.new(0.4, 0, 0, 25)
         CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         CloseBtn.Parent = NotificationFrame
@@ -177,7 +178,6 @@ function Cryptic:Notify(settings)
     NotificationFrame.BackgroundTransparency = 1
     TitleLabel.TextTransparency = 1
     DescLabel.TextTransparency = 1
-    if CloseButton then CloseBtn.TextTransparency = 1 end
 
     local TweenService = game:GetService("TweenService")
     local TweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
@@ -185,7 +185,6 @@ function Cryptic:Notify(settings)
     TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 0.1}):Play()
     TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 0}):Play()
     TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 0}):Play()
-    if CloseButton then TweenService:Create(CloseBtn, TweenInfo, {TextTransparency = 0}):Play() end
 
     -- Auto-destroy if CloseButton is false
     if not CloseButton then
@@ -193,7 +192,6 @@ function Cryptic:Notify(settings)
         TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 1}):Play()
         TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 1}):Play()
         TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 1}):Play()
-        if CloseButton then TweenService:Create(CloseBtn, TweenInfo, {TextTransparency = 1}):Play() end
         task.wait(0.5)
         NotificationFrame:Destroy()
     end
