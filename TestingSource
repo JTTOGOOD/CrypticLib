@@ -286,23 +286,26 @@ function Cryptic:CreateTab(tabName)
             return Label
         end,
 
-        CreateInput = function(self, config)
-    local InputName = config.Name or "Textbox"
-    local DefaultText = config.TextboxText or "Enter Text"
+CreateInput = function(self, config)
+    local InputName = config.Name or "Input"
+    local PlaceholderText = config.TextboxText or "Enter Text"
     local InputScript = config.script or function() end
 
+    -- Create the frame
     local InputFrame = Instance.new("Frame")
     InputFrame.Size = UDim2.new(1, -10, 0, 40)
     InputFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     InputFrame.Parent = self.Frame
 
+    -- Add corner radius
     local FrameCorner = Instance.new("UICorner")
     FrameCorner.CornerRadius = UDim.new(0, 6)
     FrameCorner.Parent = InputFrame
 
+    -- Create label
     local InputLabel = Instance.new("TextLabel")
     InputLabel.Size = UDim2.new(1, -10, 0, 20)
-    InputLabel.Position = UDim2.new(0, 5, 0, 0)
+    InputLabel.Position = UDim2.new(0, 10, 0, 0)
     InputLabel.Text = InputName
     InputLabel.Font = Enum.Font.GothamBold
     InputLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -310,26 +313,52 @@ function Cryptic:CreateTab(tabName)
     InputLabel.TextXAlignment = Enum.TextXAlignment.Left
     InputLabel.Parent = InputFrame
 
-    local InputBox = Instance.new("TextBox")
-    InputBox.Size = UDim2.new(1, -10, 0, 20)
-    InputBox.Position = UDim2.new(0, 5, 0, 20)
-    InputBox.Text = DefaultText
-    InputBox.Font = Enum.Font.GothamBold
-    InputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-    InputBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    InputBox.Parent = InputFrame
+    -- Create textbox
+    local TextBox = Instance.new("TextBox")
+    TextBox.Size = UDim2.new(1, -20, 0, 20)
+    TextBox.Position = UDim2.new(0, 10, 0, 20)
+    TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextBox.Font = Enum.Font.Gotham
+    TextBox.PlaceholderText = PlaceholderText
+    TextBox.Text = ""
+    TextBox.ClearTextOnFocus = false
+    TextBox.Parent = InputFrame
 
-    local BoxCorner = Instance.new("UICorner")
-    BoxCorner.CornerRadius = UDim.new(0, 6)
-    BoxCorner.Parent = InputBox
+    -- Add corner radius to textbox
+    local TextBoxCorner = Instance.new("UICorner")
+    TextBoxCorner.CornerRadius = UDim.new(0, 4)
+    TextBoxCorner.Parent = TextBox
 
-    InputBox.FocusLost:Connect(function(enterPressed)
+    -- Function to reset placeholder text when textbox is empty
+    local function ResetPlaceholder()
+        if TextBox.Text == "" then
+            TextBox.Text = ""
+            TextBox.PlaceholderText = PlaceholderText
+        end
+    end
+
+    -- Event when the user presses Enter
+    TextBox.FocusLost:Connect(function(enterPressed)
         if enterPressed then
-            InputScript(InputBox.Text)
+            InputScript(TextBox.Text) -- Call script function
+            TextBox.Text = "" -- Clear text
+            ResetPlaceholder()
         end
     end)
 
-    return InputFrame
+    -- Ensure placeholder resets when clicking away
+    TextBox.FocusLost:Connect(ResetPlaceholder)
+
+    return {
+        Frame = InputFrame,
+        SetText = function(text)
+            TextBox.Text = text
+        end,
+        GetText = function()
+            return TextBox.Text
+        end
+    }
 end,
 
         -- CreateButton Function
