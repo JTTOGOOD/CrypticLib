@@ -363,80 +363,71 @@ CreateInput = function(self, config)
 end,
 
 CreateDropdown = function(self, config)
-    local Dropdown = {} -- Dropdown object
-    
-    -- Creating UI Elements
+    local Dropdown = {}
+
+    -- Main Dropdown Frame
     Dropdown.Main = Instance.new("Frame")
-    Dropdown.Main.Size = UDim2.new(1, 0, 0, 30)
-    Dropdown.Main.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Dropdown.Main.Size = UDim2.new(1, 0, 0, 40)
+    Dropdown.Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     Dropdown.Main.Parent = self.Container
-    
+
+    -- Dropdown Label
+    Dropdown.Label = Instance.new("TextLabel")
+    Dropdown.Label.Size = UDim2.new(1, -10, 0, 20)
+    Dropdown.Label.Position = UDim2.new(0, 5, 0, 5)
+    Dropdown.Label.Text = config.Name
+    Dropdown.Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Dropdown.Label.TextSize = 14
+    Dropdown.Label.BackgroundTransparency = 1
+    Dropdown.Label.Parent = Dropdown.Main
+
+    -- Dropdown Button
     Dropdown.Button = Instance.new("TextButton")
-    Dropdown.Button.Size = UDim2.new(1, 0, 1, 0)
-    Dropdown.Button.Text = config.CurrentOption or "Select"
+    Dropdown.Button.Size = UDim2.new(1, -10, 0, 20)
+    Dropdown.Button.Position = UDim2.new(0, 5, 0, 25)
+    Dropdown.Button.Text = config.CurrentOption or "Select Option"
     Dropdown.Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Dropdown.Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     Dropdown.Button.Parent = Dropdown.Main
 
+    -- Dropdown List (Hidden by Default)
     Dropdown.ListFrame = Instance.new("Frame")
     Dropdown.ListFrame.Size = UDim2.new(1, 0, 0, #config.Options * 25)
-    Dropdown.ListFrame.Position = UDim2.new(0, 0, 1, 0)
-    Dropdown.ListFrame.Visible = true
-    Dropdown.ListFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Dropdown.ListFrame.Position = UDim2.new(0, 0, 1, 5)
+    Dropdown.ListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Dropdown.ListFrame.Visible = false
     Dropdown.ListFrame.Parent = Dropdown.Main
 
-    -- UIListLayout to stack options
-    local ListLayout = Instance.new("UIListLayout")
-    ListLayout.Parent = Dropdown.ListFrame
+    -- Toggle Dropdown Visibility
+    Dropdown.Button.MouseButton1Click:Connect(function()
+        Dropdown.ListFrame.Visible = not Dropdown.ListFrame.Visible
+    end)
 
-    -- Function to update selection
-    local function SelectOption(option)
-        if config.MultiSelect then
-            -- If MultiSelect is enabled, toggle selection
-            if not Dropdown.SelectedOptions then
-                Dropdown.SelectedOptions = {}
-            end
-            if Dropdown.SelectedOptions[option] then
-                Dropdown.SelectedOptions[option] = nil
-            else
-                Dropdown.SelectedOptions[option] = true
-            end
-
-            -- Update text with selected options
-            local selectedText = ""
-            for key, _ in pairs(Dropdown.SelectedOptions) do
-                selectedText = selectedText .. key .. ", "
-            end
-            Dropdown.Button.Text = selectedText:sub(1, -3) -- Remove last comma
-        else
-            -- Single select mode
-            Dropdown.Button.Text = option
-            Dropdown.ListFrame.Visible = false
-        end
-
-        -- Run the script function
-        if config.script then
-            config.script(option)
-        end
-    end
-
-    -- Creating dropdown options
+    -- Adding Options to the Dropdown
     for _, option in ipairs(config.Options) do
         local OptionButton = Instance.new("TextButton")
         OptionButton.Size = UDim2.new(1, 0, 0, 25)
         OptionButton.Text = option
         OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        OptionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         OptionButton.Parent = Dropdown.ListFrame
 
-        -- Option button click
+        -- Option Selection Logic
         OptionButton.MouseButton1Click:Connect(function()
-            SelectOption(option)
+            if config.MultiSelect then
+                -- MultiSelect Logic (Append Instead of Replace)
+                Dropdown.Button.Text = Dropdown.Button.Text .. ", " .. option
+            else
+                -- Single Select Logic
+                Dropdown.Button.Text = option
+                Dropdown.ListFrame.Visible = false
+            end
+            -- Execute Callback
+            if config.script then
+                config.script(option)
+            end
         end)
     end
-
-    -- Toggle dropdown visibility when clicked
-    Dropdown.Button.MouseButton1Click:Connect(function()
-        Dropdown.ListFrame.Visible = not Dropdown.ListFrame.Visible
-    end)
 
     return Dropdown
 end,
