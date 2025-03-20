@@ -292,6 +292,22 @@ function Cryptic:CreateTab(tabName)
             return Button
         end,
 
+        function Tab:CreateLabel(LabelText)
+    local Label = Instance.new("TextLabel")
+    Label.Name = "Label"
+    Label.Parent = self.Container  -- Assuming `Container` holds the components
+    Label.Size = UDim2.new(1, 0, 0, 30) -- Adjust height as needed
+    Label.BackgroundTransparency = 1  -- Transparent background
+    Label.Text = LabelText
+    Label.TextSize = 16
+    Label.Font = Enum.Font.Gotham
+    Label.TextColor3 = Color3.fromRGB(255, 255, 255) -- Adjust for theme support
+    Label.TextXAlignment = Enum.TextXAlignment.Left  -- Align to the left
+    Label.TextYAlignment = Enum.TextYAlignment.Center
+
+    return Label
+end,
+
         CreateToggle = function(self, config)
             local ToggleState = config.ToggleState or false
             local ToggleName = config.Name or "Toggle"
