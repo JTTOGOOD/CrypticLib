@@ -292,10 +292,10 @@ function Cryptic:CreateTab(tabName)
             return Button
         end,
 
-        CreateLabel = function(self, config)
+Tab.CreateLabel = function(self, config)
     local Label = Instance.new("TextLabel")
     Label.Name = "Label"
-    Label.Parent = self.Container -- Ensure this exists in your tab system
+    Label.Parent = self.Container -- Ensure 'Container' exists in your tab system
     Label.Size = UDim2.new(1, 0, 0, 30)
     Label.BackgroundTransparency = 1
     Label.Text = config.Name or "Label"
@@ -306,7 +306,8 @@ function Cryptic:CreateTab(tabName)
     Label.TextYAlignment = Enum.TextYAlignment.Center
 
     return Label
-end,
+end
+
 
 
         CreateToggle = function(self, config)
