@@ -362,55 +362,80 @@ CreateInput = function(self, config)
     }
 end,
 
-        CreateDropdown = function(self, config)
-    local Dropdown = Instance.new("Frame")
-    Dropdown.Name = config.Name or "Dropdown"
-    Dropdown.Size = UDim2.new(1, 0, 0, 30)
-    Dropdown.BackgroundTransparency = 1
-    Dropdown.Parent = self.Container
+CreateDropdown = function(self, config)
+    local Dropdown = {} -- Dropdown object
+    
+    -- Creating UI Elements
+    Dropdown.Main = Instance.new("Frame")
+    Dropdown.Main.Size = UDim2.new(1, 0, 0, 30)
+    Dropdown.Main.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Dropdown.Main.Parent = self.Container
+    
+    Dropdown.Button = Instance.new("TextButton")
+    Dropdown.Button.Size = UDim2.new(1, 0, 1, 0)
+    Dropdown.Button.Text = config.CurrentOption or "Select"
+    Dropdown.Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Dropdown.Button.Parent = Dropdown.Main
 
-    local DropdownButton = Instance.new("TextButton")
-    DropdownButton.Size = UDim2.new(1, 0, 0, 30)
-    DropdownButton.Text = config.CurrentOption or "Select"
-    DropdownButton.Parent = Dropdown
+    Dropdown.ListFrame = Instance.new("Frame")
+    Dropdown.ListFrame.Size = UDim2.new(1, 0, 0, #config.Options * 25)
+    Dropdown.ListFrame.Position = UDim2.new(0, 0, 1, 0)
+    Dropdown.ListFrame.Visible = false
+    Dropdown.ListFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Dropdown.ListFrame.Parent = Dropdown.Main
 
-    local DropdownList = Instance.new("Frame")
-    DropdownList.Size = UDim2.new(1, 0, 0, #config.Options * 30)
-    DropdownList.Position = UDim2.new(0, 0, 1, 5)
-    DropdownList.Visible = false
-    DropdownList.Parent = Dropdown
+    -- UIListLayout to stack options
+    local ListLayout = Instance.new("UIListLayout")
+    ListLayout.Parent = Dropdown.ListFrame
 
-    local function UpdateSelection(selectedOption)
+    -- Function to update selection
+    local function SelectOption(option)
         if config.MultiSelect then
-            if not config.CurrentOption then
-                config.CurrentOption = {}
+            -- If MultiSelect is enabled, toggle selection
+            if not Dropdown.SelectedOptions then
+                Dropdown.SelectedOptions = {}
             end
-            table.insert(config.CurrentOption, selectedOption)
-            DropdownButton.Text = table.concat(config.CurrentOption, ", ")
+            if Dropdown.SelectedOptions[option] then
+                Dropdown.SelectedOptions[option] = nil
+            else
+                Dropdown.SelectedOptions[option] = true
+            end
+
+            -- Update text with selected options
+            local selectedText = ""
+            for key, _ in pairs(Dropdown.SelectedOptions) do
+                selectedText = selectedText .. key .. ", "
+            end
+            Dropdown.Button.Text = selectedText:sub(1, -3) -- Remove last comma
         else
-            config.CurrentOption = selectedOption
-            DropdownButton.Text = selectedOption
+            -- Single select mode
+            Dropdown.Button.Text = option
+            Dropdown.ListFrame.Visible = false
         end
 
+        -- Run the script function
         if config.script then
-            config.script(config.CurrentOption)
+            config.script(option)
         end
     end
 
-    for _, option in pairs(config.Options) do
+    -- Creating dropdown options
+    for _, option in ipairs(config.Options) do
         local OptionButton = Instance.new("TextButton")
-        OptionButton.Size = UDim2.new(1, 0, 0, 30)
+        OptionButton.Size = UDim2.new(1, 0, 0, 25)
         OptionButton.Text = option
-        OptionButton.Parent = DropdownList
+        OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        OptionButton.Parent = Dropdown.ListFrame
 
+        -- Option button click
         OptionButton.MouseButton1Click:Connect(function()
-            UpdateSelection(option)
-            DropdownList.Visible = config.MultiSelect
+            SelectOption(option)
         end)
     end
 
-    DropdownButton.MouseButton1Click:Connect(function()
-        DropdownList.Visible = not DropdownList.Visible
+    -- Toggle dropdown visibility when clicked
+    Dropdown.Button.MouseButton1Click:Connect(function()
+        Dropdown.ListFrame.Visible = not Dropdown.ListFrame.Visible
     end)
 
     return Dropdown
