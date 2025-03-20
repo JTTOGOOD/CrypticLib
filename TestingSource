@@ -324,7 +324,7 @@ CreateInput = function(self, config)
     TextBox.Text = ""
     TextBox.ClearTextOnFocus = false
     TextBox.Parent = InputFrame
-    TextBox.TextSize = 22  
+    TextBox.TextSize = 18  
 
     -- Add corner radius to textbox
     local TextBoxCorner = Instance.new("UICorner")
