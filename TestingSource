@@ -295,14 +295,14 @@ function Cryptic:CreateTab(tabName)
         function Tab:CreateLabel(LabelText)
     local Label = Instance.new("TextLabel")
     Label.Name = "Label"
-    Label.Parent = self.Container  -- Assuming `Container` holds the components
-    Label.Size = UDim2.new(1, 0, 0, 30) -- Adjust height as needed
-    Label.BackgroundTransparency = 1  -- Transparent background
+    Label.Parent = self.Container  -- Ensure self.Container is set in the Tab system
+    Label.Size = UDim2.new(1, 0, 0, 30)
+    Label.BackgroundTransparency = 1
     Label.Text = LabelText
     Label.TextSize = 16
     Label.Font = Enum.Font.Gotham
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255) -- Adjust for theme support
-    Label.TextXAlignment = Enum.TextXAlignment.Left  -- Align to the left
+    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Label.TextXAlignment = Enum.TextXAlignment.Left
     Label.TextYAlignment = Enum.TextYAlignment.Center
 
     return Label
