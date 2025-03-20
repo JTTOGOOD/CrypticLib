@@ -362,6 +362,60 @@ CreateInput = function(self, config)
     }
 end,
 
+        CreateDropdown = function(self, config)
+    local Dropdown = Instance.new("Frame")
+    Dropdown.Name = config.Name or "Dropdown"
+    Dropdown.Size = UDim2.new(1, 0, 0, 30)
+    Dropdown.BackgroundTransparency = 1
+    Dropdown.Parent = self.Container
+
+    local DropdownButton = Instance.new("TextButton")
+    DropdownButton.Size = UDim2.new(1, 0, 0, 30)
+    DropdownButton.Text = config.CurrentOption or "Select"
+    DropdownButton.Parent = Dropdown
+
+    local DropdownList = Instance.new("Frame")
+    DropdownList.Size = UDim2.new(1, 0, 0, #config.Options * 30)
+    DropdownList.Position = UDim2.new(0, 0, 1, 5)
+    DropdownList.Visible = false
+    DropdownList.Parent = Dropdown
+
+    local function UpdateSelection(selectedOption)
+        if config.MultiSelect then
+            if not config.CurrentOption then
+                config.CurrentOption = {}
+            end
+            table.insert(config.CurrentOption, selectedOption)
+            DropdownButton.Text = table.concat(config.CurrentOption, ", ")
+        else
+            config.CurrentOption = selectedOption
+            DropdownButton.Text = selectedOption
+        end
+
+        if config.script then
+            config.script(config.CurrentOption)
+        end
+    end
+
+    for _, option in pairs(config.Options) do
+        local OptionButton = Instance.new("TextButton")
+        OptionButton.Size = UDim2.new(1, 0, 0, 30)
+        OptionButton.Text = option
+        OptionButton.Parent = DropdownList
+
+        OptionButton.MouseButton1Click:Connect(function()
+            UpdateSelection(option)
+            DropdownList.Visible = config.MultiSelect
+        end)
+    end
+
+    DropdownButton.MouseButton1Click:Connect(function()
+        DropdownList.Visible = not DropdownList.Visible
+    end)
+
+    return Dropdown
+end,
+
         -- CreateButton Function
         CreateButton = function(self, config)
             local Button = Instance.new("TextButton")
