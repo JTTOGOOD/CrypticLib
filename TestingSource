@@ -272,6 +272,21 @@ function Cryptic:CreateTab(tabName)
     local Tab = {
         Frame = TabFrame,
 
+        -- CreateLabel Function
+        CreateLabel = function(self, config)
+            local Label = Instance.new("TextLabel")
+            Label.Size = UDim2.new(1, -10, 0, 30)
+            Label.Text = config.Text or "Label"
+            Label.Font = Enum.Font.GothamBold
+            Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Label.BackgroundTransparency = 1
+            Label.TextXAlignment = Enum.TextXAlignment.Left
+            Label.Parent = self.Frame
+
+            return Label
+        end,
+
+        -- CreateButton Function
         CreateButton = function(self, config)
             local Button = Instance.new("TextButton")
             Button.Size = UDim2.new(1, -10, 0, 40)
@@ -291,21 +306,6 @@ function Cryptic:CreateTab(tabName)
 
             return Button
         end,
-        
-        CreateLabel = function(self, config)
-            local Label = Instance.new("TextLabel")
-            Label.Size = UDim2.new(1, -10, 0, 30)
-            Label.BackgroundTransparency = 1
-            Label.Text = config.Name or "Label"
-            Label.Font = Enum.Font.GothamBold
-            Label.TextSize = 16
-            Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-            Label.TextXAlignment = Enum.TextXAlignment.Left
-            Label.Parent = self.Frame
-
-            return Label
-        end,
-
 
         CreateToggle = function(self, config)
             local ToggleState = config.ToggleState or false
