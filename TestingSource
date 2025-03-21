@@ -369,7 +369,7 @@ function Cryptic:CreateTab(tabName)
     end)
 
     return TabFrame
-end
+end,
 
     local Tab = {
         Frame = TabFrame,
