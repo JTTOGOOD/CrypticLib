@@ -528,7 +528,7 @@ end,
     local Dropdown = Instance.new("Frame")
     Dropdown.Size = UDim2.new(1, 0, 0, 40) -- Ensure it has a visible size
     Dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Dropdown.Parent = self.Container -- Parent to the tab container
+    Dropdown.Parent = self.Frame -- Instead of `self.Container`
     Dropdown.ClipsDescendants = true
     Dropdown.Visible = true -- FIXED: `DropdownFrame` doesn't exist, so use `Dropdown`
 
