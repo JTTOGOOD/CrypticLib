@@ -509,7 +509,7 @@ end,
             }
         end,
 
-       CreateDropdown = function(self, config)
+CreateDropdown = function(self, config)
     local Name = config.Name or "Dropdown"
     local Options = config.Options or {"Option 1", "Option 2", "Option 3"}
     local CurrentOption = config.CurrentOption or Options[1]
@@ -521,12 +521,12 @@ end,
     Dropdown.Size = UDim2.new(1, 0, 0, 40)
     Dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     Dropdown.Parent = self.Frame
-    Dropdown.ClipsDescendants = true -- Ensure the dropdown menu doesn't overflow
+    Dropdown.ClipsDescendants = true -- Prevents overflowing UI elements
 
     local UICorner = Instance.new("UICorner", Dropdown)
     UICorner.CornerRadius = UDim.new(0, 6)
 
-    -- Dropdown Display (Current Selected Option)
+    -- Dropdown Display (Selected Option)
     local DropdownDisplay = Instance.new("TextLabel")
     DropdownDisplay.Size = UDim2.new(0.8, -10, 1, 0) -- 80% width
     DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
@@ -538,11 +538,11 @@ end,
     DropdownDisplay.TextXAlignment = Enum.TextXAlignment.Left
     DropdownDisplay.Parent = Dropdown
 
-    -- 🔽 Dropdown Toggle Button (⏷)
+    -- 🔽 Dropdown Toggle Button
     local DropdownButton = Instance.new("TextButton")
-    DropdownButton.Size = UDim2.new(0.15, -5, 1, -10) -- Increase size for visibility
+    DropdownButton.Size = UDim2.new(0.15, -5, 1, -10) -- Increase size
     DropdownButton.Position = UDim2.new(0.85, 0, 0, 5)
-    DropdownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Better contrast
+    DropdownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     DropdownButton.Text = "▼" -- Down arrow
     DropdownButton.TextSize = 18
     DropdownButton.Font = Enum.Font.GothamBold
@@ -552,43 +552,46 @@ end,
     local ButtonCorner = Instance.new("UICorner", DropdownButton)
     ButtonCorner.CornerRadius = UDim.new(0, 6)
 
-    -- Dropdown List (Hidden by Default)
+    -- Dropdown List (Initially Hidden)
     local DropdownList = Instance.new("Frame")
     DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Start with 0 height
     DropdownList.Position = UDim2.new(0, 0, 1, 0)
     DropdownList.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     DropdownList.Visible = false
-    DropdownList.ClipsDescendants = true -- Prevent overflow
+    DropdownList.ClipsDescendants = true
     DropdownList.Parent = Dropdown
 
     local UIListLayout = Instance.new("UIListLayout", DropdownList)
     UIListLayout.Padding = UDim.new(0, 2)
 
-    -- Fix: Ensure the dropdown expands properly when opened
+    -- ✅ Debugging: Confirming button click
     DropdownButton.MouseButton1Click:Connect(function()
         DropdownList.Visible = not DropdownList.Visible
+        print("Dropdown button clicked! Visible:", DropdownList.Visible)
 
         if DropdownList.Visible then
-            DropdownList.Size = UDim2.new(1, 0, 0, (#Options * 30) + 10) -- Adjust height dynamically
-            DropdownButton.Text = "▲" -- Change to Up arrow
+            local newHeight = (#Options * 35) + 10 -- Auto-adjust height
+            DropdownList.Size = UDim2.new(1, 0, 0, newHeight)
+            DropdownButton.Text = "▲"
         else
             DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Hide it
-            DropdownButton.Text = "▼" -- Reset to Down arrow
+            DropdownButton.Text = "▼"
         end
     end)
 
-    -- Populate Dropdown Options
+    -- ✅ Debugging: Ensure options are being created
     for _, option in pairs(Options) do
         local OptionButton = Instance.new("TextButton")
-        OptionButton.Size = UDim2.new(1, 0, 0, 30)
-        OptionButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35) -- Fix: Ensure visibility
+        OptionButton.Size = UDim2.new(1, 0, 0, 35)
+        OptionButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Ensure visibility
         OptionButton.Text = option
         OptionButton.TextSize = 14
         OptionButton.Font = Enum.Font.Gotham
         OptionButton.TextColor3 = Color3.fromRGB(200, 200, 200)
         OptionButton.Parent = DropdownList
 
-        -- Fix: Make sure option buttons are visible
+        print("Option added:", option)
+
         OptionButton.MouseButton1Click:Connect(function()
             if MultiSelect then
                 CurrentOption = CurrentOption .. ", " .. option
@@ -600,8 +603,8 @@ end,
 
             -- Close dropdown after selection
             DropdownList.Visible = false
-            DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Hide it again
-            DropdownButton.Text = "▼" -- Reset to Down arrow
+            DropdownList.Size = UDim2.new(1, 0, 0, 0)
+            DropdownButton.Text = "▼"
         end)
     end
 
