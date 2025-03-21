@@ -520,7 +520,7 @@ CreateDropdown = function(self, config)
     Dropdown.Size = UDim2.new(1, 0, 0, 60)
     Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     Dropdown.Parent = self.Frame
-    Dropdown.ClipsDescendants = false -- ✅ Fixes menu being cut off
+    Dropdown.ClipsDescendants = false
 
     local UICorner = Instance.new("UICorner", Dropdown)
     UICorner.CornerRadius = UDim.new(0, 6)
@@ -556,32 +556,21 @@ CreateDropdown = function(self, config)
     DropdownList.Size = UDim2.new(1, 0, 0, 0)
     DropdownList.Position = UDim2.new(0, 0, 1, 0)
     DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    DropdownList.Visible = false -- ✅ Fix visibility
-    DropdownList.ClipsDescendants = false -- ✅ Prevents menu from being hidden
+    DropdownList.Visible = false
     DropdownList.Parent = Dropdown
 
     local UIListLayout = Instance.new("UIListLayout", DropdownList)
     UIListLayout.Padding = UDim.new(0, 4)
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-    -- 🔥 Dropdown Toggle (Always Opens!)
-    local isExpanded = false
-    DropdownButton.MouseButton1Click:Connect(function()
-        isExpanded = not isExpanded
+    -- **🔥 EXPANDABLE CONTAINER TO PREVENT COLLISION**
+    local DropdownContainer = Instance.new("Frame")
+    DropdownContainer.Size = UDim2.new(1, 0, 0, 60) -- **Starts at normal size**
+    DropdownContainer.BackgroundTransparency = 1
+    DropdownContainer.Parent = self.Frame
 
-        if isExpanded then
-            DropdownList.Visible = true -- ✅ Ensure visibility
-            local newHeight = (#Options * 50) + 10
-            DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
-            DropdownButton.Text = "▲"
-        else
-            DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
-                DropdownList.Visible = false
-            end)
-            DropdownButton.Text = "▼"
-        end
-    end)
-
+    Dropdown.Parent = DropdownContainer -- **Put everything inside the container**
+    
     -- 🔥 Create Option Buttons
     for _, option in pairs(Options) do
         local OptionButton = Instance.new("TextButton")
@@ -596,13 +585,33 @@ CreateDropdown = function(self, config)
         OptionButton.MouseButton1Click:Connect(function()
             DropdownDisplay.Text = Name .. ": " .. option
             Callback(option)
-            isExpanded = false
             DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
                 DropdownList.Visible = false
             end)
             DropdownButton.Text = "▼"
+            DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true) -- 🔥 Reset space
         end)
     end
+
+    -- 🔥 Dropdown Toggle (Expands Space)
+    local isExpanded = false
+    DropdownButton.MouseButton1Click:Connect(function()
+        isExpanded = not isExpanded
+
+        if isExpanded then
+            DropdownList.Visible = true
+            local newHeight = (#Options * 50) + 10
+            DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
+            DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60 + newHeight), "Out", "Quad", 0.3, true) -- 🔥 Expand space
+            DropdownButton.Text = "▲"
+        else
+            DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
+                DropdownList.Visible = false
+            end)
+            DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true) -- 🔥 Reset space
+            DropdownButton.Text = "▼"
+        end
+    end)
 
     return Dropdown
 end,
