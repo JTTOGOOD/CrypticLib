@@ -311,65 +311,44 @@ end
     local Tabs = {}
 
 function Cryptic:CreateTab(tabName)
-    -- Ensure TabList is initialized
     if not TabList then
-        warn("TabList is missing! Initializing...")
-        TabList = Instance.new("Frame")
-        TabList.Size = UDim2.new(1, 0, 0, 50)
-        TabList.Position = UDim2.new(0, 0, 0, 0)
-        TabList.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-        TabList.Parent = MainFrame
-
-        local UIListLayout = Instance.new("UIListLayout", TabList)
-        UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-        UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-        UIListLayout.Padding = UDim.new(0, 5)
+        warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
+        return
     end
 
-    -- Create Tab Button
     local TabButton = Instance.new("TextButton")
     TabButton.Size = UDim2.new(0, 100, 1, 0)
     TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = tabName -- 🔥 Fix: Ensure button text is assigned
+    TabButton.Text = tabName
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
     TabButton.Parent = TabList
 
-    -- Create Tab Content Frame
     local TabFrame = Instance.new("ScrollingFrame")
-    TabFrame.Size = UDim2.new(1, 0, 1, -60)
-    TabFrame.Position = UDim2.new(0, 0, 0, 55)
-    TabFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    TabFrame.Size = UDim2.new(1, 0, 1, -100)
+    TabFrame.Position = UDim2.new(0, 0, 0, 65)
+    TabFrame.BackgroundColor3 = Theme
     TabFrame.Visible = false
     TabFrame.Parent = MainFrame
     TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
     TabFrame.ScrollBarThickness = 5
     TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 
-    -- Layout inside the TabFrame
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
     ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
     ButtonLayout.Padding = UDim.new(0, 5)
 
-    -- Update canvas size dynamically
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
     end)
 
-    -- Store the tab
     Tabs[tabName] = TabFrame
 
-    -- Handle tab switching
     TabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(Tabs) do
-            tab.Visible = false
-        end
+        for _, tab in pairs(Tabs) do tab.Visible = false end
         TabFrame.Visible = true
     end)
-
-    return TabFrame
-end,
 
     local Tab = {
         Frame = TabFrame,
