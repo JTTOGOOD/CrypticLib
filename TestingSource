@@ -520,12 +520,12 @@ CreateDropdown = function(self, config)
     Dropdown.Size = UDim2.new(1, 0, 0, 60)
     Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     Dropdown.Parent = self.Frame
-    Dropdown.ClipsDescendants = false -- ✅ Fix menu being cut off
+    Dropdown.ClipsDescendants = false -- ✅ Fixes menu being cut off
 
     local UICorner = Instance.new("UICorner", Dropdown)
     UICorner.CornerRadius = UDim.new(0, 6)
 
-    -- Dropdown Display Text
+    -- Dropdown Display
     local DropdownDisplay = Instance.new("TextLabel")
     DropdownDisplay.Size = UDim2.new(0.75, -10, 1, 0)
     DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
@@ -553,23 +553,24 @@ CreateDropdown = function(self, config)
 
     -- Dropdown Menu
     local DropdownList = Instance.new("Frame")
-    DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Start with 0 height
+    DropdownList.Size = UDim2.new(1, 0, 0, 0)
     DropdownList.Position = UDim2.new(0, 0, 1, 0)
     DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    DropdownList.ClipsDescendants = false -- ✅ Ensure options are visible
+    DropdownList.Visible = false -- ✅ Fix visibility
+    DropdownList.ClipsDescendants = false -- ✅ Prevents menu from being hidden
     DropdownList.Parent = Dropdown
 
     local UIListLayout = Instance.new("UIListLayout", DropdownList)
     UIListLayout.Padding = UDim.new(0, 4)
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-    -- 🔥 Dropdown Toggle
+    -- 🔥 Dropdown Toggle (Always Opens!)
     local isExpanded = false
     DropdownButton.MouseButton1Click:Connect(function()
         isExpanded = not isExpanded
 
         if isExpanded then
-            DropdownList.Visible = true
+            DropdownList.Visible = true -- ✅ Ensure visibility
             local newHeight = (#Options * 50) + 10
             DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
             DropdownButton.Text = "▲"
