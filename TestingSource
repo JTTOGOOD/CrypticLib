@@ -516,14 +516,18 @@ end,
     local MultiSelect = config.MultiSelect or false
     local Callback = config.Script or function() end
 
+    -- Create Dropdown Frame
     local Dropdown = Instance.new("Frame")
     Dropdown.Size = UDim2.new(1, 0, 0, 40)
     Dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Dropdown.Parent = self.MainFrame
+    Dropdown.Parent = self.Container -- Ensures it appears in the tab
+    Dropdown.ClipsDescendants = true
 
+    -- Add UI Corner for rounded edges
     local UICorner = Instance.new("UICorner", Dropdown)
     UICorner.CornerRadius = UDim.new(0, 6)
 
+    -- Dropdown Button
     local DropdownButton = Instance.new("TextButton")
     DropdownButton.Size = UDim2.new(1, 0, 1, 0)
     DropdownButton.BackgroundTransparency = 1
@@ -533,6 +537,7 @@ end,
     DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     DropdownButton.Parent = Dropdown
 
+    -- Dropdown List (Hidden by Default)
     local DropdownList = Instance.new("Frame")
     DropdownList.Size = UDim2.new(1, 0, 0, 0)
     DropdownList.Position = UDim2.new(0, 0, 1, 0)
@@ -542,12 +547,19 @@ end,
 
     local UIListLayout = Instance.new("UIListLayout", DropdownList)
     UIListLayout.Padding = UDim.new(0, 2)
+    UIListLayout.Parent = DropdownList
 
+    -- Toggle Dropdown List
     DropdownButton.MouseButton1Click:Connect(function()
         DropdownList.Visible = not DropdownList.Visible
-        DropdownList.Size = UDim2.new(1, 0, 0, #Options * 30)
+        if DropdownList.Visible then
+            DropdownList.Size = UDim2.new(1, 0, 0, #Options * 30)
+        else
+            DropdownList.Size = UDim2.new(1, 0, 0, 0)
+        end
     end)
 
+    -- Populate Dropdown Options
     for _, option in pairs(Options) do
         local OptionButton = Instance.new("TextButton")
         OptionButton.Size = UDim2.new(1, 0, 0, 30)
@@ -567,11 +579,13 @@ end,
             DropdownButton.Text = Name .. ": " .. CurrentOption
             Callback(CurrentOption)
             DropdownList.Visible = false
+            DropdownList.Size = UDim2.new(1, 0, 0, 0)
         end)
     end
 
     return Dropdown
 end,
+
 
         CreateSlider = function(self, config)
             local SliderName = config.Name or "Slider"
