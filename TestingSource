@@ -575,16 +575,15 @@ CreateDropdown = function(self, config)
     end)
 
     -- 🔥 Create Option Buttons Dynamically
-    for _, option in pairs(Options) do
-        local OptionButton = Instance.new("TextButton")
-        OptionButton.Size = UDim2.new(1, 0, 0, 35)
-        OptionButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        OptionButton.Text = option
-        OptionButton.TextSize = 14
-        OptionButton.Font = Enum.Font.Gotham
-        OptionButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-        OptionButton.ZIndex = 10
-        OptionButton.Parent = DropdownList
+for _, option in pairs(Options) do
+    print("Adding option:", option) -- Debugging
+    local OptionButton = Instance.new("TextButton")
+    OptionButton.Size = UDim2.new(1, 0, 0, 35)
+    OptionButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    OptionButton.Text = option
+    OptionButton.Parent = DropdownList
+end
+
 
         print("Option added:", option)
 
