@@ -516,10 +516,10 @@ CreateDropdown = function(self, config)
     local Callback = config.Script or function() end
 
     local Dropdown = Instance.new("Frame")
-    Dropdown.Size = UDim2.new(1, 0, 0, 60) -- 🔥 Adjusted for visibility
-    Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- More contrast
+    Dropdown.Size = UDim2.new(1, 0, 0, 60) -- 🔥 Bigger size
+    Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Better visibility
     Dropdown.Parent = self.Frame
-    Dropdown.ClipsDescendants = true -- ✅ Fix component collision
+    Dropdown.ClipsDescendants = true -- ✅ Fix for overlapping components
 
     local UICorner = Instance.new("UICorner", Dropdown)
     UICorner.CornerRadius = UDim.new(0, 6)
@@ -529,7 +529,7 @@ CreateDropdown = function(self, config)
     DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
     DropdownDisplay.BackgroundTransparency = 1
     DropdownDisplay.Text = Name .. ": " .. CurrentOption
-    DropdownDisplay.TextSize = 32 -- 🔥 2x bigger text
+    DropdownDisplay.TextSize = 32 -- 🔥 2x text size
     DropdownDisplay.Font = Enum.Font.GothamBold
     DropdownDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
     DropdownDisplay.TextXAlignment = Enum.TextXAlignment.Left
@@ -549,48 +549,37 @@ CreateDropdown = function(self, config)
     ButtonCorner.CornerRadius = UDim.new(0, 6)
 
     local DropdownList = Instance.new("Frame")
-    DropdownList.Size = UDim2.new(1, 0, 0, 0)
-    DropdownList.Position = UDim2.new(0, 0, 1, 0) -- 🔥 Default position (below)
+    DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Start collapsed
+    DropdownList.Position = UDim2.new(0, 0, 1, 0)
     DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     DropdownList.Visible = false
-    DropdownList.ClipsDescendants = true -- ✅ Prevents components inside
     DropdownList.Parent = Dropdown
 
     local UIListLayout = Instance.new("UIListLayout", DropdownList)
     UIListLayout.Padding = UDim.new(0, 4)
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-    -- 🔥 Dropdown Toggle + Boundary Fix
+    -- 🔥 Dropdown Toggle + Fix for Visibility
     DropdownButton.MouseButton1Click:Connect(function()
-        DropdownList.Visible = not DropdownList.Visible
-
         if DropdownList.Visible then
-            local newHeight = (#Options * 50) + 10
-            local DropdownPosition = Dropdown.AbsolutePosition.Y
-            local ScreenHeight = game:GetService("Workspace").CurrentCamera.ViewportSize.Y
-
-            -- ✅ Check if dropdown fits inside UI (Prevents boundary overflow)
-            if DropdownPosition + newHeight > ScreenHeight then
-                DropdownList.Position = UDim2.new(0, 0, -1, -newHeight) -- 🔥 Expand UP instead
-            else
-                DropdownList.Position = UDim2.new(0, 0, 1, 0) -- 🔥 Expand DOWN (default)
-            end
-
-            DropdownList.Size = UDim2.new(1, 0, 0, newHeight)
-            DropdownButton.Text = "▲"
-        else
+            DropdownList.Visible = false
             DropdownList.Size = UDim2.new(1, 0, 0, 0)
             DropdownButton.Text = "▼"
+        else
+            DropdownList.Visible = true -- ✅ Ensure visibility before resizing
+            local newHeight = (#Options * 50) + 10
+            DropdownList.Size = UDim2.new(1, 0, 0, newHeight) -- Expand properly
+            DropdownButton.Text = "▲"
         end
     end)
 
     -- 🔥 Create Option Buttons
     for _, option in pairs(Options) do
         local OptionButton = Instance.new("TextButton")
-        OptionButton.Size = UDim2.new(1, 0, 0, 50) -- Bigger options
+        OptionButton.Size = UDim2.new(1, 0, 0, 50) -- Bigger size
         OptionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         OptionButton.Text = option
-        OptionButton.TextSize = 32 -- 🔥 2x bigger text
+        OptionButton.TextSize = 32 -- 🔥 2x text size
         OptionButton.Font = Enum.Font.GothamBold
         OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         OptionButton.Parent = DropdownList
@@ -599,8 +588,8 @@ CreateDropdown = function(self, config)
             DropdownDisplay.Text = Name .. ": " .. option
             Callback(option)
             DropdownList.Visible = false
+            DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Collapse properly
             DropdownButton.Text = "▼"
-            DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Collapse
         end)
     end
 
