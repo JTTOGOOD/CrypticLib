@@ -566,47 +566,41 @@ CreateDropdown = function(self, config)
 
     -- ✅ Debugging: Confirming button click
     DropdownButton.MouseButton1Click:Connect(function()
-        DropdownList.Visible = not DropdownList.Visible
-        print("Dropdown button clicked! Visible:", DropdownList.Visible)
+    DropdownList.Visible = not DropdownList.Visible
+    print("Dropdown button clicked! Visible:", DropdownList.Visible)
 
-        if DropdownList.Visible then
-            local newHeight = (#Options * 35) + 10 -- Auto-adjust height
-            DropdownList.Size = UDim2.new(1, 0, 0, newHeight)
-            DropdownButton.Text = "▲"
-        else
-            DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Hide it
-            DropdownButton.Text = "▼"
-        end
-    end)
-
-    -- ✅ Debugging: Ensure options are being created
-    for _, option in pairs(Options) do
-        local OptionButton = Instance.new("TextButton")
-        OptionButton.Size = UDim2.new(1, 0, 0, 35)
-        OptionButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Ensure visibility
-        OptionButton.Text = option
-        OptionButton.TextSize = 14
-        OptionButton.Font = Enum.Font.Gotham
-        OptionButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-        OptionButton.Parent = DropdownList
-
-        print("Option added:", option)
-
-        OptionButton.MouseButton1Click:Connect(function()
-            if MultiSelect then
-                CurrentOption = CurrentOption .. ", " .. option
-            else
-                CurrentOption = option
-            end
-            DropdownDisplay.Text = Name .. ": " .. CurrentOption
-            Callback(CurrentOption)
-
-            -- Close dropdown after selection
-            DropdownList.Visible = false
-            DropdownList.Size = UDim2.new(1, 0, 0, 0)
-            DropdownButton.Text = "▼"
-        end)
+    if DropdownList.Visible then
+        local newHeight = (#Options * 35) + 10 -- Auto-adjust height
+        DropdownList.Size = UDim2.new(1, 0, 0, newHeight)
+        DropdownButton.Text = "▲"
+    else
+        DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Hide it
+        DropdownButton.Text = "▼"
     end
+end)
+
+-- 🔥 Make sure options appear correctly
+for _, option in pairs(Options) do
+    local OptionButton = Instance.new("TextButton")
+    OptionButton.Size = UDim2.new(1, 0, 0, 35)
+    OptionButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Ensure visibility
+    OptionButton.Text = option
+    OptionButton.TextSize = 14
+    OptionButton.Font = Enum.Font.Gotham
+    OptionButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+    OptionButton.ZIndex = 10 -- Ensure it renders on top
+    OptionButton.Parent = DropdownList
+
+    print("Option added:", option) -- Debugging
+
+    OptionButton.MouseButton1Click:Connect(function()
+        DropdownDisplay.Text = Name .. ": " .. option
+        Callback(option)
+        DropdownList.Visible = false
+        DropdownList.Size = UDim2.new(1, 0, 0, 0)
+        DropdownButton.Text = "▼"
+    end)
+end
 
     return Dropdown
 end,
