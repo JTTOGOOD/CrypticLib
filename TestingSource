@@ -516,13 +516,7 @@ end,
     local MultiSelect = config.MultiSelect or false
     local Callback = config.Script or function() end
 
-    -- Ensure `self.Container` is valid
-    if not self.Container then
-        warn("Dropdown cannot be created because 'self.Container' is missing.")
-        return
-    end
-
-    print("Dropdown Parent:", self.Container) -- Debugging
+    print("Dropdown Parent:", self.Frame) -- Debugging
 
     -- Create Dropdown Frame
     local Dropdown = Instance.new("Frame")
