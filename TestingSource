@@ -516,15 +516,21 @@ end,
     local MultiSelect = config.MultiSelect or false
     local Callback = config.Script or function() end
 
+    -- Ensure `self.Frame` is valid
+    if not self.Frame then
+        warn("Dropdown cannot be created because 'self.Frame' is missing.")
+        return
+    end
+
     print("Dropdown Parent:", self.Frame) -- Debugging
 
     -- Create Dropdown Frame
     local Dropdown = Instance.new("Frame")
     Dropdown.Size = UDim2.new(1, 0, 0, 40) -- Ensure it has a visible size
     Dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Dropdown.Parent = self.Frame -- Instead of `self.Container`
+    Dropdown.Parent = self.Frame -- ✅ Using self.Frame instead of self.Container
     Dropdown.ClipsDescendants = true
-    Dropdown.Visible = true -- FIXED: `DropdownFrame` doesn't exist, so use `Dropdown`
+    Dropdown.Visible = true 
 
     -- UI Corner for rounded edges
     local UICorner = Instance.new("UICorner", Dropdown)
