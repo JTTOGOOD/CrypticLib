@@ -509,6 +509,70 @@ end,
             }
         end,
 
+        CreateDropdown = function(self, config)
+    local Name = config.Name or "Dropdown"
+    local Options = config.Options or {"Option 1", "Option 2", "Option 3"}
+    local CurrentOption = config.CurrentOption or Options[1]
+    local MultiSelect = config.MultiSelect or false
+    local Callback = config.Script or function() end
+
+    local Dropdown = Instance.new("Frame")
+    Dropdown.Size = UDim2.new(1, 0, 0, 40)
+    Dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Dropdown.Parent = self.MainFrame
+
+    local UICorner = Instance.new("UICorner", Dropdown)
+    UICorner.CornerRadius = UDim.new(0, 6)
+
+    local DropdownButton = Instance.new("TextButton")
+    DropdownButton.Size = UDim2.new(1, 0, 1, 0)
+    DropdownButton.BackgroundTransparency = 1
+    DropdownButton.Text = Name .. ": " .. CurrentOption
+    DropdownButton.TextSize = 16
+    DropdownButton.Font = Enum.Font.GothamBold
+    DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    DropdownButton.Parent = Dropdown
+
+    local DropdownList = Instance.new("Frame")
+    DropdownList.Size = UDim2.new(1, 0, 0, 0)
+    DropdownList.Position = UDim2.new(0, 0, 1, 0)
+    DropdownList.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    DropdownList.Visible = false
+    DropdownList.Parent = Dropdown
+
+    local UIListLayout = Instance.new("UIListLayout", DropdownList)
+    UIListLayout.Padding = UDim.new(0, 2)
+
+    DropdownButton.MouseButton1Click:Connect(function()
+        DropdownList.Visible = not DropdownList.Visible
+        DropdownList.Size = UDim2.new(1, 0, 0, #Options * 30)
+    end)
+
+    for _, option in pairs(Options) do
+        local OptionButton = Instance.new("TextButton")
+        OptionButton.Size = UDim2.new(1, 0, 0, 30)
+        OptionButton.BackgroundTransparency = 1
+        OptionButton.Text = option
+        OptionButton.TextSize = 14
+        OptionButton.Font = Enum.Font.Gotham
+        OptionButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+        OptionButton.Parent = DropdownList
+
+        OptionButton.MouseButton1Click:Connect(function()
+            if MultiSelect then
+                CurrentOption = CurrentOption .. ", " .. option
+            else
+                CurrentOption = option
+            end
+            DropdownButton.Text = Name .. ": " .. CurrentOption
+            Callback(CurrentOption)
+            DropdownList.Visible = false
+        end)
+    end
+
+    return Dropdown
+end,
+
         CreateSlider = function(self, config)
             local SliderName = config.Name or "Slider"
             local MinValue = config.MinValue or 0
