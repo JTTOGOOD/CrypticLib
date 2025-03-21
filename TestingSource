@@ -513,35 +513,34 @@ CreateDropdown = function(self, config)
     local Name = config.Name or "Dropdown"
     local Options = config.Options or {"Option 1", "Option 2", "Option 3"}
     local CurrentOption = config.CurrentOption or Options[1]
-    local MultiSelect = config.MultiSelect or false
     local Callback = config.Script or function() end
 
     local Dropdown = Instance.new("Frame")
-    Dropdown.Size = UDim2.new(1, 0, 0, 40)
-    Dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Dropdown.Size = UDim2.new(1, 0, 0, 60) -- 🔥 Adjusted for visibility
+    Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- More contrast
     Dropdown.Parent = self.Frame
-    Dropdown.ClipsDescendants = false -- 🔥 Fix: Allow contents to be visible
+    Dropdown.ClipsDescendants = true -- ✅ Fix component collision
 
     local UICorner = Instance.new("UICorner", Dropdown)
     UICorner.CornerRadius = UDim.new(0, 6)
 
     local DropdownDisplay = Instance.new("TextLabel")
-    DropdownDisplay.Size = UDim2.new(0.8, -10, 1, 0)
+    DropdownDisplay.Size = UDim2.new(0.75, -10, 1, 0)
     DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
     DropdownDisplay.BackgroundTransparency = 1
     DropdownDisplay.Text = Name .. ": " .. CurrentOption
-    DropdownDisplay.TextSize = 16
+    DropdownDisplay.TextSize = 32 -- 🔥 2x bigger text
     DropdownDisplay.Font = Enum.Font.GothamBold
     DropdownDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
     DropdownDisplay.TextXAlignment = Enum.TextXAlignment.Left
     DropdownDisplay.Parent = Dropdown
 
     local DropdownButton = Instance.new("TextButton")
-    DropdownButton.Size = UDim2.new(0.15, -5, 1, -10)
-    DropdownButton.Position = UDim2.new(0.85, 0, 0, 5)
-    DropdownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    DropdownButton.Size = UDim2.new(0.2, -5, 1, -10)
+    DropdownButton.Position = UDim2.new(0.8, 0, 0, 5)
+    DropdownButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     DropdownButton.Text = "▼"
-    DropdownButton.TextSize = 18
+    DropdownButton.TextSize = 36
     DropdownButton.Font = Enum.Font.GothamBold
     DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     DropdownButton.Parent = Dropdown
@@ -550,39 +549,50 @@ CreateDropdown = function(self, config)
     ButtonCorner.CornerRadius = UDim.new(0, 6)
 
     local DropdownList = Instance.new("Frame")
-    DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Start hidden
-    DropdownList.Position = UDim2.new(0, 0, 1, 0)
-    DropdownList.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    DropdownList.Size = UDim2.new(1, 0, 0, 0)
+    DropdownList.Position = UDim2.new(0, 0, 1, 0) -- 🔥 Default position (below)
+    DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     DropdownList.Visible = false
+    DropdownList.ClipsDescendants = true -- ✅ Prevents components inside
     DropdownList.Parent = Dropdown
 
     local UIListLayout = Instance.new("UIListLayout", DropdownList)
-    UIListLayout.Padding = UDim.new(0, 2)
+    UIListLayout.Padding = UDim.new(0, 4)
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-    -- 🔥 Dropdown Toggle
+    -- 🔥 Dropdown Toggle + Boundary Fix
     DropdownButton.MouseButton1Click:Connect(function()
         DropdownList.Visible = not DropdownList.Visible
-        print("Dropdown button clicked! Visible:", DropdownList.Visible)
 
         if DropdownList.Visible then
-            local newHeight = (#Options * 35) + 10 -- Auto-adjust height
+            local newHeight = (#Options * 50) + 10
+            local DropdownPosition = Dropdown.AbsolutePosition.Y
+            local ScreenHeight = game:GetService("Workspace").CurrentCamera.ViewportSize.Y
+
+            -- ✅ Check if dropdown fits inside UI (Prevents boundary overflow)
+            if DropdownPosition + newHeight > ScreenHeight then
+                DropdownList.Position = UDim2.new(0, 0, -1, -newHeight) -- 🔥 Expand UP instead
+            else
+                DropdownList.Position = UDim2.new(0, 0, 1, 0) -- 🔥 Expand DOWN (default)
+            end
+
             DropdownList.Size = UDim2.new(1, 0, 0, newHeight)
             DropdownButton.Text = "▲"
         else
-            DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Hide it
+            DropdownList.Size = UDim2.new(1, 0, 0, 0)
             DropdownButton.Text = "▼"
         end
     end)
 
     -- 🔥 Create Option Buttons
     for _, option in pairs(Options) do
-        print("Adding option:", option)
-
         local OptionButton = Instance.new("TextButton")
-        OptionButton.Size = UDim2.new(1, 0, 0, 35)
-        OptionButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        OptionButton.Size = UDim2.new(1, 0, 0, 50) -- Bigger options
+        OptionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         OptionButton.Text = option
+        OptionButton.TextSize = 32 -- 🔥 2x bigger text
+        OptionButton.Font = Enum.Font.GothamBold
+        OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         OptionButton.Parent = DropdownList
 
         OptionButton.MouseButton1Click:Connect(function()
@@ -590,7 +600,7 @@ CreateDropdown = function(self, config)
             Callback(option)
             DropdownList.Visible = false
             DropdownButton.Text = "▼"
-            DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Collapse it
+            DropdownList.Size = UDim2.new(1, 0, 0, 0) -- Collapse
         end)
     end
 
