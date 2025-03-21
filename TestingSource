@@ -11,6 +11,14 @@ function Cryptic:CreateWindow(config)
     local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
     local DebugMode = config.LibraryElementObservation or false
 
+    -- Key System Configurations
+    local KeySystemEnabled = config.KeySystem or false
+    local CorrectKey = config.Key or "Hello"
+    local KeyTitle = config.KeyTitle or "Key System"
+    local KeySubTitle = config.KeySubTitle or "Enter Key below"
+    local TextboxPlaceholder = config.TextboxText or "Enter Key"
+
+    -- Debug function
     local function debugPrint(elementName, success, errMsg)
         if DebugMode then
             if success then
@@ -21,14 +29,14 @@ function Cryptic:CreateWindow(config)
         end
     end
 
-
+    -- Create ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
     local success, err = pcall(function()
         ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     end)
     debugPrint("ScreenGui", success, err)
 
-
+    -- Main UI Frame
     local MainFrame = Instance.new("Frame")
     success, err = pcall(function()
         MainFrame.Size = UDim2.new(0, 562, 0, 375)
@@ -40,12 +48,12 @@ function Cryptic:CreateWindow(config)
     end)
     debugPrint("MainFrame", success, err)
 
-
+    -- UI Corner (Rounded edges)
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 8)
     UICorner.Parent = MainFrame
 
-
+    -- Title Label
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Size = UDim2.new(1, 0, 0, 35)
     TitleLabel.BackgroundTransparency = 1
@@ -55,28 +63,92 @@ function Cryptic:CreateWindow(config)
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLabel.Parent = MainFrame
 
+    -- 🛑 Key System
+    if KeySystemEnabled then
+        local KeySystemFrame = Instance.new("Frame")
+        KeySystemFrame.Size = UDim2.new(0, 400, 0, 200)
+        KeySystemFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+        KeySystemFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        KeySystemFrame.Parent = ScreenGui
 
-    if LoadingScreenEnabled then
-        local LoadingFrame = Instance.new("Frame")
-        LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
-        LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-        LoadingFrame.Parent = ScreenGui
+        local KeyTitleLabel = Instance.new("TextLabel")
+        KeyTitleLabel.Text = KeyTitle
+        KeyTitleLabel.Size = UDim2.new(1, 0, 0, 30)
+        KeyTitleLabel.TextSize = 20
+        KeyTitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        KeyTitleLabel.Parent = KeySystemFrame
 
-        local LoadingLabel = Instance.new("TextLabel")
-        LoadingLabel.Size = UDim2.new(1, 0, 0, 50)
-        LoadingLabel.Position = UDim2.new(0, 0, 0.5, -25)
-        LoadingLabel.Text = LoadingTitle
-        LoadingLabel.TextSize = 20
-        LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        LoadingLabel.Font = Enum.Font.GothamBold
-        LoadingLabel.Parent = LoadingFrame
+        local KeySubTitleLabel = Instance.new("TextLabel")
+        KeySubTitleLabel.Text = KeySubTitle
+        KeySubTitleLabel.Size = UDim2.new(1, 0, 0, 20)
+        KeySubTitleLabel.Position = UDim2.new(0, 0, 0, 30)
+        KeySubTitleLabel.TextSize = 14
+        KeySubTitleLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+        KeySubTitleLabel.Parent = KeySystemFrame
 
-        task.spawn(function()
-            wait(LoadingScreenDuration)
-            LoadingFrame:Destroy()
-            MainFrame.Visible = true
+        local KeyTextBox = Instance.new("TextBox")
+        KeyTextBox.Size = UDim2.new(0.8, 0, 0, 30)
+        KeyTextBox.Position = UDim2.new(0.1, 0, 0, 60)
+        KeyTextBox.Text = TextboxPlaceholder
+        KeyTextBox.ClearTextOnFocus = false
+        KeyTextBox.TextSize = 16
+        KeyTextBox.Parent = KeySystemFrame
+
+        local EnterButton = Instance.new("TextButton")
+        EnterButton.Size = UDim2.new(0.8, 0, 0, 30)
+        EnterButton.Position = UDim2.new(0.1, 0, 0, 100)
+        EnterButton.Text = "Enter"
+        EnterButton.TextSize = 16
+        EnterButton.Parent = KeySystemFrame
+
+        local ErrorMessage = Instance.new("TextLabel")
+        ErrorMessage.Size = UDim2.new(1, 0, 0, 20)
+        ErrorMessage.Position = UDim2.new(0, 0, 0, 140)
+        ErrorMessage.TextColor3 = Color3.fromRGB(255, 0, 0)
+        ErrorMessage.Text = ""
+        ErrorMessage.Visible = false
+        ErrorMessage.Parent = KeySystemFrame
+
+        -- 🔹 Enter Button Logic
+        EnterButton.MouseButton1Click:Connect(function()
+            if KeyTextBox.Text == CorrectKey then
+                KeySystemFrame:Destroy() -- Remove Key System UI
+                if LoadingScreenEnabled then
+                    showLoadingScreen() -- Call loading screen
+                else
+                    MainFrame.Visible = true
+                end
+            else
+                ErrorMessage.Text = "Incorrect Key! Try Again."
+                ErrorMessage.Visible = true
+            end
         end)
+    elseif LoadingScreenEnabled then
+        -- No Key System, but Loading Screen is enabled
+        local function showLoadingScreen()
+            local LoadingFrame = Instance.new("Frame")
+            LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+            LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+            LoadingFrame.Parent = ScreenGui
+
+            local LoadingLabel = Instance.new("TextLabel")
+            LoadingLabel.Size = UDim2.new(1, 0, 0, 50)
+            LoadingLabel.Position = UDim2.new(0, 0, 0.5, -25)
+            LoadingLabel.Text = LoadingTitle
+            LoadingLabel.TextSize = 20
+            LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            LoadingLabel.Font = Enum.Font.GothamBold
+            LoadingLabel.Parent = LoadingFrame
+
+            task.spawn(function()
+                wait(LoadingScreenDuration)
+                LoadingFrame:Destroy()
+                MainFrame.Visible = true
+            end)
+        end
+        showLoadingScreen()
     else
+        -- No Key System and No Loading Screen, show UI instantly
         MainFrame.Visible = true
     end
 
