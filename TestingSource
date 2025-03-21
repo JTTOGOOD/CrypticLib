@@ -516,14 +516,20 @@ end,
     local MultiSelect = config.MultiSelect or false
     local Callback = config.Script or function() end
 
+    -- Ensure the dropdown is inside the tab's container
+    if not self.Container then
+        warn("Dropdown cannot be created because 'self.Container' is missing.")
+        return
+    end
+
     -- Create Dropdown Frame
     local Dropdown = Instance.new("Frame")
-    Dropdown.Size = UDim2.new(1, 0, 0, 40)
+    Dropdown.Size = UDim2.new(1, 0, 0, 40) -- Ensure it has a visible size
     Dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Dropdown.Parent = self.Container -- Ensures it appears in the tab
+    Dropdown.Parent = self.Container -- Parent to the tab container
     Dropdown.ClipsDescendants = true
 
-    -- Add UI Corner for rounded edges
+    -- UI Corner for rounded edges
     local UICorner = Instance.new("UICorner", Dropdown)
     UICorner.CornerRadius = UDim.new(0, 6)
 
@@ -547,7 +553,6 @@ end,
 
     local UIListLayout = Instance.new("UIListLayout", DropdownList)
     UIListLayout.Padding = UDim.new(0, 2)
-    UIListLayout.Parent = DropdownList
 
     -- Toggle Dropdown List
     DropdownButton.MouseButton1Click:Connect(function()
@@ -585,7 +590,6 @@ end,
 
     return Dropdown
 end,
-
 
         CreateSlider = function(self, config)
             local SliderName = config.Name or "Slider"
