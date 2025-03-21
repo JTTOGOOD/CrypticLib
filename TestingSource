@@ -311,16 +311,24 @@ end
     local Tabs = {}
 
 function Cryptic:CreateTab(tabName)
+    -- Ensure MainFrame is initialized
+    if not MainFrame then
+        warn("MainFrame is missing! Make sure to create a window first.")
+        return
+    end
+
     -- Ensure TabList is initialized
     if not TabList then
         warn("TabList is missing! Initializing...")
+
         TabList = Instance.new("Frame")
         TabList.Size = UDim2.new(1, 0, 0, 50)
         TabList.Position = UDim2.new(0, 0, 0, 0)
         TabList.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
         TabList.Parent = MainFrame
 
-        local UIListLayout = Instance.new("UIListLayout", TabList)
+        local UIListLayout = Instance.new("UIListLayout")
+        UIListLayout.Parent = TabList
         UIListLayout.FillDirection = Enum.FillDirection.Horizontal
         UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
         UIListLayout.Padding = UDim.new(0, 5)
@@ -330,7 +338,7 @@ function Cryptic:CreateTab(tabName)
     local TabButton = Instance.new("TextButton")
     TabButton.Size = UDim2.new(0, 100, 1, 0)
     TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = tabName -- 🔥 Fix: Ensure button text is assigned
+    TabButton.Text = tabName
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
     TabButton.Parent = TabList
