@@ -522,29 +522,41 @@ end,
         return
     end
 
-    print("Dropdown Parent:", self.Frame) -- Debugging
-
-    -- Create Dropdown Frame
+    -- Create Dropdown Main Frame
     local Dropdown = Instance.new("Frame")
-    Dropdown.Size = UDim2.new(1, 0, 0, 40) -- Ensure it has a visible size
+    Dropdown.Size = UDim2.new(1, 0, 0, 40)
     Dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Dropdown.Parent = self.Frame -- ✅ Using self.Frame instead of self.Container
+    Dropdown.Parent = self.Frame
     Dropdown.ClipsDescendants = true
-    Dropdown.Visible = true 
 
-    -- UI Corner for rounded edges
     local UICorner = Instance.new("UICorner", Dropdown)
     UICorner.CornerRadius = UDim.new(0, 6)
 
-    -- Dropdown Button
+    -- Dropdown Display (Current Selected Option)
+    local DropdownDisplay = Instance.new("TextLabel")
+    DropdownDisplay.Size = UDim2.new(0.8, 0, 1, 0) -- 80% width
+    DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
+    DropdownDisplay.BackgroundTransparency = 1
+    DropdownDisplay.Text = Name .. ": " .. CurrentOption
+    DropdownDisplay.TextSize = 16
+    DropdownDisplay.Font = Enum.Font.GothamBold
+    DropdownDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
+    DropdownDisplay.TextXAlignment = Enum.TextXAlignment.Left
+    DropdownDisplay.Parent = Dropdown
+
+    -- Dropdown Toggle Button (⏷)
     local DropdownButton = Instance.new("TextButton")
-    DropdownButton.Size = UDim2.new(1, 0, 1, 0)
-    DropdownButton.BackgroundTransparency = 1
-    DropdownButton.Text = Name .. ": " .. CurrentOption
-    DropdownButton.TextSize = 16
+    DropdownButton.Size = UDim2.new(0.2, -10, 1, 0) -- 20% width
+    DropdownButton.Position = UDim2.new(0.8, 0, 0, 0)
+    DropdownButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    DropdownButton.Text = "▼" -- Down arrow
+    DropdownButton.TextSize = 18
     DropdownButton.Font = Enum.Font.GothamBold
     DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     DropdownButton.Parent = Dropdown
+
+    local ButtonCorner = Instance.new("UICorner", DropdownButton)
+    ButtonCorner.CornerRadius = UDim.new(0, 6)
 
     -- Dropdown List (Hidden by Default)
     local DropdownList = Instance.new("Frame")
@@ -557,18 +569,19 @@ end,
     local UIListLayout = Instance.new("UIListLayout", DropdownList)
     UIListLayout.Padding = UDim.new(0, 2)
 
-    -- Toggle Dropdown List
+    -- Toggle Dropdown List on Button Click
     DropdownButton.MouseButton1Click:Connect(function()
         DropdownList.Visible = not DropdownList.Visible
         if DropdownList.Visible then
             DropdownList.Size = UDim2.new(1, 0, 0, #Options * 30)
+            DropdownButton.Text = "▲" -- Change to Up arrow
         else
             DropdownList.Size = UDim2.new(1, 0, 0, 0)
+            DropdownButton.Text = "▼" -- Change to Down arrow
         end
     end)
 
     -- Populate Dropdown Options
-    print("Dropdown Options:", #Options) -- Debugging
     for _, option in pairs(Options) do
         local OptionButton = Instance.new("TextButton")
         OptionButton.Size = UDim2.new(1, 0, 0, 30)
@@ -585,10 +598,13 @@ end,
             else
                 CurrentOption = option
             end
-            DropdownButton.Text = Name .. ": " .. CurrentOption
+            DropdownDisplay.Text = Name .. ": " .. CurrentOption
             Callback(CurrentOption)
+
+            -- Close dropdown after selection
             DropdownList.Visible = false
             DropdownList.Size = UDim2.new(1, 0, 0, 0)
+            DropdownButton.Text = "▼" -- Reset to Down arrow
         end)
     end
 
