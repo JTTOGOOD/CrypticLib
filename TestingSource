@@ -319,7 +319,7 @@ function Cryptic:CreateWindow(config)
     end
 
     local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(0, 100, 1, 0) -- Width: 100px, Full height
+    TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
     TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     TabButton.Text = tabName
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
