@@ -22,11 +22,21 @@ function Cryptic:CreateWindow(config)
     end
 
 
-    local ScreenGui = Instance.new("ScreenGui")
-    local success, err = pcall(function()
-        ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-    end)
-    debugPrint("ScreenGui", success, err)
+-- 🔥 Prevent UI Reset Issues (Move UI to CoreGui)
+local existingUI = game:GetService("CoreGui"):FindFirstChild("CroxieLib")
+if existingUI then
+    existingUI:Destroy() -- Remove old instance before creating a new one
+end
+
+-- Create ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+local success, err = pcall(function()
+    ScreenGui.Name = "CroxieLib"
+    ScreenGui.Parent = game:GetService("CoreGui") -- 🔥 Fixes UI disappearing issue
+    ScreenGui.ResetOnSpawn = false
+end)
+debugPrint("ScreenGui", success, err)
+
 
 
     local MainFrame = Instance.new("Frame")
