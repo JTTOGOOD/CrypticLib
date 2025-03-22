@@ -196,6 +196,7 @@ function Cryptic:CreateWindow(config)
 		local Duration = settings.Duration or 5
 		local CloseButton = settings.CloseButton or false
 		local ButtonText = settings.ButtonText or "Close"
+                local player = game:GetService("Players").LocalPlayer
 
 		-- Create Notification UI
 		local NotificationFrame = Instance.new("Frame")
@@ -203,7 +204,8 @@ function Cryptic:CreateWindow(config)
 		NotificationFrame.Position = UDim2.new(0.75, 0, 0.75, 0)
 		NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 		NotificationFrame.BackgroundTransparency = 0.1
-		NotificationFrame.Parent = game:GetService("CoreGui"):FindFirstChild("CroxieLib") or game:GetService("CoreGui")
+                local PlayerGui = player:FindFirstChild("PlayerGui")
+                NotificationFrame.Parent = PlayerGui or game:GetService("CoreGui")
 
 		-- Title Label
 		local TitleLabel = Instance.new("TextLabel")
