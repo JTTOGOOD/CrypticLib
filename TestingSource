@@ -483,6 +483,77 @@ function Cryptic:CreateWindow(config)
 				return Button
 			end,
 
+                        CreateTimer = function(self, config)
+    local TimerFrame = Instance.new("Frame")
+    local TimerLabel = Instance.new("TextLabel")
+    local StartButton = Instance.new("TextButton")
+    local StopButton = Instance.new("TextButton")
+
+    -- Parent
+    TimerFrame.Parent = self
+    TimerFrame.Size = UDim2.new(0, 200, 0, 50)
+    TimerFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    
+    -- Timer Label
+    TimerLabel.Parent = TimerFrame
+    TimerLabel.Text = config.Name .. ": 00:00:00"
+    TimerLabel.Size = UDim2.new(1, 0, 1, 0)
+    TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TimerLabel.Font = Enum.Font.GothamBold
+
+    -- Start Button
+    StartButton.Parent = TimerFrame
+    StartButton.Text = "Start"
+    StartButton.Size = UDim2.new(0.5, -5, 0, 25)
+    StartButton.Position = UDim2.new(0, 0, 1, 5)
+
+    -- Stop Button
+    StopButton.Parent = TimerFrame
+    StopButton.Text = "Stop"
+    StopButton.Size = UDim2.new(0.5, -5, 0, 25)
+    StopButton.Position = UDim2.new(0.5, 5, 1, 5)
+
+    -- Calculate total time
+    local totalTime = (config.HoursTime * 3600) + (config.MinutesTime * 60) + config.SecondsTime
+    local currentTime = (config.Type == "Timer") and totalTime or 0
+    local running = false
+
+    -- Timer update function
+    local function updateTimer()
+        local hours = math.floor(currentTime / 3600)
+        local minutes = math.floor((currentTime % 3600) / 60)
+        local seconds = currentTime % 60
+        TimerLabel.Text = config.Name .. string.format(": %02d:%02d:%02d", hours, minutes, seconds)
+    end
+
+    -- Start Timer function
+    local function startTimer()
+        if running then return end
+        running = true
+        while running and ((config.Type == "Timer" and currentTime > 0) or (config.Type == "Stopwatch" and currentTime < totalTime)) do
+            task.wait(1)
+            if config.Type == "Timer" then
+                currentTime = currentTime - 1
+            else
+                currentTime = currentTime + 1
+            end
+            updateTimer()
+        end
+    end
+
+    -- Stop Timer function
+    local function stopTimer()
+        running = false
+    end
+
+    -- Button Connections
+    StartButton.MouseButton1Click:Connect(startTimer)
+    StopButton.MouseButton1Click:Connect(stopTimer)
+
+    -- Initialize timer
+    updateTimer()
+end,
+
 			CreateToggle = function(self, config)
 				local ToggleState = config.ToggleState or false
 				local ToggleName = config.Name or "Toggle"
