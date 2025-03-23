@@ -464,49 +464,25 @@ function Cryptic:CreateWindow(config)
 
 			-- CreateButton Function
 			CreateButton = function(self, config)
-    local Button = Instance.new("TextButton")
-    Button.Size = UDim2.new(1, -10, 0, 40)
-    Button.Text = "  " .. (config.Name or "Button")
-    Button.Font = Enum.Font.GothamBold
-    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    Button.AutoButtonColor = false
-    Button.Parent = self.Frame
+				local Button = Instance.new("TextButton")
+				Button.Size = UDim2.new(1, -10, 0, 40)
+				Button.Text = "  " .. (config.Name or "Button")
+				Button.Font = Enum.Font.GothamBold
+				Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+				Button.Parent = self.Frame
 
-    local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 6)
-    ButtonCorner.Parent = Button
+				local ButtonCorner = Instance.new("UICorner")
+				ButtonCorner.CornerRadius = UDim.new(0, 6)
+				ButtonCorner.Parent = Button
 
-    -- Function to update button name
-    function Button:SetBTNname(newName)
-        self.Text = "  " .. newName
-    end
+				Button.MouseButton1Click:Connect(function()
+					if config.Script then config.Script() end
+				end)
 
-    -- Hover Effects
-    Button.MouseEnter:Connect(function()
-        Button.BackgroundColor3 = Color3.fromRGB(65, 65, 65) -- Lighten on hover
-    end)
+				return Button
+			end,
 
-    Button.MouseLeave:Connect(function()
-        Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Restore original color
-    end)
-
-    -- Click Effect
-    Button.MouseButton1Down:Connect(function()
-        Button.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Darken on click
-    end)
-
-    Button.MouseButton1Up:Connect(function()
-        Button.BackgroundColor3 = Color3.fromRGB(65, 65, 65) -- Back to hover color
-    end)
-
-    -- Click Event
-    Button.MouseButton1Click:Connect(function()
-        if config.Script then config.Script() end
-    end)
-
-    return Button
-end,
 
 
 			CreateToggle = function(self, config)
