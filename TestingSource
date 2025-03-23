@@ -490,7 +490,7 @@ function Cryptic:CreateWindow(config)
     local StopButton = Instance.new("TextButton")
 
     -- Parent
-    TimerFrame.Parent = self
+    TimerFrame.Parent = self.Frane
     TimerFrame.Size = UDim2.new(0, 200, 0, 50)
     TimerFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     
