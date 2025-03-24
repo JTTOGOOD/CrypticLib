@@ -4,7 +4,19 @@ local Cryptic = {}
 
 function Cryptic:CreateWindow(config)
 	local Name = config.Name or "Cryptic UI"
+	local LoadingScreenEnabled = config.LoadingScreen or false
+	local LoadingScreenDuration = config.LoadingScreenDuration or 2
+	local LoadingTitle = config.LoadingTitle or "Loading..."
+	local LoadingSubtitle = config.LoadingSubtitle or "Please wait"
+	local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
 	local DebugMode = config.LibraryElementObservation or false
+
+	-- Key System Configurations
+	local KeySystemEnabled = config.KeySystem or false
+	local CorrectKey = config.Key or "Hello"
+	local KeyTitle = config.KeyTitle or "Key System"
+	local KeySubTitle = config.KeySubTitle or "Enter Key below"
+	local TextboxPlaceholder = config.TextboxText or "Enter Key"
 
 	-- Debug function
 	local function debugPrint(elementName, success, errMsg)
@@ -20,24 +32,24 @@ function Cryptic:CreateWindow(config)
 	-- 🔥 Prevent UI Reset Issues (Move UI to CoreGui)
 	local existingUI = game:GetService("CoreGui"):FindFirstChild("CroxieLib")
 	if existingUI then
-		existingUI:Destroy()
+		existingUI:Destroy() -- Remove old instance before creating a new one
 	end
 
 	-- Create ScreenGui
 	local ScreenGui = Instance.new("ScreenGui")
 	local success, err = pcall(function()
 		ScreenGui.Name = "CroxieLib"
-		ScreenGui.Parent = game:GetService("CoreGui")
+		ScreenGui.Parent = game:GetService("CoreGui") -- 🔥 Fixes UI disappearing issue
 		ScreenGui.ResetOnSpawn = false
 	end)
 	debugPrint("ScreenGui", success, err)
 
-	-- 🖼️ Main UI Frame
+	-- Main UI Frame
 	local MainFrame = Instance.new("Frame")
 	success, err = pcall(function()
 		MainFrame.Name = "MainFrame"
-		MainFrame.Size = UDim2.new(0, 735, 0, 564)
-		MainFrame.Position = UDim2.new(0.20653908, 0, 0.0923520923, 0)
+		MainFrame.Size = UDim2.new(0, 585, 0, 416)
+		MainFrame.Position = UDim2.new(0.267145127, 0, 0.203463197, 0)
 		MainFrame.BackgroundColor3 = Color3.new(0.105882, 0.105882, 0.105882)
 		MainFrame.BorderSizePixel = 0
 		MainFrame.Visible = false
@@ -45,37 +57,23 @@ function Cryptic:CreateWindow(config)
 	end)
 	debugPrint("MainFrame", success, err)
 
-	-- 🔵 UI Corner (Rounded edges)
+	-- UI Corner (Rounded edges)
 	local UICorner = Instance.new("UICorner")
 	UICorner.CornerRadius = UDim.new(0, 10)
 	UICorner.Parent = MainFrame
 
-	-- 🔠 Title Label
+	-- Title Label
 	local TitleLabel = Instance.new("TextLabel")
-	success, err = pcall(function()
-		TitleLabel.Name = "TitleLabel"
-		TitleLabel.Size = UDim2.new(0, 560, 0, 50)
-		TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0)
-		TitleLabel.BackgroundTransparency = 1
-		TitleLabel.Text = Name
-		TitleLabel.Font = Enum.Font.GothamBold
-		TitleLabel.TextSize = 32
-		TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0)
-		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-		TitleLabel.Parent = MainFrame
-	end)
-	debugPrint("TitleLabel", success, err)
-
-	-- ✅ Return UI elements
-	return {
-		ScreenGui = ScreenGui,
-		MainFrame = MainFrame,
-		TitleLabel = TitleLabel
-	}
-end
-
--- Make sure to return Cryptic so other scripts can use it!
-return Cryptic
+	TitleLabel.Name = "TitleLabel"
+	TitleLabel.Size = UDim2.new(0, 560, 0, 50)
+	TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0)
+	TitleLabel.BackgroundTransparency = 1
+	TitleLabel.Text = Name
+	TitleLabel.Font = Enum.Font.GothamBold
+	TitleLabel.TextSize = 23
+	TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0)
+	TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	TitleLabel.Parent = MainFrame
 
 
 	-- 🛑 Key System
