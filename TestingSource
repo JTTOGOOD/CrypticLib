@@ -482,20 +482,16 @@ end
         if config.Script then config.Script() end
     end)
 
-    -- Store reference to Button inside ButtonObject
-    local ButtonObject = {}
-    ButtonObject.Button = Button
-
-    -- Define SetName function inside ButtonObject
-    function ButtonObject:SetName(newName)
-        if self.Button then -- Ensure the button exists
-            self.Button.Text = "  " .. newName
+    -- Attach function directly to the button instance
+    function Button:SetName(newName)
+        if self then
+            self.Text = "  " .. newName
         else
             warn("SetName failed: Button is nil")
         end
     end
 
-    return ButtonObject
+    return Button
 end,
 
 
