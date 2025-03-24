@@ -464,7 +464,7 @@ end
 				}
 			end,
 
-			CreateButton = function(self, config)
+                        CreateButton = function(self, config)
     local Button = Instance.new("TextButton")
     Button.Size = UDim2.new(1, -10, 0, 40)
     Button.Text = "  " .. (config.Name or "Button")
@@ -473,24 +473,41 @@ end
     Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     Button.Parent = self.Frame
 
+    -- Create UI corner (rounded edges)
     local ButtonCorner = Instance.new("UICorner")
     ButtonCorner.CornerRadius = UDim.new(0, 6)
     ButtonCorner.Parent = Button
 
+    -- Button click event
     Button.MouseButton1Click:Connect(function()
-        if config.Script then config.Script() end
+        if config.Script then
+            config.Script()
+        end
     end)
 
-    -- ✅ Wrap the button inside a table with methods
+    -- ✅ Return a table with useful methods
     local ButtonObject = {
-        Instance = Button, -- Store actual button instance
+        Instance = Button, -- Store the button reference
+
+        -- Function to change button text
         SetName = function(self, newName)
-            self.Instance.Text = "  " .. newName
+            if self.Instance then
+                self.Instance.Text = "  " .. newName
+            end
+        end,
+
+        -- Function to change button color
+        SetColor = function(self, newColor)
+            if self.Instance then
+                self.Instance.BackgroundColor3 = newColor
+            end
         end
     }
 
     return ButtonObject
 end,
+
+
 			CreateToggle = function(self, config)
 				local ToggleState = config.ToggleState or false
 				local ToggleName = config.Name or "Toggle"
