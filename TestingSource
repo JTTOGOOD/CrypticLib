@@ -466,24 +466,30 @@ end
 
 			-- CreateButton Function
 			CreateButton = function(self, config)
-				local Button = Instance.new("TextButton")
-				Button.Size = UDim2.new(1, -10, 0, 40)
-				Button.Text = "  " .. (config.Name or "Button")
-				Button.Font = Enum.Font.GothamBold
-				Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-				Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-				Button.Parent = self.Frame
+    local Button = Instance.new("TextButton")
+    Button.Size = UDim2.new(1, -10, 0, 40)
+    Button.Text = "  " .. (config.Name or "Button")
+    Button.Font = Enum.Font.GothamBold
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Button.Parent = self.Frame
 
-				local ButtonCorner = Instance.new("UICorner")
-				ButtonCorner.CornerRadius = UDim.new(0, 6)
-				ButtonCorner.Parent = Button
+    local ButtonCorner = Instance.new("UICorner")
+    ButtonCorner.CornerRadius = UDim.new(0, 6)
+    ButtonCorner.Parent = Button
 
-				Button.MouseButton1Click:Connect(function()
-					if config.Script then config.Script() end
-				end)
+    Button.MouseButton1Click:Connect(function()
+        if config.Script then config.Script() end
+    end)
 
-				return Button
-			end,
+    -- Function to set button name
+    function Button:SetName(newName)
+        self.Text = "  " .. newName
+    end
+
+    return Button
+end,
+
 
 
 
