@@ -485,15 +485,17 @@ end
     -- Attach function directly to the button instance
     function Button:SetName(newName)
         if self then
+            DebugPrint("Setting button name to:", newName) -- Debugging
             self.Text = "  " .. newName
         else
             warn("SetName failed: Button is nil")
         end
     end
 
+    print("Button created successfully:", Button) -- Debugging
+
     return Button
 end,
-
 
 
 			CreateToggle = function(self, config)
