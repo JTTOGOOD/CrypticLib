@@ -700,7 +700,7 @@ end,
 
                         Timer = function(self, config)
     local TimerFrame = Instance.new("Frame")
-    TimerFrame.Size = UDim2.new(1, -10, 0, 50)
+    TimerFrame.Size = UDim2.new(1, -10, 0, 40)
     TimerFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     TimerFrame.Parent = self.Frame
 
@@ -709,18 +709,21 @@ end,
     TimerCorner.Parent = TimerFrame
 
     local TimerLabel = Instance.new("TextLabel")
-    TimerLabel.Size = UDim2.new(1, -10, 1, 0)
-    TimerLabel.Text = config.Name or "Timer"
-    TimerLabel.Font = Enum.Font.GothamBold
-    TimerLabel.TextSize = 14
-    TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TimerLabel.Size = UDim2.new(1, 0, 1, 0)
     TimerLabel.BackgroundTransparency = 1
+    TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TimerLabel.Font = Enum.Font.GothamBold
+    TimerLabel.TextScaled = true
+    TimerLabel.Text = "00:00:00"
     TimerLabel.Parent = TimerFrame
 
     local totalSeconds = (config.HourDuration or 0) * 3600 + (config.MinuteDuration or 0) * 60 + (config.SecondDuration or 0)
-    local running = config.AutoStart or false
-    local completed = false
+    local running = config.AutoStart
+    local isCountdown = config.Countdown
+    local loop = config.Loop
+    local startTime = tick()
 
+    -- Function to format time
     local function formatTime(seconds)
         local days = math.floor(seconds / 86400)
         local hours = math.floor((seconds % 86400) / 3600)
@@ -728,68 +731,71 @@ end,
         local secs = seconds % 60
 
         if config.ShowTime then
-            if days > 0 then
-                return string.format("%d Days, %d Hours, %d Minutes", days, hours, minutes)
-            elseif hours > 0 then
-                return string.format("%d Hours, %d Minutes", hours, minutes)
-            else
-                return string.format("%d Minutes, %d Seconds", minutes, secs)
-            end
+            return string.format("%d Days, %02d:%02d:%02d", days, hours, minutes, secs)
         else
-            return ""
+            return string.format("%02d:%02d:%02d", hours, minutes, secs)
         end
     end
 
-    local function updateTimer()
-        if config.Countdown then
-            totalSeconds = totalSeconds - 1
-            if totalSeconds <= 0 then
-                if config.Loop then
-                    totalSeconds = (config.HourDuration or 0) * 3600 + (config.MinuteDuration or 0) * 60 + (config.SecondDuration or 0)
+    -- Timer logic
+    task.spawn(function()
+        while running do
+            local elapsed = tick() - startTime
+            local currentSeconds = isCountdown and (totalSeconds - elapsed) or elapsed
+
+            if currentSeconds <= 0 then
+                if config.OnComplete then
+                    config.OnComplete()
+                end
+                if loop then
+                    startTime = tick()
                 else
-                    running = false
-                    completed = true
-                    if config.OnComplete then
-                        config.OnComplete()
-                    end
+                    break
                 end
             end
-        else
-            totalSeconds = totalSeconds + 1
-        end
-        TimerLabel.Text = formatTime(totalSeconds)
-    end
 
-    -- Timer Object
+            TimerLabel.Text = formatTime(math.max(0, currentSeconds))
+            task.wait(1)
+        end
+    end)
+
+    -- Return timer object with controls
     local TimerObject = {
         Instance = TimerFrame,
         Start = function(self)
-            if not running then
-                running = true
-                while running and not completed do
-                    updateTimer()
-                    wait(1)
-                end
-            end
+            running = true
+            startTime = tick()
         end,
         Stop = function(self)
             running = false
         end,
         Reset = function(self)
-            totalSeconds = (config.HourDuration or 0) * 3600 + (config.MinuteDuration or 0) * 60 + (config.SecondDuration or 0)
-            completed = false
-            running = config.AutoStart
-        end,
-        SetTime = function(self, newHours, newMinutes, newSeconds)
-            totalSeconds = (newHours or 0) * 3600 + (newMinutes or 0) * 60 + (newSeconds or 0)
+            running = false
+            startTime = tick()
             TimerLabel.Text = formatTime(totalSeconds)
         end
     }
 
-    -- AutoStart Functionality
-    if config.AutoStart then
-        spawn(function()
+    -- Add Start/Stop buttons if AutoStart is false
+    if not config.AutoStart then
+        local StartButton = Instance.new("TextButton")
+        StartButton.Size = UDim2.new(0.5, -5, 1, 0)
+        StartButton.Position = UDim2.new(0, 0, 0, 40)
+        StartButton.Text = "Start"
+        StartButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        StartButton.Parent = TimerFrame
+        StartButton.MouseButton1Click:Connect(function()
             TimerObject:Start()
+        end)
+
+        local StopButton = Instance.new("TextButton")
+        StopButton.Size = UDim2.new(0.5, -5, 1, 0)
+        StopButton.Position = UDim2.new(0.5, 5, 0, 40)
+        StopButton.Text = "Stop"
+        StopButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        StopButton.Parent = TimerFrame
+        StopButton.MouseButton1Click:Connect(function()
+            TimerObject:Stop()
         end)
     end
 
