@@ -482,17 +482,18 @@ end
         if config.Script then config.Script() end
     end)
 
-    -- Wrap Button inside a table with custom functions
-    local ButtonObject = {
-        Instance = Button
-    }
+    -- Wrapping Button inside a Lua table to allow methods
+    local ButtonObject = {}
+    ButtonObject.Instance = Button
 
+    -- SetName function to change button text
     function ButtonObject:SetName(newName)
         self.Instance.Text = "  " .. newName
     end
 
     return ButtonObject
 end,
+
 
 
 
