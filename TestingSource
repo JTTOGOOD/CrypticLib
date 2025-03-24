@@ -368,17 +368,6 @@ local TabList = Instance.new("ScrollingFrame")
         TabFrame.Visible = true
     end)
 
-		-- Store the tab
-		Tabs[tabName] = TabFrame
-
-		-- Handle tab switching
-		TabButton.MouseButton1Click:Connect(function()
-			for _, tab in pairs(Tabs) do
-				tab.Visible = false
-			end
-			TabFrame.Visible = true
-		end)
-
 		local Tab = {
 			Frame = TabFrame,
 
