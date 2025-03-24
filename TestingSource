@@ -288,7 +288,8 @@ function Cryptic:CreateWindow(config)
     end
 end
 
-	--// Tab List (Scrolling Tabs)
+
+--// Tab List (Scrolling Tabs)
 local TabList = Instance.new("ScrollingFrame")
 TabList.Size = UDim2.new(1, 0, 0, 30)
 TabList.Position = UDim2.new(0, 0, 0, 35)
@@ -351,7 +352,7 @@ function Cryptic:CreateTab(tabName)
     local TabFrame = Instance.new("ScrollingFrame")
     TabFrame.Size = UDim2.new(1, 0, 1, -100)
     TabFrame.Position = UDim2.new(0, 0, 0, 65)
-    TabFrame.BackgroundColor3 = Theme
+    TabFrame.BackgroundColor3 = Theme or Color3.fromRGB(25, 25, 25) -- Default if nil
     TabFrame.Visible = false
     TabFrame.Parent = MainFrame
     TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
@@ -379,7 +380,7 @@ function Cryptic:CreateTab(tabName)
         end
         TabFrame.Visible = true
     end)
-end
+end  
 
 		-- Store the tab
 		Tabs[tabName] = TabFrame
