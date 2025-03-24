@@ -1,7 +1,3 @@
-warn("Report to (@MynamesJT) on Discord if you come across any issues.")
-
-local Cryptic = {}
-
 function Cryptic:CreateWindow(config)
 	local Name = config.Name or "Cryptic UI"
 	local LoadingScreenEnabled = config.LoadingScreen or false
@@ -44,13 +40,13 @@ function Cryptic:CreateWindow(config)
 	end)
 	debugPrint("ScreenGui", success, err)
 
-
 	-- Main UI Frame
 	local MainFrame = Instance.new("Frame")
 	success, err = pcall(function()
-		MainFrame.Size = UDim2.new(0, 562, 0, 375)
-		MainFrame.Position = UDim2.new(0.5, -281, 0.5, -187)
-		MainFrame.BackgroundColor3 = Theme
+		MainFrame.Name = "MainFrame"
+		MainFrame.Size = UDim2.new(0, 585, 0, 416)
+		MainFrame.Position = UDim2.new(0.267145127, 0, 0.203463197, 0)
+		MainFrame.BackgroundColor3 = Color3.new(0.105882, 0.105882, 0.105882)
 		MainFrame.BorderSizePixel = 0
 		MainFrame.Visible = false
 		MainFrame.Parent = ScreenGui
@@ -59,17 +55,20 @@ function Cryptic:CreateWindow(config)
 
 	-- UI Corner (Rounded edges)
 	local UICorner = Instance.new("UICorner")
-	UICorner.CornerRadius = UDim.new(0, 8)
+	UICorner.CornerRadius = UDim.new(0, 10)
 	UICorner.Parent = MainFrame
 
 	-- Title Label
 	local TitleLabel = Instance.new("TextLabel")
-	TitleLabel.Size = UDim2.new(1, 0, 0, 35)
+	TitleLabel.Name = "TitleLabel"
+	TitleLabel.Size = UDim2.new(0, 560, 0, 50)
+	TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0)
 	TitleLabel.BackgroundTransparency = 1
 	TitleLabel.Text = Name
-	TitleLabel.TextSize = 18
 	TitleLabel.Font = Enum.Font.GothamBold
-	TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TitleLabel.TextSize = 23
+	TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0)
+	TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 	TitleLabel.Parent = MainFrame
 
 	-- 🛑 Key System
