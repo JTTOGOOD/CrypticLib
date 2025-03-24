@@ -197,7 +197,8 @@ function Cryptic:CreateWindow(config)
 		local CloseButton = settings.CloseButton or false
 		local ButtonText = settings.ButtonText or "Close"
                 local player = game:GetService("Players").LocalPlayer
-                local PlayerGui = player:FindFirstChild("PlayerGui")
+                local PlayerGui = player:WaitForChild("PlayerGui")
+
                 
 		-- Create Notification UI
 		local NotificationFrame = Instance.new("Frame")
