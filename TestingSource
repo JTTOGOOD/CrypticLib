@@ -44,36 +44,39 @@ function Cryptic:CreateWindow(config)
 	end)
 	debugPrint("ScreenGui", success, err)
 
-	-- Main UI Frame
+	-- 🖼️ Main UI Frame (Updated)
 	local MainFrame = Instance.new("Frame")
 	success, err = pcall(function()
 		MainFrame.Name = "MainFrame"
-		MainFrame.Size = UDim2.new(0, 585, 0, 416)
-		MainFrame.Position = UDim2.new(0.267145127, 0, 0.203463197, 0)
-		MainFrame.BackgroundColor3 = Color3.new(0.105882, 0.105882, 0.105882)
+		MainFrame.Size = UDim2.new(0, 735, 0, 564) -- Updated size
+		MainFrame.Position = UDim2.new(0.20653908, 0, 0.0923520923, 0) -- Updated position
+		MainFrame.BackgroundColor3 = Color3.fromRGB(39, 39, 39) -- Updated background color
 		MainFrame.BorderSizePixel = 0
 		MainFrame.Visible = false
 		MainFrame.Parent = ScreenGui
 	end)
 	debugPrint("MainFrame", success, err)
 
-	-- UI Corner (Rounded edges)
+	-- 🔵 UI Corner (Rounded edges)
 	local UICorner = Instance.new("UICorner")
 	UICorner.CornerRadius = UDim.new(0, 10)
 	UICorner.Parent = MainFrame
 
-	-- Title Label
+	-- 🔠 Title Label (Updated)
 	local TitleLabel = Instance.new("TextLabel")
-	TitleLabel.Name = "TitleLabel"
-	TitleLabel.Size = UDim2.new(0, 560, 0, 50)
-	TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0)
-	TitleLabel.BackgroundTransparency = 1
-	TitleLabel.Text = Name
-	TitleLabel.Font = Enum.Font.GothamBold
-	TitleLabel.TextSize = 23
-	TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0)
-	TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-	TitleLabel.Parent = MainFrame
+	success, err = pcall(function()
+		TitleLabel.Name = "TitleLabel"
+		TitleLabel.Size = UDim2.new(0, 560, 0, 50) -- Same size
+		TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0) -- Same position
+		TitleLabel.BackgroundTransparency = 1
+		TitleLabel.Text = Name -- Uses the `Name` from config
+		TitleLabel.Font = Enum.Font.GothamBold
+		TitleLabel.TextSize = 32 -- Increased text size
+		TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0) -- Kept same color
+		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+		TitleLabel.Parent = MainFrame
+	end)
+	debugPrint("TitleLabel", success, err)
 
 
 	-- 🛑 Key System
