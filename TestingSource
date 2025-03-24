@@ -326,6 +326,9 @@ end
 --// Tabs Storage
 local Tabs = {}
 
+print(Cryptic) -- Should print "table: 0x..." (not nil)
+print(Cryptic.CreateTab) -- Should print "function: 0x..." (not nil)
+
 --// Function to Create a Tab
 function Cryptic:CreateTab(tabName)
     if not TabList then
