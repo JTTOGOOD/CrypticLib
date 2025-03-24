@@ -288,52 +288,58 @@ function Cryptic:CreateWindow(config)
     end
 end
 
-	local TabList = Instance.new("ScrollingFrame")
-	TabList.Size = UDim2.new(1, 0, 0, 30)
-	TabList.Position = UDim2.new(0, 0, 0, 35)
-	TabList.ScrollBarThickness = 4
-	TabList.ScrollingDirection = Enum.ScrollingDirection.X
-	TabList.BackgroundTransparency = 1
-	TabList.Parent = MainFrame
+	--// Tab List (Scrolling Tabs)
+local TabList = Instance.new("ScrollingFrame")
+TabList.Size = UDim2.new(1, 0, 0, 30)
+TabList.Position = UDim2.new(0, 0, 0, 35)
+TabList.ScrollBarThickness = 4
+TabList.ScrollingDirection = Enum.ScrollingDirection.X
+TabList.BackgroundTransparency = 1
+TabList.Parent = MainFrame
 
-	local TabLayout = Instance.new("UIListLayout")
-	TabLayout.FillDirection = Enum.FillDirection.Horizontal
-	TabLayout.Padding = UDim.new(0, 5)
-	TabLayout.Parent = TabList
+--// Layout for Tabs
+local TabLayout = Instance.new("UIListLayout")
+TabLayout.FillDirection = Enum.FillDirection.Horizontal
+TabLayout.Padding = UDim.new(0, 5)
+TabLayout.Parent = TabList
 
-	TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-		TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
-	end)
+-- Auto-adjust the CanvasSize for smooth scrolling
+TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
+end)
 
-	-- **CreateOpener Function (Moved Below MainFrame Creation)**
-	function Cryptic:CreateOpener(Keybind)
-		Keybind = Keybind or "LeftControl"  -- Default keybind
+--// Function to Create UI Opener (Toggle UI Visibility)
+function Cryptic:CreateOpener(Keybind)
+    Keybind = Keybind or "LeftControl"  -- Default Keybind
 
-		local UIS = game:GetService("UserInputService")
+    local UIS = game:GetService("UserInputService")
 
-		UIS.InputBegan:Connect(function(input, gameProcessed)
-			if gameProcessed then return end
-			if input.KeyCode == Enum.KeyCode[Keybind] then
-				MainFrame.Visible = not MainFrame.Visible
-			end
-		end)
-	end
+    UIS.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.KeyCode == Enum.KeyCode[Keybind] then
+            MainFrame.Visible = not MainFrame.Visible
+        end
+    end)
+end
 
-	local Tabs = {}
+--// Tabs Storage
+local Tabs = {}
 
-	function Cryptic:CreateTab(tabName)
+--// Function to Create a Tab
+function Cryptic:CreateTab(tabName)
     if not TabList then
         warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
         return
     end
 
+    --// Create Tab Button
     local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
+    TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 150px, Full height
     TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     TabButton.Text = tabName
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextScaled = true -- Scale text automatically
+    TabButton.TextScaled = true -- Automatically scale text
     TabButton.Parent = TabList 
 
     -- Ensure text fits inside the button
@@ -341,6 +347,7 @@ end
     TextConstraint.MaxTextSize = 18
     TextConstraint.Parent = TabButton
 
+    --// Create Tab Content Frame
     local TabFrame = Instance.new("ScrollingFrame")
     TabFrame.Size = UDim2.new(1, 0, 1, -100)
     TabFrame.Position = UDim2.new(0, 0, 0, 65)
@@ -351,21 +358,28 @@ end
     TabFrame.ScrollBarThickness = 5
     TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 
+    --// Layout for Buttons inside the Tab
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
     ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
     ButtonLayout.Padding = UDim.new(0, 5)
 
+    -- Auto-adjust CanvasSize for smooth scrolling
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
     end)
 
+    -- Store Tab in Table
     Tabs[tabName] = TabFrame
 
+    --// Tab Switching Logic
     TabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(Tabs) do tab.Visible = false end
+        for _, tab in pairs(Tabs) do 
+            tab.Visible = false 
+        end
         TabFrame.Visible = true
     end)
+end
 
 		-- Store the tab
 		Tabs[tabName] = TabFrame
