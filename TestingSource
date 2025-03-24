@@ -464,7 +464,6 @@ end
 				}
 			end,
 
-			-- CreateButton Function
 			CreateButton = function(self, config)
     local Button = Instance.new("TextButton")
     Button.Size = UDim2.new(1, -10, 0, 40)
@@ -472,7 +471,13 @@ end
     Button.Font = Enum.Font.GothamBold
     Button.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    Button.Parent = self.Frame
+    
+    -- Ensure self.Frame exists before parenting
+    if self.Frame then
+        Button.Parent = self.Frame
+    else
+        warn("self.Frame is nil! Button will not be parented.")
+    end
 
     local ButtonCorner = Instance.new("UICorner")
     ButtonCorner.CornerRadius = UDim.new(0, 6)
@@ -482,21 +487,23 @@ end
         if config.Script then config.Script() end
     end)
 
-    -- Attach function directly to the button instance
-    function Button:SetName(newName)
+    -- ✅ Attach SetName function manually to the button
+    local function SetName(self, newName)
         if self then
-            DebugPrint("Setting button name to:", newName) -- Debugging
+            print("Setting button name to:", newName) -- Debugging
             self.Text = "  " .. newName
         else
             warn("SetName failed: Button is nil")
         end
     end
 
+    -- ✅ Store the function inside a dictionary to avoid errors
+    Button.SetName = SetName
+
     print("Button created successfully:", Button) -- Debugging
 
     return Button
 end,
-
 
 			CreateToggle = function(self, config)
 				local ToggleState = config.ToggleState or false
