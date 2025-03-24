@@ -44,7 +44,7 @@ function Cryptic:CreateWindow(config)
 	end)
 	debugPrint("ScreenGui", success, err)
 
-	-- 🖼️ Main UI Frame
+	-- Main UI Frame
 	local MainFrame = Instance.new("Frame")
 	success, err = pcall(function()
 		MainFrame.Name = "MainFrame"
@@ -57,34 +57,23 @@ function Cryptic:CreateWindow(config)
 	end)
 	debugPrint("MainFrame", success, err)
 
-	-- 🔵 UI Corner (Rounded edges)
+	-- UI Corner (Rounded edges)
 	local UICorner = Instance.new("UICorner")
 	UICorner.CornerRadius = UDim.new(0, 10)
 	UICorner.Parent = MainFrame
 
-	-- 🔠 Title Label
+	-- Title Label
 	local TitleLabel = Instance.new("TextLabel")
-	success, err = pcall(function()
-		TitleLabel.Name = "TitleLabel"
-		TitleLabel.Size = UDim2.new(0, 560, 0, 50)
-		TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0)
-		TitleLabel.BackgroundTransparency = 1
-		TitleLabel.Text = Name
-		TitleLabel.Font = Enum.Font.GothamBold
-		TitleLabel.TextSize = 23
-		TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0)
-		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-		TitleLabel.Parent = MainFrame
-	end)
-	debugPrint("TitleLabel", success, err)
-
-	-- ✅ Return UI elements
-	return {
-		ScreenGui = ScreenGui,
-		MainFrame = MainFrame,
-		TitleLabel = TitleLabel
-	}
-end
+	TitleLabel.Name = "TitleLabel"
+	TitleLabel.Size = UDim2.new(0, 560, 0, 50)
+	TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0)
+	TitleLabel.BackgroundTransparency = 1
+	TitleLabel.Text = Name
+	TitleLabel.Font = Enum.Font.GothamBold
+	TitleLabel.TextSize = 23
+	TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0)
+	TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	TitleLabel.Parent = MainFrame
 
 	-- 🛑 Key System
 	if KeySystemEnabled then
