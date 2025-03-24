@@ -288,7 +288,7 @@ function Cryptic:CreateWindow(config)
     end
 end
 
---// Tab List (New Look)
+--// Tab List
 local TabList = Instance.new("ScrollingFrame")
 TabList.Size = UDim2.new(1, 0, 0, 35)
 TabList.Position = UDim2.new(0, 0, 0, 35)
@@ -306,7 +306,7 @@ TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
 end)
 
---// CreateOpener Function (No Changes)
+--// CreateOpener Function
 function Cryptic:CreateOpener(Keybind)
     Keybind = Keybind or "LeftControl"  
 
@@ -322,7 +322,7 @@ end
 
 local Tabs = {}
 
---// CreateTab Function (Updated Look)
+--// CreateTab Function
 function Cryptic:CreateTab(tabName)
     if not TabList then
         warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
@@ -339,7 +339,7 @@ function Cryptic:CreateTab(tabName)
     TabButton.Parent = TabList 
 
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 6)  -- Apply rounded corners
+    UICorner.CornerRadius = UDim.new(0, 6)  
     UICorner.Parent = TabButton
 
     local TextConstraint = Instance.new("UITextSizeConstraint")
@@ -349,7 +349,7 @@ function Cryptic:CreateTab(tabName)
     local TabFrame = Instance.new("ScrollingFrame")
     TabFrame.Size = UDim2.new(1, 0, 1, -100)
     TabFrame.Position = UDim2.new(0, 0, 0, 65)
-    TabFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)  -- New background color
+    TabFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)  
     TabFrame.Visible = false
     TabFrame.Parent = MainFrame
     TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
@@ -357,7 +357,7 @@ function Cryptic:CreateTab(tabName)
     TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 
     local TabCorner = Instance.new("UICorner")
-    TabCorner.CornerRadius = UDim.new(0, 8)  -- Rounded corners for tab frame
+    TabCorner.CornerRadius = UDim.new(0, 8)  
     TabCorner.Parent = TabFrame
 
     local ButtonLayout = Instance.new("UIListLayout")
@@ -369,10 +369,12 @@ function Cryptic:CreateTab(tabName)
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
     end)
 
-    Tabs[tabName] = TabFrame
+    Tabs[tabName] = TabFrame -- Store in the Tabs table
 
     TabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(Tabs) do tab.Visible = false end
+        for _, tab in pairs(Tabs) do 
+            tab.Visible = false 
+        end
         TabFrame.Visible = true
     end)
 end
