@@ -471,8 +471,7 @@ end
     Button.Font = Enum.Font.GothamBold
     Button.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    
-    -- Ensure self.Frame exists before parenting
+
     if self.Frame then
         Button.Parent = self.Frame
     else
@@ -487,18 +486,20 @@ end
         if config.Script then config.Script() end
     end)
 
-    -- ✅ Attach SetName function manually to the button
-    local function SetName(self, newName)
-        if self then
-            print("Setting button name to:", newName) -- Debugging
-            self.Text = "  " .. newName
-        else
-            warn("SetName failed: Button is nil")
+    -- ✅ Attach SetName using metatable
+    local ButtonMethods = {
+        SetName = function(self, newName)
+            if self then
+                print("Setting button name to:", newName) -- Debugging
+                self.Text = "  " .. newName
+            else
+                warn("SetName failed: Button is nil")
+            end
         end
-    end
+    }
 
-    -- ✅ Store the function inside a dictionary to avoid errors
-    Button.SetName = SetName
+    -- ✅ Set metatable to allow calling custom functions
+    setmetatable(Button, { __index = ButtonMethods })
 
     print("Button created successfully:", Button) -- Debugging
 
