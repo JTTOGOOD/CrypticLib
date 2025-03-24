@@ -486,24 +486,22 @@ end
         if config.Script then config.Script() end
     end)
 
-    -- ✅ Attach SetName using metatable
-    local ButtonMethods = {
+    -- ✅ Use a table wrapper for custom functions
+    local ButtonWrapper = {
+        Instance = Button, -- Store actual button instance
         SetName = function(self, newName)
-            if self then
+            if self.Instance then
                 print("Setting button name to:", newName) -- Debugging
-                self.Text = "  " .. newName
+                self.Instance.Text = "  " .. newName
             else
-                warn("SetName failed: Button is nil")
+                warn("SetName failed: Button instance is nil")
             end
         end
     }
 
-    -- ✅ Set metatable to allow calling custom functions
-    setmetatable(Button, { __index = ButtonMethods })
-
     print("Button created successfully:", Button) -- Debugging
 
-    return Button
+    return ButtonWrapper -- ✅ Return the table instead of just the instance
 end,
 
 			CreateToggle = function(self, config)
