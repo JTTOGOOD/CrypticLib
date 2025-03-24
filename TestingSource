@@ -500,7 +500,6 @@ end,
 
 
 
-
 			CreateToggle = function(self, config)
 				local ToggleState = config.ToggleState or false
 				local ToggleName = config.Name or "Toggle"
