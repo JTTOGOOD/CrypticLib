@@ -482,15 +482,12 @@ end
         if config.Script then config.Script() end
     end)
 
-    -- Create a new table to store functions
-    local ButtonObject = {}
-
-    -- Attach the real button instance to the table
-    ButtonObject.Button = Button
+    -- Create a new table and set the metatable to the button
+    local ButtonObject = setmetatable({}, { __index = Button })
 
     -- Define the SetName function
     function ButtonObject:SetName(newName)
-        self.Button.Text = "  " .. newName
+        self.Text = "  " .. newName -- Directly modify the button
     end
 
     return ButtonObject
