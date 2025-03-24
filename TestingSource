@@ -290,80 +290,67 @@ end
 
 --// Tab List
 local TabList = Instance.new("ScrollingFrame")
-TabList.Name = "TabsList"
-TabList.Parent = MainFrame
-TabList.Active = true
-TabList.BackgroundColor3 = Color3.new(1, 1, 1)
-TabList.BackgroundTransparency = 1
-TabList.BorderColor3 = Color3.new(0, 0, 0)
-TabList.BorderSizePixel = 0
-TabList.Position = UDim2.new(0.0038, 0, 0.0882, 0)
-TabList.Size = UDim2.new(0, 733, 0, 52)
-TabList.ScrollBarThickness = 4
-TabList.ScrollingDirection = Enum.ScrollingDirection.X
+	TabList.Size = UDim2.new(1, 0, 0, 30)
+	TabList.Position = UDim2.new(0, 0, 0, 35)
+	TabList.ScrollBarThickness = 4
+	TabList.ScrollingDirection = Enum.ScrollingDirection.X
+	TabList.BackgroundTransparency = 1
+	TabList.Parent = MainFrame
 
-local TabLayout = Instance.new("UIListLayout")
-TabLayout.FillDirection = Enum.FillDirection.Horizontal
-TabLayout.Padding = UDim.new(0, 5)
-TabLayout.Parent = TabList
+	local TabLayout = Instance.new("UIListLayout")
+	TabLayout.FillDirection = Enum.FillDirection.Horizontal
+	TabLayout.Padding = UDim.new(0, 5)
+	TabLayout.Parent = TabList
 
-TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
-end)
+	TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
+	end)
 
-function Cryptic:CreateOpener(Keybind)
-    Keybind = Keybind or "LeftControl"  -- Default keybind
-    local UIS = game:GetService("UserInputService")
+	-- **CreateOpener Function (Moved Below MainFrame Creation)**
+	function Cryptic:CreateOpener(Keybind)
+		Keybind = Keybind or "LeftControl"  -- Default keybind
 
-    UIS.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.KeyCode == Enum.KeyCode[Keybind] then
-            MainFrame.Visible = not MainFrame.Visible
-        end
-    end)
-end
+		local UIS = game:GetService("UserInputService")
 
-local Tabs = {}
+		UIS.InputBegan:Connect(function(input, gameProcessed)
+			if gameProcessed then return end
+			if input.KeyCode == Enum.KeyCode[Keybind] then
+				MainFrame.Visible = not MainFrame.Visible
+			end
+		end)
+	end
 
-function Cryptic:CreateTab(tabName)
+	local Tabs = {}
+
+	function Cryptic:CreateTab(tabName)
     if not TabList then
         warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
         return
     end
 
-    -- Create Tab Button
     local TabButton = Instance.new("TextButton")
-    local UICorner = Instance.new("UICorner")
-
-    TabButton.Name = "TabButton"
-    TabButton.Parent = TabList
-    TabButton.BackgroundColor3 = Color3.new(1, 0.333, 0) -- Orange color
-    TabButton.BorderColor3 = Color3.new(0, 0, 0)
-    TabButton.BorderSizePixel = 0
-    TabButton.Size = UDim2.new(0, 161, 0, 42)
-    TabButton.Font = Enum.Font.SourceSansBold
-    TabButton.TextColor3 = Color3.new(1, 1, 1)
-    TabButton.TextSize = 20
+    TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
+    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     TabButton.Text = tabName
+    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TabButton.Font = Enum.Font.GothamBold
+    TabButton.TextScaled = true -- Scale text automatically
+    TabButton.Parent = TabList 
 
-    UICorner.Parent = TabButton
-    UICorner.CornerRadius = UDim.new(0, 25)
+    -- Ensure text fits inside the button
+    local TextConstraint = Instance.new("UITextSizeConstraint")
+    TextConstraint.MaxTextSize = 18
+    TextConstraint.Parent = TabButton
 
-    -- Create Tab Frame
     local TabFrame = Instance.new("ScrollingFrame")
-    TabFrame.Name = "TabFrame"
+    TabFrame.Size = UDim2.new(1, 0, 1, -100)
+    TabFrame.Position = UDim2.new(0, 0, 0, 65)
+    TabFrame.BackgroundColor3 = Theme
+    TabFrame.Visible = false
     TabFrame.Parent = MainFrame
-    TabFrame.Active = true
-    TabFrame.BackgroundColor3 = Color3.new(1, 1, 1)
-    TabFrame.BackgroundTransparency = 1
-    TabFrame.BorderColor3 = Color3.new(0, 0, 0)
-    TabFrame.BorderSizePixel = 0
-    TabFrame.Position = UDim2.new(0, 0, 0.1702, 0)
-    TabFrame.Size = UDim2.new(0, 735, 0, 467)
     TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
     TabFrame.ScrollBarThickness = 5
     TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
-    TabFrame.Visible = false
 
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
@@ -376,12 +363,10 @@ function Cryptic:CreateTab(tabName)
 
     Tabs[tabName] = TabFrame
 
-    -- Tab Button Click Event
     TabButton.MouseButton1Click:Connect(function()
         for _, tab in pairs(Tabs) do tab.Visible = false end
         TabFrame.Visible = true
     end)
-end
 
 		-- Store the tab
 		Tabs[tabName] = TabFrame
