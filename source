@@ -293,85 +293,130 @@ end
 		end
 	end
 
+--// Tab List (Updated Scrolling Tabs)
 local TabList = Instance.new("ScrollingFrame")
-	TabList.Size = UDim2.new(1, 0, 0, 30)
-	TabList.Position = UDim2.new(0, 0, 0, 35)
-	TabList.ScrollBarThickness = 4
-	TabList.ScrollingDirection = Enum.ScrollingDirection.X
-	TabList.BackgroundTransparency = 1
-	TabList.Parent = MainFrame
+TabList.Size = UDim2.new(1, 0, 0, 35) -- Increased height for better visuals
+TabList.Position = UDim2.new(0, 0, 0, 35)
+TabList.ScrollBarThickness = 3
+TabList.ScrollingDirection = Enum.ScrollingDirection.X
+TabList.BackgroundTransparency = 1
+TabList.AutomaticCanvasSize = Enum.AutomaticSize.X -- Auto-resizes horizontally
+TabList.Parent = MainFrame
 
-	local TabLayout = Instance.new("UIListLayout")
-	TabLayout.FillDirection = Enum.FillDirection.Horizontal
-	TabLayout.Padding = UDim.new(0, 5)
-	TabLayout.Parent = TabList
+--// Tab Layout
+local TabLayout = Instance.new("UIListLayout")
+TabLayout.FillDirection = Enum.FillDirection.Horizontal
+TabLayout.Padding = UDim.new(0, 6) -- Increased padding for spacing
+TabLayout.Parent = TabList
 
-	TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-		TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
-	end)
+TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X + 10, 1, 0)
+end)
 
-	-- **CreateOpener Function (Moved Below MainFrame Creation)**
-	function Cryptic:CreateOpener(Keybind)
-		Keybind = Keybind or "LeftControl"  -- Default keybind
+--// UI Corner for Rounded Tabs
+local function ApplyUICorner(instance, radius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, radius)
+    corner.Parent = instance
+end
 
-		local UIS = game:GetService("UserInputService")
+--// **CreateOpener Function (Toggles UI Visibility)**
+function Cryptic:CreateOpener(Keybind)
+    Keybind = Keybind or "LeftControl"  -- Default Keybind
 
-		UIS.InputBegan:Connect(function(input, gameProcessed)
-			if gameProcessed then return end
-			if input.KeyCode == Enum.KeyCode[Keybind] then
-				MainFrame.Visible = not MainFrame.Visible
-			end
-		end)
-	end
+    local UIS = game:GetService("UserInputService")
 
-	local Tabs = {}
+    UIS.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.KeyCode == Enum.KeyCode[Keybind] then
+            MainFrame.Visible = not MainFrame.Visible
+        end
+    end)
+end
 
-	function Cryptic:CreateTab(tabName)
+--// Tabs Storage
+local Tabs = {}
+local CurrentTab = nil -- Tracks the currently active tab
+
+--// Function to Create a Tab
+function Cryptic:CreateTab(tabName)
     if not TabList then
         warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
         return
     end
 
+    --// Create Tab Button (Updated)
     local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
-    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    TabButton.Size = UDim2.new(0, 140, 0, 30) -- Wider for better aesthetics
+    TabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Darker default
     TabButton.Text = tabName
     TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextScaled = true -- Scale text automatically
-    TabButton.Parent = TabList 
+    TabButton.TextScaled = true
+    TabButton.AutoButtonColor = false -- Prevents default hover effect
+    TabButton.Parent = TabList
+
+    -- Apply rounded corners
+    ApplyUICorner(TabButton, 6)
 
     -- Ensure text fits inside the button
     local TextConstraint = Instance.new("UITextSizeConstraint")
     TextConstraint.MaxTextSize = 18
     TextConstraint.Parent = TabButton
 
+    --// Create Tab Content Frame (Updated)
     local TabFrame = Instance.new("ScrollingFrame")
     TabFrame.Size = UDim2.new(1, 0, 1, -100)
     TabFrame.Position = UDim2.new(0, 0, 0, 65)
-    TabFrame.BackgroundColor3 = Theme
+    TabFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25) -- Default dark theme
     TabFrame.Visible = false
     TabFrame.Parent = MainFrame
     TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
-    TabFrame.ScrollBarThickness = 5
+    TabFrame.ScrollBarThickness = 4
     TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+    TabFrame.BorderSizePixel = 0 -- Remove borders for a clean look
 
+    -- Apply rounded corners
+    ApplyUICorner(TabFrame, 8)
+
+    --// Layout for Tab Content (Buttons, Toggles, etc.)
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
     ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    ButtonLayout.Padding = UDim.new(0, 5)
+    ButtonLayout.Padding = UDim.new(0, 6)
 
+    -- Auto-adjust CanvasSize for smooth scrolling
     ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
     end)
 
+    -- Store Tab in Table
     Tabs[tabName] = TabFrame
 
+    --// Tab Switching Logic (Updated with Active State)
     TabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(Tabs) do tab.Visible = false end
+        for _, tab in pairs(Tabs) do 
+            tab.Visible = false 
+        end
         TabFrame.Visible = true
+        CurrentTab = TabFrame
+
+        -- Visual Feedback: Highlight Active Tab
+        for _, btn in pairs(TabList:GetChildren()) do
+            if btn:IsA("TextButton") then
+                btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Default color
+            end
+        end
+        TabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Highlight active tab
     end)
 
+    -- Auto-select first tab
+    if not CurrentTab then
+        TabFrame.Visible = true
+        CurrentTab = TabFrame
+        TabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    end
+end
 
 		-- Store the tab
 		Tabs[tabName] = TabFrame
