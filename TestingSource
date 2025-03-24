@@ -482,12 +482,16 @@ end
         if config.Script then config.Script() end
     end)
 
-    -- Function to set button name
-    function Button:SetName(newName)
-        self.Text = "  " .. newName
+    -- Wrap Button inside a table with custom functions
+    local ButtonObject = {
+        Instance = Button
+    }
+
+    function ButtonObject:SetName(newName)
+        self.Instance.Text = "  " .. newName
     end
 
-    return Button
+    return ButtonObject
 end,
 
 
