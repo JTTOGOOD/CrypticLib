@@ -48,8 +48,8 @@ function Cryptic:CreateWindow(config)
 	local MainFrame = Instance.new("Frame")
 	success, err = pcall(function()
 		MainFrame.Name = "MainFrame"
-		MainFrame.Size = UDim2.new(0, 735, 0, 564)
-		MainFrame.Position = UDim2.new(0.20653908, 0, 0.0923520923, 0)
+		MainFrame.Size = UDim2.new(0, 585, 0, 416)
+		MainFrame.Position = UDim2.new(0.267145127, 0, 0.203463197, 0)
 		MainFrame.BackgroundColor3 = Color3.new(0.105882, 0.105882, 0.105882)
 		MainFrame.BorderSizePixel = 0
 		MainFrame.Visible = false
@@ -71,7 +71,7 @@ function Cryptic:CreateWindow(config)
 		TitleLabel.BackgroundTransparency = 1
 		TitleLabel.Text = Name
 		TitleLabel.Font = Enum.Font.GothamBold
-		TitleLabel.TextSize = 32
+		TitleLabel.TextSize = 23
 		TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0)
 		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 		TitleLabel.Parent = MainFrame
@@ -85,7 +85,6 @@ function Cryptic:CreateWindow(config)
 		TitleLabel = TitleLabel
 	}
 end
-
 	-- 🛑 Key System
 	if KeySystemEnabled then
 		local KeySystemFrame = Instance.new("Frame")
