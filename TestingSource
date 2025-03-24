@@ -482,12 +482,17 @@ end
         if config.Script then config.Script() end
     end)
 
-    -- Create a new table and set the metatable to the button
-    local ButtonObject = setmetatable({}, { __index = Button })
+    -- Store reference to Button inside ButtonObject
+    local ButtonObject = {}
+    ButtonObject.Button = Button
 
-    -- Define the SetName function
+    -- Define SetName function inside ButtonObject
     function ButtonObject:SetName(newName)
-        self.Text = "  " .. newName -- Directly modify the button
+        if self.Button then -- Ensure the button exists
+            self.Button.Text = "  " .. newName
+        else
+            warn("SetName failed: Button is nil")
+        end
     end
 
     return ButtonObject
