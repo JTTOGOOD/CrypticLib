@@ -288,15 +288,12 @@ function Cryptic:CreateWindow(config)
     end
 end
 
---// Tab List
+-- Tab List
 local TabList = Instance.new("ScrollingFrame")
 TabList.Name = "TabsList"
 TabList.Parent = MainFrame
 TabList.Active = true
-TabList.BackgroundColor3 = Color3.new(1, 1, 1)
 TabList.BackgroundTransparency = 1
-TabList.BorderColor3 = Color3.new(0, 0, 0)
-TabList.BorderSizePixel = 0
 TabList.Position = UDim2.new(0.0038, 0, 0.0882, 0)
 TabList.Size = UDim2.new(0, 733, 0, 52)
 TabList.ScrollBarThickness = 4
@@ -311,8 +308,9 @@ TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     TabList.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 1, 0)
 end)
 
+-- Function to Create UI Opener
 function Cryptic:CreateOpener(Keybind)
-    Keybind = Keybind or "LeftControl"  -- Default keybind
+    Keybind = Keybind or "LeftControl"
     local UIS = game:GetService("UserInputService")
 
     UIS.InputBegan:Connect(function(input, gameProcessed)
@@ -323,23 +321,22 @@ function Cryptic:CreateOpener(Keybind)
     end)
 end
 
+-- Tab Storage
 local Tabs = {}
 
+-- Function to Create Tabs
 function Cryptic:CreateTab(tabName)
     if not TabList then
         warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
         return
     end
 
-    -- Create Tab Button
     local TabButton = Instance.new("TextButton")
     local UICorner = Instance.new("UICorner")
 
     TabButton.Name = "TabButton"
     TabButton.Parent = TabList
-    TabButton.BackgroundColor3 = Color3.new(1, 0.333, 0) -- Orange color
-    TabButton.BorderColor3 = Color3.new(0, 0, 0)
-    TabButton.BorderSizePixel = 0
+    TabButton.BackgroundColor3 = Color3.new(1, 0.333, 0)
     TabButton.Size = UDim2.new(0, 161, 0, 42)
     TabButton.Font = Enum.Font.SourceSansBold
     TabButton.TextColor3 = Color3.new(1, 1, 1)
@@ -349,15 +346,11 @@ function Cryptic:CreateTab(tabName)
     UICorner.Parent = TabButton
     UICorner.CornerRadius = UDim.new(0, 25)
 
-    -- Create Tab Frame
     local TabFrame = Instance.new("ScrollingFrame")
     TabFrame.Name = "TabFrame"
     TabFrame.Parent = MainFrame
     TabFrame.Active = true
-    TabFrame.BackgroundColor3 = Color3.new(1, 1, 1)
     TabFrame.BackgroundTransparency = 1
-    TabFrame.BorderColor3 = Color3.new(0, 0, 0)
-    TabFrame.BorderSizePixel = 0
     TabFrame.Position = UDim2.new(0, 0, 0.1702, 0)
     TabFrame.Size = UDim2.new(0, 735, 0, 467)
     TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
@@ -376,12 +369,11 @@ function Cryptic:CreateTab(tabName)
 
     Tabs[tabName] = TabFrame
 
-    -- Tab Button Click Event
     TabButton.MouseButton1Click:Connect(function()
         for _, tab in pairs(Tabs) do tab.Visible = false end
         TabFrame.Visible = true
     end)
-end
+
 
 		local Tab = {
 			Frame = TabFrame,
@@ -475,6 +467,9 @@ end
 					end
 				}
 			end,
+
+     local Cryptic = {} -- Define Cryptic before using it
+
 
                         CreateButton = function(self, config)
     local Button = Instance.new("TextButton")
@@ -710,110 +705,7 @@ end,
 			end,
 
 
-                        Timer = function(self, config)
-    local TimerFrame = Instance.new("Frame")
-    TimerFrame.Size = UDim2.new(1, -10, 0, 40)
-    TimerFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TimerFrame.Parent = self.Frame
 
-    local TimerCorner = Instance.new("UICorner")
-    TimerCorner.CornerRadius = UDim.new(0, 6)
-    TimerCorner.Parent = TimerFrame
-
-    local TimerLabel = Instance.new("TextLabel")
-    TimerLabel.Size = UDim2.new(1, 0, 1, 0)
-    TimerLabel.BackgroundTransparency = 1
-    TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TimerLabel.Font = Enum.Font.GothamBold
-    TimerLabel.TextScaled = true
-    TimerLabel.Text = "00:00:00"
-    TimerLabel.Parent = TimerFrame
-
-    local totalSeconds = (config.HourDuration or 0) * 3600 + (config.MinuteDuration or 0) * 60 + (config.SecondDuration or 0)
-    local running = config.AutoStart
-    local isCountdown = config.Countdown
-    local loop = config.Loop
-    local startTime = tick()
-
-    -- Function to format time
-    local function formatTime(seconds)
-        local days = math.floor(seconds / 86400)
-        local hours = math.floor((seconds % 86400) / 3600)
-        local minutes = math.floor((seconds % 3600) / 60)
-        local secs = seconds % 60
-
-        if config.ShowTime then
-            return string.format("%d Days, %02d:%02d:%02d", days, hours, minutes, secs)
-        else
-            return string.format("%02d:%02d:%02d", hours, minutes, secs)
-        end
-    end
-
-    -- Timer logic
-    task.spawn(function()
-        while running do
-            local elapsed = tick() - startTime
-            local currentSeconds = isCountdown and (totalSeconds - elapsed) or elapsed
-
-            if currentSeconds <= 0 then
-                if config.OnComplete then
-                    config.OnComplete()
-                end
-                if loop then
-                    startTime = tick()
-                else
-                    break
-                end
-            end
-
-            TimerLabel.Text = formatTime(math.max(0, currentSeconds))
-            task.wait(1)
-        end
-    end)
-
-    -- Return timer object with controls
-    local TimerObject = {
-        Instance = TimerFrame,
-        Start = function(self)
-            running = true
-            startTime = tick()
-        end,
-        Stop = function(self)
-            running = false
-        end,
-        Reset = function(self)
-            running = false
-            startTime = tick()
-            TimerLabel.Text = formatTime(totalSeconds)
-        end
-    }
-
-    -- Add Start/Stop buttons if AutoStart is false
-    if not config.AutoStart then
-        local StartButton = Instance.new("TextButton")
-        StartButton.Size = UDim2.new(0.5, -5, 1, 0)
-        StartButton.Position = UDim2.new(0, 0, 0, 40)
-        StartButton.Text = "Start"
-        StartButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-        StartButton.Parent = TimerFrame
-        StartButton.MouseButton1Click:Connect(function()
-            TimerObject:Start()
-        end)
-
-        local StopButton = Instance.new("TextButton")
-        StopButton.Size = UDim2.new(0.5, -5, 1, 0)
-        StopButton.Position = UDim2.new(0.5, 5, 0, 40)
-        StopButton.Text = "Stop"
-        StopButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-        StopButton.Parent = TimerFrame
-        StopButton.MouseButton1Click:Connect(function()
-            TimerObject:Stop()
-        end)
-    end
-
-    return TimerObject
-end,
-                        
 
 			CreateSlider = function(self, config)
 				local SliderName = config.Name or "Slider"
