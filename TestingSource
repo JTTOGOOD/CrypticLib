@@ -791,8 +791,7 @@ function Cryptic:CreateWindow(config)
 	return Tab
 end 
 
-    return Cryptic
+	return Cryptic
 end
-
 
 return Cryptic
