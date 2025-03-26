@@ -197,6 +197,20 @@ function Cryptic:CreateWindow(config)
 		end
 	end)
 
+
+        function Cryptic:CreateOpener(Keybind)
+		Keybind = Keybind or "LeftControl"  -- Default keybind
+
+		local UIS = game:GetService("UserInputService")
+
+		UIS.InputBegan:Connect(function(input, gameProcessed)
+			if gameProcessed then return end
+			if input.KeyCode == Enum.KeyCode[Keybind] then
+				MainFrame.Visible = not MainFrame.Visible
+			end
+		end)
+	end
+
 	function Cryptic:Notify(settings)
 		local Title = settings.Title or "Notification"
 		local Description = settings.Description or "No Description Provided"
