@@ -384,7 +384,7 @@ function Cryptic:CreateWindow(config)
 				Label.BackgroundTransparency = 1
 				Label.TextXAlignment = Enum.TextXAlignment.Left
 				Label.Parent = self.Frame
-                                Label.TextSize = 24
+                                Label.TextSize = 16
 
 				return Label
 			end,
