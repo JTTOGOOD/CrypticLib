@@ -198,19 +198,6 @@ function Cryptic:CreateWindow(config)
 	end)
 
 
-        function Cryptic:CreateOpener(Keybind)
-		Keybind = Keybind or "LeftControl"  -- Default keybind
-
-		local UIS = game:GetService("UserInputService")
-
-		UIS.InputBegan:Connect(function(input, gameProcessed)
-			if gameProcessed then return end
-			if input.KeyCode == Enum.KeyCode[Keybind] then
-				MainFrame.Visible = not MainFrame.Visible
-			end
-		end)
-	end
-
 	function Cryptic:Notify(settings)
 		local Title = settings.Title or "Notification"
 		local Description = settings.Description or "No Description Provided"
@@ -364,6 +351,7 @@ function Cryptic:CreateWindow(config)
     TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
     TabFrame.ScrollBarThickness = 5
     TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+    TabFrame.BackgroundTransparency = 1
 
     local ButtonLayout = Instance.new("UIListLayout")
     ButtonLayout.Parent = TabFrame
