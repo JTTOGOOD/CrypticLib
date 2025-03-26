@@ -322,474 +322,474 @@ function Cryptic:CreateWindow(config)
 	local Tabs = {}
 
 	function Cryptic:CreateTab(tabName)
-    if not TabList then
-        warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
-        return
-    end
+		if not TabList then
+			warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
+			return
+		end
 
-    local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
-    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = tabName
-    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextScaled = true -- Scale text automatically
-    TabButton.Parent = TabList 
+		local TabButton = Instance.new("TextButton")
+		TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
+		TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		TabButton.Text = tabName
+		TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TabButton.Font = Enum.Font.GothamBold
+		TabButton.TextScaled = true -- Scale text automatically
+		TabButton.Parent = TabList 
 
-    -- Ensure text fits inside the button
-    local TextConstraint = Instance.new("UITextSizeConstraint")
-    TextConstraint.MaxTextSize = 18
-    TextConstraint.Parent = TabButton
+		-- Ensure text fits inside the button
+		local TextConstraint = Instance.new("UITextSizeConstraint")
+		TextConstraint.MaxTextSize = 18
+		TextConstraint.Parent = TabButton
 
-    local TabFrame = Instance.new("ScrollingFrame")
-    TabFrame.Size = UDim2.new(1, 0, 1, -100)
-    TabFrame.Position = UDim2.new(0, 0, 0, 65)
-    TabFrame.BackgroundColor3 = Theme
-    TabFrame.Visible = false
-    TabFrame.Parent = MainFrame
-    TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
-    TabFrame.ScrollBarThickness = 5
-    TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+		local TabFrame = Instance.new("ScrollingFrame")
+		TabFrame.Size = UDim2.new(1, 0, 1, -100)
+		TabFrame.Position = UDim2.new(0, 0, 0, 65)
+		TabFrame.BackgroundColor3 = Theme
+		TabFrame.Visible = false
+		TabFrame.Parent = MainFrame
+		TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
+		TabFrame.ScrollBarThickness = 5
+		TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 
-    local ButtonLayout = Instance.new("UIListLayout")
-    ButtonLayout.Parent = TabFrame
-    ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    ButtonLayout.Padding = UDim.new(0, 5)
+		local ButtonLayout = Instance.new("UIListLayout")
+		ButtonLayout.Parent = TabFrame
+		ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		ButtonLayout.Padding = UDim.new(0, 5)
 
-    ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
-    end)
+		ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+			TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
+		end)
 
-    Tabs[tabName] = TabFrame
+		Tabs[tabName] = TabFrame
 
-    TabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(Tabs) do tab.Visible = false end
-        TabFrame.Visible = true
-    end)
+		TabButton.MouseButton1Click:Connect(function()
+			for _, tab in pairs(Tabs) do tab.Visible = false end
+			TabFrame.Visible = true
+		end)
 
-	local Tab = {
-		Frame = TabFrame,
+		local Tab = {
+			Frame = TabFrame,
 
-		-- CreateLabel Function
-		CreateLabel = function(self, config)
-			local Label = Instance.new("TextLabel")
-			Label.Size = UDim2.new(1, -10, 0, 30)
-			Label.Text = config.Text or "Label"
-			Label.Font = Enum.Font.GothamBold
-			Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-			Label.BackgroundTransparency = 1
-			Label.TextXAlignment = Enum.TextXAlignment.Left
-			Label.Parent = self.Frame
+			-- CreateLabel Function
+			CreateLabel = function(self, config)
+				local Label = Instance.new("TextLabel")
+				Label.Size = UDim2.new(1, -10, 0, 30)
+				Label.Text = config.Text or "Label"
+				Label.Font = Enum.Font.GothamBold
+				Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+				Label.BackgroundTransparency = 1
+				Label.TextXAlignment = Enum.TextXAlignment.Left
+				Label.Parent = self.Frame
 
-			return Label
-		end,
+				return Label
+			end,
 
-		CreateInput = function(self, config)
-			local InputName = config.Name or "Input"
-			local PlaceholderText = config.TextboxText or "Enter Text"
-			local InputScript = config.script or function() end
+			CreateInput = function(self, config)
+				local InputName = config.Name or "Input"
+				local PlaceholderText = config.TextboxText or "Enter Text"
+				local InputScript = config.script or function() end
 
-			-- Create the frame
-			local InputFrame = Instance.new("Frame")
-			InputFrame.Size = UDim2.new(1, -10, 0, 40)
-			InputFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-			InputFrame.Parent = self.Frame
+				-- Create the frame
+				local InputFrame = Instance.new("Frame")
+				InputFrame.Size = UDim2.new(1, -10, 0, 40)
+				InputFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				InputFrame.Parent = self.Frame
 
-			-- Add corner radius
-			local FrameCorner = Instance.new("UICorner")
-			FrameCorner.CornerRadius = UDim.new(0, 6)
-			FrameCorner.Parent = InputFrame
+				-- Add corner radius
+				local FrameCorner = Instance.new("UICorner")
+				FrameCorner.CornerRadius = UDim.new(0, 6)
+				FrameCorner.Parent = InputFrame
 
-			-- Create label
-			local InputLabel = Instance.new("TextLabel")
-			InputLabel.Size = UDim2.new(1, -10, 0, 20)
-			InputLabel.Position = UDim2.new(0, 10, 0, 0)
-			InputLabel.Text = InputName
-			InputLabel.Font = Enum.Font.GothamBold
-			InputLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-			InputLabel.BackgroundTransparency = 1
-			InputLabel.TextXAlignment = Enum.TextXAlignment.Left
-			InputLabel.Parent = InputFrame
+				-- Create label
+				local InputLabel = Instance.new("TextLabel")
+				InputLabel.Size = UDim2.new(1, -10, 0, 20)
+				InputLabel.Position = UDim2.new(0, 10, 0, 0)
+				InputLabel.Text = InputName
+				InputLabel.Font = Enum.Font.GothamBold
+				InputLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				InputLabel.BackgroundTransparency = 1
+				InputLabel.TextXAlignment = Enum.TextXAlignment.Left
+				InputLabel.Parent = InputFrame
 
-			-- Create textbox
-			local TextBox = Instance.new("TextBox")
-			TextBox.Size = UDim2.new(1, -20, 0, 20)
-			TextBox.Position = UDim2.new(0, 10, 0, 20)
-			TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-			TextBox.Font = Enum.Font.Gotham
-			TextBox.PlaceholderText = PlaceholderText
-			TextBox.Text = ""
-			TextBox.ClearTextOnFocus = false
-			TextBox.Parent = InputFrame
-			TextBox.TextSize = 18  
+				-- Create textbox
+				local TextBox = Instance.new("TextBox")
+				TextBox.Size = UDim2.new(1, -20, 0, 20)
+				TextBox.Position = UDim2.new(0, 10, 0, 20)
+				TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+				TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+				TextBox.Font = Enum.Font.Gotham
+				TextBox.PlaceholderText = PlaceholderText
+				TextBox.Text = ""
+				TextBox.ClearTextOnFocus = false
+				TextBox.Parent = InputFrame
+				TextBox.TextSize = 18  
 
-			-- Add corner radius to textbox
-			local TextBoxCorner = Instance.new("UICorner")
-			TextBoxCorner.CornerRadius = UDim.new(0, 4)
-			TextBoxCorner.Parent = TextBox
+				-- Add corner radius to textbox
+				local TextBoxCorner = Instance.new("UICorner")
+				TextBoxCorner.CornerRadius = UDim.new(0, 4)
+				TextBoxCorner.Parent = TextBox
 
-			-- Function to reset placeholder text when textbox is empty
-			local function ResetPlaceholder()
-				if TextBox.Text == "" then
-					TextBox.Text = ""
-					TextBox.PlaceholderText = PlaceholderText
-				end
-			end
-
-			-- Event when the user presses Enter
-			TextBox.FocusLost:Connect(function(enterPressed)
-				if enterPressed then
-					InputScript(TextBox.Text) -- Call script function
-					TextBox.Text = "" -- Clear text
-					ResetPlaceholder()
-				end
-			end)
-
-			-- Ensure placeholder resets when clicking away
-			TextBox.FocusLost:Connect(ResetPlaceholder)
-
-			return {
-				Frame = InputFrame,
-				SetText = function(text)
-					TextBox.Text = text
-				end,
-				GetText = function()
-					return TextBox.Text
-				end
-			}
-		end,
-
-
-		CreateButton = function(self, config)
-			local Button = Instance.new("TextButton")
-			Button.Size = UDim2.new(1, -10, 0, 40)
-			Button.Text = "  " .. (config.Name or "Button")
-			Button.Font = Enum.Font.GothamBold
-			Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-			Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-			Button.Parent = self.Frame
-
-			-- Create UI corner (rounded edges)
-			local ButtonCorner = Instance.new("UICorner")
-			ButtonCorner.CornerRadius = UDim.new(0, 6)
-			ButtonCorner.Parent = Button
-
-			-- Button click event
-			Button.MouseButton1Click:Connect(function()
-				if config.Script then
-					config.Script()
-				end
-			end)
-
-			-- ✅ Return a table with useful methods
-			local ButtonObject = {
-				Instance = Button, -- Store the button reference
-
-				-- Function to change button text
-				SetName = function(self, newName)
-					if self.Instance then
-						self.Instance.Text = "  " .. newName
-					end
-				end,
-
-				-- Function to change button color
-				SetColor = function(self, newColor)
-					if self.Instance then
-						self.Instance.BackgroundColor3 = newColor
+				-- Function to reset placeholder text when textbox is empty
+				local function ResetPlaceholder()
+					if TextBox.Text == "" then
+						TextBox.Text = ""
+						TextBox.PlaceholderText = PlaceholderText
 					end
 				end
-			}
 
-			return ButtonObject
-		end,
+				-- Event when the user presses Enter
+				TextBox.FocusLost:Connect(function(enterPressed)
+					if enterPressed then
+						InputScript(TextBox.Text) -- Call script function
+						TextBox.Text = "" -- Clear text
+						ResetPlaceholder()
+					end
+				end)
+
+				-- Ensure placeholder resets when clicking away
+				TextBox.FocusLost:Connect(ResetPlaceholder)
+
+				return {
+					Frame = InputFrame,
+					SetText = function(text)
+						TextBox.Text = text
+					end,
+					GetText = function()
+						return TextBox.Text
+					end
+				}
+			end,
 
 
-		CreateToggle = function(self, config)
-			local ToggleState = config.ToggleState or false
-			local ToggleName = config.Name or "Toggle"
-			local ToggleScript = config.Script or function() end
+			CreateButton = function(self, config)
+				local Button = Instance.new("TextButton")
+				Button.Size = UDim2.new(1, -10, 0, 40)
+				Button.Text = "  " .. (config.Name or "Button")
+				Button.Font = Enum.Font.GothamBold
+				Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+				Button.Parent = self.Frame
 
-			local ToggleFrame = Instance.new("Frame")
-			ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
-			ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-			ToggleFrame.Parent = self.Frame
+				-- Create UI corner (rounded edges)
+				local ButtonCorner = Instance.new("UICorner")
+				ButtonCorner.CornerRadius = UDim.new(0, 6)
+				ButtonCorner.Parent = Button
 
-			local FrameCorner = Instance.new("UICorner")
-			FrameCorner.CornerRadius = UDim.new(0, 6)
-			FrameCorner.Parent = ToggleFrame
+				-- Button click event
+				Button.MouseButton1Click:Connect(function()
+					if config.Script then
+						config.Script()
+					end
+				end)
 
-			local ToggleLabel = Instance.new("TextLabel")
-			ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
-			ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
-			ToggleLabel.Text = ToggleName
-			ToggleLabel.Font = Enum.Font.GothamBold
-			ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-			ToggleLabel.BackgroundTransparency = 1
-			ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-			ToggleLabel.Parent = ToggleFrame
+				-- ✅ Return a table with useful methods
+				local ButtonObject = {
+					Instance = Button, -- Store the button reference
 
-			local ToggleButton = Instance.new("TextButton")
-			ToggleButton.Size = UDim2.new(0, 50, 0.8, 0)
-			ToggleButton.Position = UDim2.new(1, -60, 0.1, 0)
-			ToggleButton.Text = ToggleState and "ON" or "OFF"
-			ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-			ToggleButton.Font = Enum.Font.GothamBold
-			ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-			ToggleButton.Parent = ToggleFrame
+					-- Function to change button text
+					SetName = function(self, newName)
+						if self.Instance then
+							self.Instance.Text = "  " .. newName
+						end
+					end,
 
-			local ButtonCorner = Instance.new("UICorner")
-			ButtonCorner.CornerRadius = UDim.new(0, 6)
-			ButtonCorner.Parent = ToggleButton
+					-- Function to change button color
+					SetColor = function(self, newColor)
+						if self.Instance then
+							self.Instance.BackgroundColor3 = newColor
+						end
+					end
+				}
 
-			local function UpdateToggle(state)
-				ToggleState = state
+				return ButtonObject
+			end,
+
+
+			CreateToggle = function(self, config)
+				local ToggleState = config.ToggleState or false
+				local ToggleName = config.Name or "Toggle"
+				local ToggleScript = config.Script or function() end
+
+				local ToggleFrame = Instance.new("Frame")
+				ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
+				ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				ToggleFrame.Parent = self.Frame
+
+				local FrameCorner = Instance.new("UICorner")
+				FrameCorner.CornerRadius = UDim.new(0, 6)
+				FrameCorner.Parent = ToggleFrame
+
+				local ToggleLabel = Instance.new("TextLabel")
+				ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
+				ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+				ToggleLabel.Text = ToggleName
+				ToggleLabel.Font = Enum.Font.GothamBold
+				ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				ToggleLabel.BackgroundTransparency = 1
+				ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+				ToggleLabel.Parent = ToggleFrame
+
+				local ToggleButton = Instance.new("TextButton")
+				ToggleButton.Size = UDim2.new(0, 50, 0.8, 0)
+				ToggleButton.Position = UDim2.new(1, -60, 0.1, 0)
 				ToggleButton.Text = ToggleState and "ON" or "OFF"
 				ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-				pcall(ToggleScript, ToggleState)
-			end
+				ToggleButton.Font = Enum.Font.GothamBold
+				ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+				ToggleButton.Parent = ToggleFrame
 
-			ToggleButton.MouseButton1Click:Connect(function()
-				UpdateToggle(not ToggleState)
-			end)
+				local ButtonCorner = Instance.new("UICorner")
+				ButtonCorner.CornerRadius = UDim.new(0, 6)
+				ButtonCorner.Parent = ToggleButton
 
-			return {
-				Frame = ToggleFrame,
-				SetState = UpdateToggle
-			}
-		end,
+				local function UpdateToggle(state)
+					ToggleState = state
+					ToggleButton.Text = ToggleState and "ON" or "OFF"
+					ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
+					pcall(ToggleScript, ToggleState)
+				end
 
-		CreateDropdown = function(self, config)
-			local Name = config.Name or "Dropdown"
-			local Options = config.Options or {"Option 1", "Option 2", "Option 3"}
-			local CurrentOption = config.CurrentOption or Options[1]
-			local MultiSelect = config.MultiSelect or false
-			local Callback = config.Script or function() end
+				ToggleButton.MouseButton1Click:Connect(function()
+					UpdateToggle(not ToggleState)
+				end)
 
-			local SelectedOptions = {} -- Stores selected options (for MultiSelect)
+				return {
+					Frame = ToggleFrame,
+					SetState = UpdateToggle
+				}
+			end,
 
-			-- Main Dropdown Frame
-			local Dropdown = Instance.new("Frame")
-			Dropdown.Size = UDim2.new(1, 0, 0, 60)
-			Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-			Dropdown.Parent = self.Frame
-			Dropdown.ClipsDescendants = false
+			CreateDropdown = function(self, config)
+				local Name = config.Name or "Dropdown"
+				local Options = config.Options or {"Option 1", "Option 2", "Option 3"}
+				local CurrentOption = config.CurrentOption or Options[1]
+				local MultiSelect = config.MultiSelect or false
+				local Callback = config.Script or function() end
 
-			local UICorner = Instance.new("UICorner", Dropdown)
-			UICorner.CornerRadius = UDim.new(0, 6)
+				local SelectedOptions = {} -- Stores selected options (for MultiSelect)
 
-			-- Dropdown Display
-			local DropdownDisplay = Instance.new("TextLabel")
-			DropdownDisplay.Size = UDim2.new(0.75, -10, 1, 0)
-			DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
-			DropdownDisplay.BackgroundTransparency = 1
-			DropdownDisplay.Text = Name .. ": " .. (MultiSelect and "Select item" or CurrentOption)
-			DropdownDisplay.TextSize = 32
-			DropdownDisplay.Font = Enum.Font.GothamBold
-			DropdownDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
-			DropdownDisplay.TextXAlignment = Enum.TextXAlignment.Left
-			DropdownDisplay.Parent = Dropdown
+				-- Main Dropdown Frame
+				local Dropdown = Instance.new("Frame")
+				Dropdown.Size = UDim2.new(1, 0, 0, 60)
+				Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				Dropdown.Parent = self.Frame
+				Dropdown.ClipsDescendants = false
 
-			-- Dropdown Button
-			local DropdownButton = Instance.new("TextButton")
-			DropdownButton.Size = UDim2.new(0.2, -5, 1, -10)
-			DropdownButton.Position = UDim2.new(0.8, 0, 0, 5)
-			DropdownButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-			DropdownButton.Text = "▼"
-			DropdownButton.TextSize = 36
-			DropdownButton.Font = Enum.Font.GothamBold
-			DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-			DropdownButton.Parent = Dropdown
+				local UICorner = Instance.new("UICorner", Dropdown)
+				UICorner.CornerRadius = UDim.new(0, 6)
 
-			local ButtonCorner = Instance.new("UICorner", DropdownButton)
-			ButtonCorner.CornerRadius = UDim.new(0, 6)
+				-- Dropdown Display
+				local DropdownDisplay = Instance.new("TextLabel")
+				DropdownDisplay.Size = UDim2.new(0.75, -10, 1, 0)
+				DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
+				DropdownDisplay.BackgroundTransparency = 1
+				DropdownDisplay.Text = Name .. ": " .. (MultiSelect and "Select item" or CurrentOption)
+				DropdownDisplay.TextSize = 32
+				DropdownDisplay.Font = Enum.Font.GothamBold
+				DropdownDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
+				DropdownDisplay.TextXAlignment = Enum.TextXAlignment.Left
+				DropdownDisplay.Parent = Dropdown
 
-			-- Dropdown Menu
-			local DropdownList = Instance.new("Frame")
-			DropdownList.Size = UDim2.new(1, 0, 0, 0)
-			DropdownList.Position = UDim2.new(0, 0, 1, 0)
-			DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			DropdownList.Visible = false
-			DropdownList.Parent = Dropdown
+				-- Dropdown Button
+				local DropdownButton = Instance.new("TextButton")
+				DropdownButton.Size = UDim2.new(0.2, -5, 1, -10)
+				DropdownButton.Position = UDim2.new(0.8, 0, 0, 5)
+				DropdownButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+				DropdownButton.Text = "▼"
+				DropdownButton.TextSize = 36
+				DropdownButton.Font = Enum.Font.GothamBold
+				DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+				DropdownButton.Parent = Dropdown
 
-			local UIListLayout = Instance.new("UIListLayout", DropdownList)
-			UIListLayout.Padding = UDim.new(0, 4)
-			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+				local ButtonCorner = Instance.new("UICorner", DropdownButton)
+				ButtonCorner.CornerRadius = UDim.new(0, 6)
 
-			-- **🔥 EXPANDABLE CONTAINER TO PREVENT COLLISION**
-			local DropdownContainer = Instance.new("Frame")
-			DropdownContainer.Size = UDim2.new(1, 0, 0, 60) -- **Starts at normal size**
-			DropdownContainer.BackgroundTransparency = 1
-			DropdownContainer.Parent = self.Frame
+				-- Dropdown Menu
+				local DropdownList = Instance.new("Frame")
+				DropdownList.Size = UDim2.new(1, 0, 0, 0)
+				DropdownList.Position = UDim2.new(0, 0, 1, 0)
+				DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+				DropdownList.Visible = false
+				DropdownList.Parent = Dropdown
 
-			Dropdown.Parent = DropdownContainer -- **Put everything inside the container**
+				local UIListLayout = Instance.new("UIListLayout", DropdownList)
+				UIListLayout.Padding = UDim.new(0, 4)
+				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-			-- 🔥 Create Option Buttons
-			for _, option in pairs(Options) do
-				local OptionButton = Instance.new("TextButton")
-				OptionButton.Size = UDim2.new(1, 0, 0, 50)
-				OptionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-				OptionButton.Text = option
-				OptionButton.TextSize = 32
-				OptionButton.Font = Enum.Font.GothamBold
-				OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-				OptionButton.Parent = DropdownList
+				-- **🔥 EXPANDABLE CONTAINER TO PREVENT COLLISION**
+				local DropdownContainer = Instance.new("Frame")
+				DropdownContainer.Size = UDim2.new(1, 0, 0, 60) -- **Starts at normal size**
+				DropdownContainer.BackgroundTransparency = 1
+				DropdownContainer.Parent = self.Frame
 
-				OptionButton.MouseButton1Click:Connect(function()
-					if MultiSelect then
-						-- Toggle Selection
-						if SelectedOptions[option] then
-							SelectedOptions[option] = nil -- Deselect
+				Dropdown.Parent = DropdownContainer -- **Put everything inside the container**
+
+				-- 🔥 Create Option Buttons
+				for _, option in pairs(Options) do
+					local OptionButton = Instance.new("TextButton")
+					OptionButton.Size = UDim2.new(1, 0, 0, 50)
+					OptionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+					OptionButton.Text = option
+					OptionButton.TextSize = 32
+					OptionButton.Font = Enum.Font.GothamBold
+					OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+					OptionButton.Parent = DropdownList
+
+					OptionButton.MouseButton1Click:Connect(function()
+						if MultiSelect then
+							-- Toggle Selection
+							if SelectedOptions[option] then
+								SelectedOptions[option] = nil -- Deselect
+							else
+								SelectedOptions[option] = true -- Select
+							end
+
+							-- Update Dropdown Display
+							local selectedText = "Select item"
+							local selectedItems = {}
+							for key in pairs(SelectedOptions) do
+								table.insert(selectedItems, key)
+							end
+
+							if #selectedItems > 0 then
+								selectedText = "Select item: " .. table.concat(selectedItems, ", ")
+							end
+
+							DropdownDisplay.Text = selectedText
+							Callback(selectedItems) -- Return all selected items
 						else
-							SelectedOptions[option] = true -- Select
-						end
+							DropdownDisplay.Text = Name .. ": " .. option
+							Callback(option)
 
-						-- Update Dropdown Display
-						local selectedText = "Select item"
-						local selectedItems = {}
-						for key in pairs(SelectedOptions) do
-							table.insert(selectedItems, key)
+							-- Close Dropdown
+							DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
+								DropdownList.Visible = false
+							end)
+							DropdownButton.Text = "▼"
+							DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true) -- 🔥 Reset space
 						end
+					end)
+				end
 
-						if #selectedItems > 0 then
-							selectedText = "Select item: " .. table.concat(selectedItems, ", ")
-						end
+				-- 🔥 Dropdown Toggle (Expands Space)
+				local isExpanded = false
+				DropdownButton.MouseButton1Click:Connect(function()
+					isExpanded = not isExpanded
 
-						DropdownDisplay.Text = selectedText
-						Callback(selectedItems) -- Return all selected items
+					if isExpanded then
+						DropdownList.Visible = true
+						local newHeight = (#Options * 50) + 10
+						DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
+						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60 + newHeight), "Out", "Quad", 0.3, true) -- 🔥 Expand space
+						DropdownButton.Text = "▲"
 					else
-						DropdownDisplay.Text = Name .. ": " .. option
-						Callback(option)
-
-						-- Close Dropdown
 						DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
 							DropdownList.Visible = false
 						end)
-						DropdownButton.Text = "▼"
 						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true) -- 🔥 Reset space
+						DropdownButton.Text = "▼"
 					end
 				end)
-			end
 
-			-- 🔥 Dropdown Toggle (Expands Space)
-			local isExpanded = false
-			DropdownButton.MouseButton1Click:Connect(function()
-				isExpanded = not isExpanded
-
-				if isExpanded then
-					DropdownList.Visible = true
-					local newHeight = (#Options * 50) + 10
-					DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
-					DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60 + newHeight), "Out", "Quad", 0.3, true) -- 🔥 Expand space
-					DropdownButton.Text = "▲"
-				else
-					DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
-						DropdownList.Visible = false
-					end)
-					DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true) -- 🔥 Reset space
-					DropdownButton.Text = "▼"
-				end
-			end)
-
-			return Dropdown
-		end,
+				return Dropdown
+			end,
 
 
 
 
-		CreateSlider = function(self, config)
-			local SliderName = config.Name or "Slider"
-			local MinValue = config.MinValue or 0
-			local MaxValue = config.MaxValue or 100
-			local CurrentValue = math.clamp(config.CurrentValue or MinValue, MinValue, MaxValue)
-			local Increment = config.Increasement or 1
-			local Suffix = config.Suffix or ""
-			local Script = config.Script or function() end
+			CreateSlider = function(self, config)
+				local SliderName = config.Name or "Slider"
+				local MinValue = config.MinValue or 0
+				local MaxValue = config.MaxValue or 100
+				local CurrentValue = math.clamp(config.CurrentValue or MinValue, MinValue, MaxValue)
+				local Increment = config.Increasement or 1
+				local Suffix = config.Suffix or ""
+				local Script = config.Script or function() end
 
-			local SliderFrame = Instance.new("Frame")
-			SliderFrame.Size = UDim2.new(1, -10, 0, 50)
-			SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-			SliderFrame.Parent = self.Frame
+				local SliderFrame = Instance.new("Frame")
+				SliderFrame.Size = UDim2.new(1, -10, 0, 50)
+				SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				SliderFrame.Parent = self.Frame
 
-			local SliderLabel = Instance.new("TextLabel")
-			SliderLabel.Size = UDim2.new(1, -10, 0, 20)
-			SliderLabel.Position = UDim2.new(0, 5, 0, 0)
-			SliderLabel.Text = SliderName .. ": " .. CurrentValue .. Suffix
-			SliderLabel.Font = Enum.Font.GothamBold
-			SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-			SliderLabel.BackgroundTransparency = 1
-			SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-			SliderLabel.Parent = SliderFrame
+				local SliderLabel = Instance.new("TextLabel")
+				SliderLabel.Size = UDim2.new(1, -10, 0, 20)
+				SliderLabel.Position = UDim2.new(0, 5, 0, 0)
+				SliderLabel.Text = SliderName .. ": " .. CurrentValue .. Suffix
+				SliderLabel.Font = Enum.Font.GothamBold
+				SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				SliderLabel.BackgroundTransparency = 1
+				SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+				SliderLabel.Parent = SliderFrame
 
-			local SliderBar = Instance.new("Frame")
-			SliderBar.Size = UDim2.new(1, -10, 0, 8)
-			SliderBar.Position = UDim2.new(0, 5, 0, 25)
-			SliderBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			SliderBar.Parent = SliderFrame
+				local SliderBar = Instance.new("Frame")
+				SliderBar.Size = UDim2.new(1, -10, 0, 8)
+				SliderBar.Position = UDim2.new(0, 5, 0, 25)
+				SliderBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+				SliderBar.Parent = SliderFrame
 
-			local SliderFill = Instance.new("Frame")
-			SliderFill.Size = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), 0, 1, 0)
-			SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-			SliderFill.Parent = SliderBar
+				local SliderFill = Instance.new("Frame")
+				SliderFill.Size = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), 0, 1, 0)
+				SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+				SliderFill.Parent = SliderBar
 
-			local SliderButton = Instance.new("TextButton")
-			SliderButton.Size = UDim2.new(0, 15, 1.5, 0)
-			SliderButton.Position = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), -7, -0.25, 0)
-			SliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			SliderButton.Text = ""
-			SliderButton.Parent = SliderBar
+				local SliderButton = Instance.new("TextButton")
+				SliderButton.Size = UDim2.new(0, 15, 1.5, 0)
+				SliderButton.Position = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), -7, -0.25, 0)
+				SliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				SliderButton.Text = ""
+				SliderButton.Parent = SliderBar
 
-			local ButtonCorner = Instance.new("UICorner")
-			ButtonCorner.CornerRadius = UDim.new(1, 0)
-			ButtonCorner.Parent = SliderButton
+				local ButtonCorner = Instance.new("UICorner")
+				ButtonCorner.CornerRadius = UDim.new(1, 0)
+				ButtonCorner.Parent = SliderButton
 
-			local function UpdateSlider(input)
-				local Position = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
-				local NewValue = math.floor((MinValue + (MaxValue - MinValue) * Position) / Increment) * Increment
+				local function UpdateSlider(input)
+					local Position = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
+					local NewValue = math.floor((MinValue + (MaxValue - MinValue) * Position) / Increment) * Increment
 
-				SliderFill.Size = UDim2.new(Position, 0, 1, 0)
-				SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
-				SliderLabel.Text = SliderName .. ": " .. NewValue .. " " .. Suffix  -- Added space before suffix
-
-				pcall(Script, NewValue)
-			end
-
-			SliderButton.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 then
-					UpdateSlider(input)
-					local moveConnection
-					local releaseConnection
-					moveConnection = game:GetService("UserInputService").InputChanged:Connect(function(moveInput)
-						if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
-							UpdateSlider(moveInput)
-						end
-					end)
-					releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(releaseInput)
-						if releaseInput.UserInputType == Enum.UserInputType.MouseButton1 then
-							if moveConnection then moveConnection:Disconnect() end
-							if releaseConnection then releaseConnection:Disconnect() end
-						end
-					end)
-				end
-			end)
-
-
-			return {
-				Frame = SliderFrame,
-				SetValue = function(value)
-					local ClampedValue = math.clamp(value, MinValue, MaxValue)
-					local Position = (ClampedValue - MinValue) / (MaxValue - MinValue)
 					SliderFill.Size = UDim2.new(Position, 0, 1, 0)
 					SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
-					SliderLabel.Text = SliderName .. ": " .. ClampedValue .. Suffix
-					pcall(Script, ClampedValue)
-				end
-			}
-		end
-	}
+					SliderLabel.Text = SliderName .. ": " .. NewValue .. " " .. Suffix  -- Added space before suffix
 
-	return Tab
-end 
+					pcall(Script, NewValue)
+				end
+
+				SliderButton.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then
+						UpdateSlider(input)
+						local moveConnection
+						local releaseConnection
+						moveConnection = game:GetService("UserInputService").InputChanged:Connect(function(moveInput)
+							if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
+								UpdateSlider(moveInput)
+							end
+						end)
+						releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(releaseInput)
+							if releaseInput.UserInputType == Enum.UserInputType.MouseButton1 then
+								if moveConnection then moveConnection:Disconnect() end
+								if releaseConnection then releaseConnection:Disconnect() end
+							end
+						end)
+					end
+				end)
+
+
+				return {
+					Frame = SliderFrame,
+					SetValue = function(value)
+						local ClampedValue = math.clamp(value, MinValue, MaxValue)
+						local Position = (ClampedValue - MinValue) / (MaxValue - MinValue)
+						SliderFill.Size = UDim2.new(Position, 0, 1, 0)
+						SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
+						SliderLabel.Text = SliderName .. ": " .. ClampedValue .. Suffix
+						pcall(Script, ClampedValue)
+					end
+				}
+			end
+		}
+
+		return Tab
+	end 
 
 	return Cryptic
 end
