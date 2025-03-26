@@ -461,8 +461,6 @@ local TabList = Instance.new("ScrollingFrame")
 				}
 			end,
 
-     local Cryptic = {} -- Define Cryptic before using it
-
 
                         CreateButton = function(self, config)
     local Button = Instance.new("TextButton")
