@@ -365,6 +365,7 @@ function Cryptic:CreateTab(tabName)
         TabFrame.Visible = true
     end)
 
+
 		local Tab = {
 			Frame = TabFrame,
 
