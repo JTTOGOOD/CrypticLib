@@ -198,97 +198,97 @@ function Cryptic:CreateWindow(config)
 	end)
 
 	function Cryptic:Notify(settings)
-    local Title = settings.Title or "Notification"
-    local Description = settings.Description or "No Description Provided"
-    local Duration = settings.Duration or 5
-    local CloseButton = settings.CloseButton or false
-    local ButtonText = settings.ButtonText or "Close"
-    
-    local player = game:GetService("Players").LocalPlayer
-    local PlayerGui = player:WaitForChild("PlayerGui") -- Ensure it loads
-    
-    -- Create Notification UI
-    local NotificationFrame = Instance.new("Frame")
-    NotificationFrame.Size = UDim2.new(0, 468, 0, 80) -- Default height
-    NotificationFrame.Position = UDim2.new(0.75, 0, 0.75, 0)
-    NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    NotificationFrame.BackgroundTransparency = 0.1
-    NotificationFrame.Parent = PlayerGui -- Ensure it goes inside PlayerGui
-    
-    -- Title Label
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Text = Title
-    TitleLabel.Size = UDim2.new(1, -12, 0, 30)
-    TitleLabel.Position = UDim2.new(0, 6, 0, 6) 
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextSize = 20
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.TextWrapped = true
-    TitleLabel.Parent = NotificationFrame
+		local Title = settings.Title or "Notification"
+		local Description = settings.Description or "No Description Provided"
+		local Duration = settings.Duration or 5
+		local CloseButton = settings.CloseButton or false
+		local ButtonText = settings.ButtonText or "Close"
 
-    -- Description Label
-    local DescLabel = Instance.new("TextLabel")
-    DescLabel.Text = Description
-    DescLabel.Position = UDim2.new(0, 6, 0, 36) 
-    DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    DescLabel.Size = UDim2.new(1, -12, 0, 40)
-    DescLabel.TextSize = 18
-    DescLabel.TextWrapped = true
-    DescLabel.BackgroundTransparency = 1
-    DescLabel.Font = Enum.Font.Gotham
-    DescLabel.TextXAlignment = Enum.TextXAlignment.Left
-    DescLabel.TextYAlignment = Enum.TextYAlignment.Top
-    DescLabel.Parent = NotificationFrame
+		local player = game:GetService("Players").LocalPlayer
+		local PlayerGui = player:WaitForChild("PlayerGui") -- Ensure it loads
 
-    -- Adjust height based on text size
-    task.wait(0.05)
-    local textSize = game:GetService("TextService"):GetTextSize(Description, 18, Enum.Font.Gotham, Vector2.new(440, math.huge))
-    local newHeight = math.clamp(textSize.Y + 50, 80, 200)
-    NotificationFrame.Size = UDim2.new(0, 468, 0, newHeight)
-    DescLabel.Size = UDim2.new(1, -12, 0, newHeight - 50)
+		-- Create Notification UI
+		local NotificationFrame = Instance.new("Frame")
+		NotificationFrame.Size = UDim2.new(0, 468, 0, 80) -- Default height
+		NotificationFrame.Position = UDim2.new(0.75, 0, 0.75, 0)
+		NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+		NotificationFrame.BackgroundTransparency = 0.1
+		NotificationFrame.Parent = PlayerGui -- Ensure it goes inside PlayerGui
 
-    -- Close Button (if enabled)
-    if CloseButton then
-        local CloseBtn = Instance.new("TextButton")
-        CloseBtn.Text = ButtonText
-        CloseBtn.Position = UDim2.new(0.5, -40, 1, -30)
-        CloseBtn.Size = UDim2.new(0.4, 0, 0, 25)
-        CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        CloseBtn.Parent = NotificationFrame
+		-- Title Label
+		local TitleLabel = Instance.new("TextLabel")
+		TitleLabel.Text = Title
+		TitleLabel.Size = UDim2.new(1, -12, 0, 30)
+		TitleLabel.Position = UDim2.new(0, 6, 0, 6) 
+		TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TitleLabel.BackgroundTransparency = 1
+		TitleLabel.Font = Enum.Font.GothamBold
+		TitleLabel.TextSize = 20
+		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+		TitleLabel.TextWrapped = true
+		TitleLabel.Parent = NotificationFrame
 
-        CloseBtn.MouseButton1Click:Connect(function()
-            NotificationFrame:Destroy()
-        end)
-    end
+		-- Description Label
+		local DescLabel = Instance.new("TextLabel")
+		DescLabel.Text = Description
+		DescLabel.Position = UDim2.new(0, 6, 0, 36) 
+		DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+		DescLabel.Size = UDim2.new(1, -12, 0, 40)
+		DescLabel.TextSize = 18
+		DescLabel.TextWrapped = true
+		DescLabel.BackgroundTransparency = 1
+		DescLabel.Font = Enum.Font.Gotham
+		DescLabel.TextXAlignment = Enum.TextXAlignment.Left
+		DescLabel.TextYAlignment = Enum.TextYAlignment.Top
+		DescLabel.Parent = NotificationFrame
 
-    -- Ensure it's visible
-    NotificationFrame.BackgroundTransparency = 0.1
-    TitleLabel.TextTransparency = 0
-    DescLabel.TextTransparency = 0
+		-- Adjust height based on text size
+		task.wait(0.05)
+		local textSize = game:GetService("TextService"):GetTextSize(Description, 18, Enum.Font.Gotham, Vector2.new(440, math.huge))
+		local newHeight = math.clamp(textSize.Y + 50, 80, 200)
+		NotificationFrame.Size = UDim2.new(0, 468, 0, newHeight)
+		DescLabel.Size = UDim2.new(1, -12, 0, newHeight - 50)
 
-    -- Tween Animation
-    local TweenService = game:GetService("TweenService")
-    local TweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		-- Close Button (if enabled)
+		if CloseButton then
+			local CloseBtn = Instance.new("TextButton")
+			CloseBtn.Text = ButtonText
+			CloseBtn.Position = UDim2.new(0.5, -40, 1, -30)
+			CloseBtn.Size = UDim2.new(0.4, 0, 0, 25)
+			CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+			CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+			CloseBtn.Parent = NotificationFrame
 
-    TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 0.1}):Play()
-    TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 0}):Play()
-    TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 0}):Play()
+			CloseBtn.MouseButton1Click:Connect(function()
+				NotificationFrame:Destroy()
+			end)
+		end
 
-    -- Auto-Close if CloseButton is false
-    if not CloseButton then
-        task.wait(Duration)
-        TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 1}):Play()
-        TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 1}):Play()
-        TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 1}):Play()
-        task.wait(0.5)
-        NotificationFrame:Destroy()
-    end
-end
+		-- Ensure it's visible
+		NotificationFrame.BackgroundTransparency = 0.1
+		TitleLabel.TextTransparency = 0
+		DescLabel.TextTransparency = 0
 
-local TabList = Instance.new("ScrollingFrame")
+		-- Tween Animation
+		local TweenService = game:GetService("TweenService")
+		local TweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+		TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 0.1}):Play()
+		TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 0}):Play()
+		TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 0}):Play()
+
+		-- Auto-Close if CloseButton is false
+		if not CloseButton then
+			task.wait(Duration)
+			TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 1}):Play()
+			TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 1}):Play()
+			TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 1}):Play()
+			task.wait(0.5)
+			NotificationFrame:Destroy()
+		end
+	end
+
+	local TabList = Instance.new("ScrollingFrame")
 	TabList.Size = UDim2.new(1, 0, 0, 30)
 	TabList.Position = UDim2.new(0, 0, 0, 35)
 	TabList.ScrollBarThickness = 4
@@ -322,50 +322,50 @@ local TabList = Instance.new("ScrollingFrame")
 	local Tabs = {}
 
 	function Cryptic:CreateTab(tabName)
-    if not TabList then
-        warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
-        return
-    end
+		if not TabList then
+			warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
+			return
+		end
 
-    local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
-    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = tabName
-    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextScaled = true -- Scale text automatically
-    TabButton.Parent = TabList 
+		local TabButton = Instance.new("TextButton")
+		TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
+		TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		TabButton.Text = tabName
+		TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TabButton.Font = Enum.Font.GothamBold
+		TabButton.TextScaled = true -- Scale text automatically
+		TabButton.Parent = TabList 
 
-    -- Ensure text fits inside the button
-    local TextConstraint = Instance.new("UITextSizeConstraint")
-    TextConstraint.MaxTextSize = 18
-    TextConstraint.Parent = TabButton
+		-- Ensure text fits inside the button
+		local TextConstraint = Instance.new("UITextSizeConstraint")
+		TextConstraint.MaxTextSize = 18
+		TextConstraint.Parent = TabButton
 
-    local TabFrame = Instance.new("ScrollingFrame")
-    TabFrame.Size = UDim2.new(1, 0, 1, -100)
-    TabFrame.Position = UDim2.new(0, 0, 0, 65)
-    TabFrame.BackgroundColor3 = Theme
-    TabFrame.Visible = false
-    TabFrame.Parent = MainFrame
-    TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
-    TabFrame.ScrollBarThickness = 5
-    TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+		local TabFrame = Instance.new("ScrollingFrame")
+		TabFrame.Size = UDim2.new(1, 0, 1, -100)
+		TabFrame.Position = UDim2.new(0, 0, 0, 65)
+		TabFrame.BackgroundColor3 = Theme
+		TabFrame.Visible = false
+		TabFrame.Parent = MainFrame
+		TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
+		TabFrame.ScrollBarThickness = 5
+		TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 
-    local ButtonLayout = Instance.new("UIListLayout")
-    ButtonLayout.Parent = TabFrame
-    ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    ButtonLayout.Padding = UDim.new(0, 5)
+		local ButtonLayout = Instance.new("UIListLayout")
+		ButtonLayout.Parent = TabFrame
+		ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		ButtonLayout.Padding = UDim.new(0, 5)
 
-    ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
-    end)
+		ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+			TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
+		end)
 
-    Tabs[tabName] = TabFrame
+		Tabs[tabName] = TabFrame
 
-    TabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(Tabs) do tab.Visible = false end
-        TabFrame.Visible = true
-    end)
+		TabButton.MouseButton1Click:Connect(function()
+			for _, tab in pairs(Tabs) do tab.Visible = false end
+			TabFrame.Visible = true
+		end)
 
 
 		local Tab = {
@@ -462,48 +462,48 @@ local TabList = Instance.new("ScrollingFrame")
 			end,
 
 
-                        CreateButton = function(self, config)
-    local Button = Instance.new("TextButton")
-    Button.Size = UDim2.new(1, -10, 0, 40)
-    Button.Text = "  " .. (config.Name or "Button")
-    Button.Font = Enum.Font.GothamBold
-    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    Button.Parent = self.Frame
+			CreateButton = function(self, config)
+				local Button = Instance.new("TextButton")
+				Button.Size = UDim2.new(1, -10, 0, 40)
+				Button.Text = "  " .. (config.Name or "Button")
+				Button.Font = Enum.Font.GothamBold
+				Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+				Button.Parent = self.Frame
 
-    -- Create UI corner (rounded edges)
-    local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 6)
-    ButtonCorner.Parent = Button
+				-- Create UI corner (rounded edges)
+				local ButtonCorner = Instance.new("UICorner")
+				ButtonCorner.CornerRadius = UDim.new(0, 6)
+				ButtonCorner.Parent = Button
 
-    -- Button click event
-    Button.MouseButton1Click:Connect(function()
-        if config.Script then
-            config.Script()
-        end
-    end)
+				-- Button click event
+				Button.MouseButton1Click:Connect(function()
+					if config.Script then
+						config.Script()
+					end
+				end)
 
-    -- ✅ Return a table with useful methods
-    local ButtonObject = {
-        Instance = Button, -- Store the button reference
+				-- ✅ Return a table with useful methods
+				local ButtonObject = {
+					Instance = Button, -- Store the button reference
 
-        -- Function to change button text
-        SetName = function(self, newName)
-            if self.Instance then
-                self.Instance.Text = "  " .. newName
-            end
-        end,
+					-- Function to change button text
+					SetName = function(self, newName)
+						if self.Instance then
+							self.Instance.Text = "  " .. newName
+						end
+					end,
 
-        -- Function to change button color
-        SetColor = function(self, newColor)
-            if self.Instance then
-                self.Instance.BackgroundColor3 = newColor
-            end
-        end
-    }
+					-- Function to change button color
+					SetColor = function(self, newColor)
+						if self.Instance then
+							self.Instance.BackgroundColor3 = newColor
+						end
+					end
+				}
 
-    return ButtonObject
-end,
+				return ButtonObject
+			end,
 
 
 			CreateToggle = function(self, config)
