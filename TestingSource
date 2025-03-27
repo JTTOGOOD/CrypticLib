@@ -1,4 +1,4 @@
-colwarn("Report to (@MynamesJT) on Discord if you come across any issues.")
+warn("Report to (@MynamesJT) on Discord if you come across any issues.")
 
 local Cryptic = {}
 
