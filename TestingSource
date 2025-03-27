@@ -703,7 +703,7 @@ function Cryptic:CreateWindow(config)
 
                         -- Inside your UI module or table, such as Tab or CroxieLib
 
-Tab.CreateColorPicker = function(self, config)
+CreateColorPicker = function(self, config)
     local Name = config.Name or "Color Picker"
     local DefaultColor = config.DefaultColor or Color3.fromRGB(255, 0, 0)
     local AllowAlpha = config.AllowAlpha or false
