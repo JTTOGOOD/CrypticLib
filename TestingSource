@@ -29,7 +29,7 @@ function Cryptic:CreateWindow(config)
 		end
 	end
 
-	-- 🔥 Prevent UI Reset Issues (Move UI to CoreGui)
+
 	local existingUI = game:GetService("CoreGui"):FindFirstChild("CroxieLib")
 	if existingUI then
 		existingUI:Destroy() -- Remove old instance before creating a new one
@@ -39,7 +39,7 @@ function Cryptic:CreateWindow(config)
 	local ScreenGui = Instance.new("ScreenGui")
 	local success, err = pcall(function()
 		ScreenGui.Name = "CroxieLib"
-		ScreenGui.Parent = game:GetService("CoreGui") -- 🔥 Fixes UI disappearing issue
+		ScreenGui.Parent = game:GetService("CoreGui") 
 		ScreenGui.ResetOnSpawn = false
 	end)
 	debugPrint("ScreenGui", success, err)
@@ -57,12 +57,11 @@ function Cryptic:CreateWindow(config)
 	end)
 	debugPrint("MainFrame", success, err)
 
-	-- 🔵 UI Corner (Rounded edges)
+
 	local UICorner = Instance.new("UICorner")
 	UICorner.CornerRadius = UDim.new(0, 10)
 	UICorner.Parent = MainFrame
 
-	-- 🔠 Title Label (Updated)
 	local TitleLabel = Instance.new("TextLabel")
 	success, err = pcall(function()
 		TitleLabel.Name = "TitleLabel"
@@ -79,7 +78,7 @@ function Cryptic:CreateWindow(config)
 	debugPrint("TitleLabel", success, err)
 
 
-	-- 🛑 Key System
+
 	if KeySystemEnabled then
 		local KeySystemFrame = Instance.new("Frame")
 		KeySystemFrame.Size = UDim2.new(0, 400, 0, 200)
@@ -125,7 +124,7 @@ function Cryptic:CreateWindow(config)
 		ErrorMessage.Visible = false
 		ErrorMessage.Parent = KeySystemFrame
 
-		-- 🔹 Enter Button Logic
+
 		EnterButton.MouseButton1Click:Connect(function()
 			if KeyTextBox.Text == CorrectKey then
 				KeySystemFrame:Destroy() -- Remove Key System UI
@@ -243,7 +242,7 @@ function Cryptic:CreateWindow(config)
 		DescLabel.TextYAlignment = Enum.TextYAlignment.Top
 		DescLabel.Parent = NotificationFrame
 
-		-- Adjust height based on text size
+	
 		task.wait(0.05)
 		local textSize = game:GetService("TextService"):GetTextSize(Description, 18, Enum.Font.Gotham, Vector2.new(440, math.huge))
 		local newHeight = math.clamp(textSize.Y + 50, 80, 200)
@@ -265,12 +264,12 @@ function Cryptic:CreateWindow(config)
 			end)
 		end
 
-		-- Ensure it's visible
+
 		NotificationFrame.BackgroundTransparency = 0.1
 		TitleLabel.TextTransparency = 0
 		DescLabel.TextTransparency = 0
 
-		-- Tween Animation
+
 		local TweenService = game:GetService("TweenService")
 		local TweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
@@ -278,7 +277,7 @@ function Cryptic:CreateWindow(config)
 		TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 0}):Play()
 		TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 0}):Play()
 
-		-- Auto-Close if CloseButton is false
+
 		if not CloseButton then
 			task.wait(Duration)
 			TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 1}):Play()
@@ -337,7 +336,7 @@ function Cryptic:CreateWindow(config)
     TabButton.TextScaled = true -- Scale text automatically
     TabButton.Parent = TabList 
 
-    -- Ensure text fits inside the button
+
     local TextConstraint = Instance.new("UITextSizeConstraint")
     TextConstraint.MaxTextSize = 18
     TextConstraint.Parent = TabButton
@@ -394,18 +393,18 @@ function Cryptic:CreateWindow(config)
 				local PlaceholderText = config.TextboxText or "Enter Text"
 				local InputScript = config.script or function() end
 
-				-- Create the frame
+
 				local InputFrame = Instance.new("Frame")
 				InputFrame.Size = UDim2.new(1, -10, 0, 40)
 				InputFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 				InputFrame.Parent = self.Frame
 
-				-- Add corner radius
+
 				local FrameCorner = Instance.new("UICorner")
 				FrameCorner.CornerRadius = UDim.new(0, 6)
 				FrameCorner.Parent = InputFrame
 
-				-- Create label
+
 				local InputLabel = Instance.new("TextLabel")
 				InputLabel.Size = UDim2.new(1, -10, 0, 20)
 				InputLabel.Position = UDim2.new(0, 10, 0, 0)
@@ -417,7 +416,7 @@ function Cryptic:CreateWindow(config)
 				InputLabel.Parent = InputFrame
                                 InputLabel.TextSize = 24
 
-				-- Create textbox
+
 				local TextBox = Instance.new("TextBox")
 				TextBox.Size = UDim2.new(1, -20, 0, 20)
 				TextBox.Position = UDim2.new(0, 10, 0, 20)
@@ -430,12 +429,12 @@ function Cryptic:CreateWindow(config)
 				TextBox.Parent = InputFrame
 				TextBox.TextSize = 18  
 
-				-- Add corner radius to textbox
+
 				local TextBoxCorner = Instance.new("UICorner")
 				TextBoxCorner.CornerRadius = UDim.new(0, 4)
 				TextBoxCorner.Parent = TextBox
 
-				-- Function to reset placeholder text when textbox is empty
+
 				local function ResetPlaceholder()
 					if TextBox.Text == "" then
 						TextBox.Text = ""
@@ -443,7 +442,7 @@ function Cryptic:CreateWindow(config)
 					end
 				end
 
-				-- Event when the user presses Enter
+
 				TextBox.FocusLost:Connect(function(enterPressed)
 					if enterPressed then
 						InputScript(TextBox.Text) -- Call script function
@@ -452,7 +451,7 @@ function Cryptic:CreateWindow(config)
 					end
 				end)
 
-				-- Ensure placeholder resets when clicking away
+
 				TextBox.FocusLost:Connect(ResetPlaceholder)
 
 				return {
@@ -489,7 +488,7 @@ function Cryptic:CreateWindow(config)
 					end
 				end)
 
-				-- ✅ Return a table with useful methods
+
 				local ButtonObject = {
 					Instance = Button, -- Store the button reference
 
@@ -624,15 +623,14 @@ function Cryptic:CreateWindow(config)
 				UIListLayout.Padding = UDim.new(0, 4)
 				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-				-- **🔥 EXPANDABLE CONTAINER TO PREVENT COLLISION**
 				local DropdownContainer = Instance.new("Frame")
-				DropdownContainer.Size = UDim2.new(1, 0, 0, 60) -- **Starts at normal size**
+				DropdownContainer.Size = UDim2.new(1, 0, 0, 60)
 				DropdownContainer.BackgroundTransparency = 1
 				DropdownContainer.Parent = self.Frame
 
-				Dropdown.Parent = DropdownContainer -- **Put everything inside the container**
+				Dropdown.Parent = DropdownContainer
 
-				-- 🔥 Create Option Buttons
+
 				for _, option in pairs(Options) do
 					local OptionButton = Instance.new("TextButton")
 					OptionButton.Size = UDim2.new(1, 0, 0, 50)
@@ -674,7 +672,7 @@ function Cryptic:CreateWindow(config)
 								DropdownList.Visible = false
 							end)
 							DropdownButton.Text = "▼"
-							DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true) -- 🔥 Reset space
+							DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true)
 						end
 					end)
 				end
@@ -688,13 +686,13 @@ function Cryptic:CreateWindow(config)
 						DropdownList.Visible = true
 						local newHeight = (#Options * 50) + 10
 						DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
-						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60 + newHeight), "Out", "Quad", 0.3, true) -- 🔥 Expand space
+						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60 + newHeight), "Out", "Quad", 0.3, true) 
 						DropdownButton.Text = "▲"
 					else
 						DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
 							DropdownList.Visible = false
 						end)
-						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true) -- 🔥 Reset space
+						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true)
 						DropdownButton.Text = "▼"
 					end
 				end)
