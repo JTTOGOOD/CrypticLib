@@ -242,7 +242,7 @@ function Cryptic:CreateWindow(config)
 		DescLabel.TextYAlignment = Enum.TextYAlignment.Top
 		DescLabel.Parent = NotificationFrame
 
-	
+
 		task.wait(0.05)
 		local textSize = game:GetService("TextService"):GetTextSize(Description, 18, Enum.Font.Gotham, Vector2.new(440, math.huge))
 		local newHeight = math.clamp(textSize.Y + 50, 80, 200)
@@ -322,51 +322,51 @@ function Cryptic:CreateWindow(config)
 	local Tabs = {}
 
 	function Cryptic:CreateTab(tabName)
-    if not TabList then
-        warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
-        return
-    end
+		if not TabList then
+			warn("TabList is missing! Make sure it's initialized before calling CreateTab.")
+			return
+		end
 
-    local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
-    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TabButton.Text = tabName
-    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextScaled = true -- Scale text automatically
-    TabButton.Parent = TabList 
+		local TabButton = Instance.new("TextButton")
+		TabButton.Size = UDim2.new(0, 150, 0, 30) -- Width: 100px, Full height
+		TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		TabButton.Text = tabName
+		TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TabButton.Font = Enum.Font.GothamBold
+		TabButton.TextScaled = true -- Scale text automatically
+		TabButton.Parent = TabList 
 
 
-    local TextConstraint = Instance.new("UITextSizeConstraint")
-    TextConstraint.MaxTextSize = 18
-    TextConstraint.Parent = TabButton
+		local TextConstraint = Instance.new("UITextSizeConstraint")
+		TextConstraint.MaxTextSize = 18
+		TextConstraint.Parent = TabButton
 
-    local TabFrame = Instance.new("ScrollingFrame")
-    TabFrame.Size = UDim2.new(1, 0, 1, -100)
-    TabFrame.Position = UDim2.new(0, 0, 0, 65)
-    TabFrame.BackgroundColor3 = Theme
-    TabFrame.Visible = false
-    TabFrame.Parent = MainFrame
-    TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
-    TabFrame.ScrollBarThickness = 5
-    TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
-    TabFrame.BackgroundTransparency = 1
+		local TabFrame = Instance.new("ScrollingFrame")
+		TabFrame.Size = UDim2.new(1, 0, 1, -100)
+		TabFrame.Position = UDim2.new(0, 0, 0, 65)
+		TabFrame.BackgroundColor3 = Theme
+		TabFrame.Visible = false
+		TabFrame.Parent = MainFrame
+		TabFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
+		TabFrame.ScrollBarThickness = 5
+		TabFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+		TabFrame.BackgroundTransparency = 1
 
-    local ButtonLayout = Instance.new("UIListLayout")
-    ButtonLayout.Parent = TabFrame
-    ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    ButtonLayout.Padding = UDim.new(0, 5)
+		local ButtonLayout = Instance.new("UIListLayout")
+		ButtonLayout.Parent = TabFrame
+		ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		ButtonLayout.Padding = UDim.new(0, 5)
 
-    ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
-    end)
+		ButtonLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+			TabFrame.CanvasSize = UDim2.new(0, 0, 0, ButtonLayout.AbsoluteContentSize.Y + 10)
+		end)
 
-    Tabs[tabName] = TabFrame
+		Tabs[tabName] = TabFrame
 
-    TabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(Tabs) do tab.Visible = false end
-        TabFrame.Visible = true
-    end)
+		TabButton.MouseButton1Click:Connect(function()
+			for _, tab in pairs(Tabs) do tab.Visible = false end
+			TabFrame.Visible = true
+		end)
 
 
 
@@ -383,7 +383,7 @@ function Cryptic:CreateWindow(config)
 				Label.BackgroundTransparency = 1
 				Label.TextXAlignment = Enum.TextXAlignment.Left
 				Label.Parent = self.Frame
-                                Label.TextSize = 16
+				Label.TextSize = 16
 
 				return Label
 			end,
@@ -414,7 +414,7 @@ function Cryptic:CreateWindow(config)
 				InputLabel.BackgroundTransparency = 1
 				InputLabel.TextXAlignment = Enum.TextXAlignment.Left
 				InputLabel.Parent = InputFrame
-                                InputLabel.TextSize = 24
+				InputLabel.TextSize = 24
 
 
 				local TextBox = Instance.new("TextBox")
@@ -474,7 +474,7 @@ function Cryptic:CreateWindow(config)
 				Button.TextColor3 = Color3.fromRGB(255, 255, 255)
 				Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 				Button.Parent = self.Frame
-                                Button.TextSize = 24
+				Button.TextSize = 24
 
 				-- Create UI corner (rounded edges)
 				local ButtonCorner = Instance.new("UICorner")
@@ -534,7 +534,7 @@ function Cryptic:CreateWindow(config)
 				ToggleLabel.BackgroundTransparency = 1
 				ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 				ToggleLabel.Parent = ToggleFrame
-                                ToggleLabel.TextSize = 24
+				ToggleLabel.TextSize = 24
 
 				local ToggleButton = Instance.new("TextButton")
 				ToggleButton.Size = UDim2.new(0, 50, 0.8, 0)
@@ -700,7 +700,7 @@ function Cryptic:CreateWindow(config)
 				return Dropdown
 			end,
 
-                
+
 			CreateSlider = function(self, config)
 				local SliderName = config.Name or "Slider"
 				local MinValue = config.MinValue or 0
@@ -724,7 +724,7 @@ function Cryptic:CreateWindow(config)
 				SliderLabel.BackgroundTransparency = 1
 				SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
 				SliderLabel.Parent = SliderFrame
-                                SliderLabel.TextSize = 24
+				SliderLabel.TextSize = 24
 
 				local SliderBar = Instance.new("Frame")
 				SliderBar.Size = UDim2.new(1, -10, 0, 8)
