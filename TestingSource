@@ -700,7 +700,7 @@ function Cryptic:CreateWindow(config)
 				return Dropdown
 			end,
 
-                        CreateColorPicker = function(self, config)
+                       CreateColorPicker = function(self, config)
     local Name = config.Name or "Color Picker"
     local DefaultColor = config.DefaultColor or Color3.fromRGB(255, 0, 0)
     local AllowAlpha = config.AllowAlpha or false
@@ -810,6 +810,17 @@ function Cryptic:CreateWindow(config)
         Callback(ColorBox.BackgroundColor3)
         PickerFrame.Visible = false
     end)
+
+    -- **Return the ColorPicker object**
+    return {
+        OpenButton = OpenButton,
+        PickerFrame = PickerFrame,
+        ColorBox = ColorBox,
+        HueSlider = HueSlider,
+        AlphaSlider = AlphaSlider,
+        PreviewBox = PreviewBox,
+        ConfirmButton = ConfirmButton
+    }
 end
 
 
