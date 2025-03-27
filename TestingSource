@@ -701,6 +701,130 @@ function Cryptic:CreateWindow(config)
 			end,
 
 
+                        CreateColorPicker = function(self, config)
+    local Name = config.Name or "Color Picker"
+    local DefaultColor = config.DefaultColor or Color3.fromRGB(255, 0, 0)
+    local AllowAlpha = config.AllowAlpha or false
+    local Callback = config.script or function() end
+
+    -- Open/Close Button
+    local OpenButton = Instance.new("TextButton")
+    OpenButton.Parent = self.Frame
+    OpenButton.Size = UDim2.new(0, 120, 0, 30)
+    OpenButton.Position = UDim2.new(0, 10, 0, 10)
+    OpenButton.Text = Name
+
+    -- Main Picker UI
+    local PickerFrame = Instance.new("Frame")
+    PickerFrame.Parent = self.Frame
+    PickerFrame.Size = UDim2.new(0, 200, 0, 260)
+    PickerFrame.Position = UDim2.new(0, 10, 0, 50)
+    PickerFrame.Visible = false
+
+    -- Color Selection Box
+    local ColorBox = Instance.new("ImageButton")
+    ColorBox.Parent = PickerFrame
+    ColorBox.Size = UDim2.new(0, 150, 0, 150)
+    ColorBox.Position = UDim2.new(0, 25, 0, 10)
+    ColorBox.Image = "rbxassetid://4155801252"
+    ColorBox.BackgroundColor3 = DefaultColor
+
+    -- Hue Slider
+    local HueSlider = Instance.new("Frame")
+    HueSlider.Parent = PickerFrame
+    HueSlider.Size = UDim2.new(0, 150, 0, 15)
+    HueSlider.Position = UDim2.new(0, 25, 0, 170)
+    HueSlider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+    local HueGradient = Instance.new("UIGradient")
+    HueGradient.Parent = HueSlider
+    HueGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.16, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 255)),
+        ColorSequenceKeypoint.new(0.66, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(255, 0, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+    })
+
+    -- Alpha Slider (if enabled)
+    local AlphaSlider
+    if AllowAlpha then
+        AlphaSlider = Instance.new("Frame")
+        AlphaSlider.Parent = PickerFrame
+        AlphaSlider.Size = UDim2.new(0, 150, 0, 15)
+        AlphaSlider.Position = UDim2.new(0, 25, 0, 190)
+        AlphaSlider.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    end
+
+    -- Live Preview Box
+    local PreviewBox = Instance.new("Frame")
+    PreviewBox.Parent = PickerFrame
+    PreviewBox.Size = UDim2.new(0, 50, 0, 50)
+    PreviewBox.Position = UDim2.new(0, 75, 0, 210)
+    PreviewBox.BackgroundColor3 = DefaultColor
+
+    -- Confirm Button
+    local ConfirmButton = Instance.new("TextButton")
+    ConfirmButton.Parent = PickerFrame
+    ConfirmButton.Size = UDim2.new(0, 100, 0, 20)
+    ConfirmButton.Position = UDim2.new(0, 50, 0, 230)
+    ConfirmButton.Text = "Confirm"
+
+    -- Open/Close Button Click Event
+    OpenButton.MouseButton1Click:Connect(function()
+        PickerFrame.Visible = not PickerFrame.Visible
+    end)
+
+    -- Color Selection Logic
+    ColorBox.MouseButton1Click:Connect(function()
+        local MousePos = game.Players.LocalPlayer:GetMouse().X
+        local BoxPos = ColorBox.AbsolutePosition.X
+        local RelativeX = math.clamp((MousePos - BoxPos) / ColorBox.AbsoluteSize.X, 0, 1)
+        local SelectedColor = Color3.fromHSV(RelativeX, 1, 1)
+        ColorBox.BackgroundColor3 = SelectedColor
+        PreviewBox.BackgroundColor3 = SelectedColor
+    end)
+
+    -- Hue Selection Logic
+    HueSlider.MouseButton1Click:Connect(function()
+        local MousePos = game.Players.LocalPlayer:GetMouse().X
+        local SliderPos = HueSlider.AbsolutePosition.X
+        local RelativeX = math.clamp((MousePos - SliderPos) / HueSlider.AbsoluteSize.X, 0, 1)
+        local SelectedHue = Color3.fromHSV(RelativeX, 1, 1)
+        ColorBox.ImageColor3 = SelectedHue
+    end)
+
+    -- Alpha Selection Logic (if enabled)
+    if AllowAlpha then
+        AlphaSlider.MouseButton1Click:Connect(function()
+            local MousePos = game.Players.LocalPlayer:GetMouse().X
+            local SliderPos = AlphaSlider.AbsolutePosition.X
+            local RelativeX = math.clamp((MousePos - SliderPos) / AlphaSlider.AbsoluteSize.X, 0, 1)
+            PreviewBox.BackgroundTransparency = RelativeX
+        end)
+    end
+
+    -- Confirm Button Logic
+    ConfirmButton.MouseButton1Click:Connect(function()
+        Callback(ColorBox.BackgroundColor3)
+        PickerFrame.Visible = false
+    end)
+
+    -- **Return the ColorPicker object**
+    return {
+        OpenButton = OpenButton,
+        PickerFrame = PickerFrame,
+        ColorBox = ColorBox,
+        HueSlider = HueSlider,
+        AlphaSlider = AlphaSlider,
+        PreviewBox = PreviewBox,
+        ConfirmButton = ConfirmButton
+    }
+end,
+
+
 			CreateSlider = function(self, config)
 				local SliderName = config.Name or "Slider"
 				local MinValue = config.MinValue or 0
