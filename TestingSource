@@ -375,28 +375,28 @@ function Cryptic:CreateWindow(config)
 
 			-- CreateLabel Function
 			CreateLabel = function(self, config)
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(1, -10, 0, 30)
-    Label.Text = config.Text or "Label"
-    Label.Font = Enum.Font.GothamBold
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.BackgroundTransparency = 1
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Parent = self.Frame
-    Label.TextSize = 16
+				local Label = Instance.new("TextLabel")
+				Label.Size = UDim2.new(1, -10, 0, 30)
+				Label.Text = config.Text or "Label"
+				Label.Font = Enum.Font.GothamBold
+				Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+				Label.BackgroundTransparency = 1
+				Label.TextXAlignment = Enum.TextXAlignment.Left
+				Label.Parent = self.Frame
+				Label.TextSize = 16
 
-    -- Create wrapper table
-    local LabelObject = {
-        Instance = Label
-    }
+				-- Create wrapper table
+				local LabelObject = {
+					Instance = Label
+				}
 
-    -- Function to update label text
-    function LabelObject:NewText(newText)
-        self.Instance.Text = newText
-    end
+				-- Function to update label text
+				function LabelObject:NewText(newText)
+					self.Instance.Text = newText
+				end
 
-    return LabelObject
-end,
+				return LabelObject
+			end,
 
 
 
@@ -713,7 +713,7 @@ end,
 			end,
 
 
-			
+
 			CreateSlider = function(self, config)
 				local SliderName = config.Name or "Slider"
 				local MinValue = config.MinValue or 0
