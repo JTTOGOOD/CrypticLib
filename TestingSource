@@ -385,12 +385,18 @@ function Cryptic:CreateWindow(config)
     Label.Parent = self.Frame
     Label.TextSize = 16
 
-    -- Add NewText function to update label text
-    function Label:NewText(newText)
-        self.Text = newText
+    -- Create a wrapper table to hold custom methods
+    local LabelObject = {}
+
+    -- Store the label instance inside the object
+    LabelObject.Instance = Label
+
+    -- Function to update the label's text
+    function LabelObject:NewText(newText)
+        self.Instance.Text = newText
     end
 
-    return Label
+    return LabelObject
 end,
 
 
