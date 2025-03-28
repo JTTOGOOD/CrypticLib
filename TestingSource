@@ -385,15 +385,12 @@ function Cryptic:CreateWindow(config)
     Label.Parent = self.Frame
     Label.TextSize = 16
 
-    -- Create a wrapper table to hold custom methods
-    local LabelObject = {}
+    -- Create a wrapper table to store the Label instance and methods
+    local LabelObject = setmetatable({}, { __index = Label })
 
-    -- Store the label instance inside the object
-    LabelObject.Instance = Label
-
-    -- Function to update the label's text
+    -- Function to update text
     function LabelObject:NewText(newText)
-        self.Instance.Text = newText
+        self.Text = newText
     end
 
     return LabelObject
