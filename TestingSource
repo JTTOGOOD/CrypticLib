@@ -715,6 +715,7 @@ end,
 
 			
 			CreateSlider = function(self, config)
+    -- Configuration values with defaults
     local SliderName = config.Name or "Slider"
     local MinValue = config.MinValue or 0
     local MaxValue = config.MaxValue or 100
@@ -723,11 +724,13 @@ end,
     local Suffix = config.Suffix or ""
     local Script = config.Script or function() end
 
+    -- Create the slider frame
     local SliderFrame = Instance.new("Frame")
     SliderFrame.Size = UDim2.new(1, -10, 0, 50)
     SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     SliderFrame.Parent = self.Frame
 
+    -- Create the slider label
     local SliderLabel = Instance.new("TextLabel")
     SliderLabel.Size = UDim2.new(1, -10, 0, 20)
     SliderLabel.Position = UDim2.new(0, 5, 0, 0)
@@ -739,17 +742,20 @@ end,
     SliderLabel.Parent = SliderFrame
     SliderLabel.TextSize = 24
 
+    -- Create the slider bar
     local SliderBar = Instance.new("Frame")
     SliderBar.Size = UDim2.new(1, -10, 0, 8)
     SliderBar.Position = UDim2.new(0, 5, 0, 25)
     SliderBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     SliderBar.Parent = SliderFrame
 
+    -- Create the fill for the slider
     local SliderFill = Instance.new("Frame")
     SliderFill.Size = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), 0, 1, 0)
     SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
     SliderFill.Parent = SliderBar
 
+    -- Create the slider button
     local SliderButton = Instance.new("TextButton")
     SliderButton.Size = UDim2.new(0, 15, 1.5, 0)
     SliderButton.Position = UDim2.new((CurrentValue - MinValue) / (MaxValue - MinValue), -7, -0.25, 0)
@@ -757,6 +763,7 @@ end,
     SliderButton.Text = ""
     SliderButton.Parent = SliderBar
 
+    -- Add corner radius to the slider button
     local ButtonCorner = Instance.new("UICorner")
     ButtonCorner.CornerRadius = UDim.new(1, 0)
     ButtonCorner.Parent = SliderButton
@@ -823,8 +830,8 @@ end,
     }
 end,
 
-		return Tab
-	end 
+-- Assuming 'Tab' is already defined elsewhere
+return Tab,
 
 	return Cryptic
 end
