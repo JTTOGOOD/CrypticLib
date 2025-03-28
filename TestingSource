@@ -815,6 +815,7 @@ end,
         end
     end
 
+    -- Return the slider object with SetValue and SetMaxValue functions
     return {
         Frame = SliderFrame,
         SetValue = SetValue,
