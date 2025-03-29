@@ -138,7 +138,8 @@ function Cryptic:CreateWindow(config)
 				ErrorMessage.Visible = true
 			end
 		end)
-	elseif LoadingScreenEnabled then
+
+		elseif LoadingScreenEnabled then
 		-- No Key System, but Loading Screen is enabled
 		local function showLoadingScreen()
 			local LoadingFrame = Instance.new("Frame")
@@ -148,12 +149,23 @@ function Cryptic:CreateWindow(config)
 
 			local LoadingLabel = Instance.new("TextLabel")
 			LoadingLabel.Size = UDim2.new(1, 0, 0, 50)
-			LoadingLabel.Position = UDim2.new(0, 0, 0.5, -25)
+			LoadingLabel.Position = UDim2.new(0, 0, 0.4, -25)
 			LoadingLabel.Text = LoadingTitle
-			LoadingLabel.TextSize = 20
+			LoadingLabel.TextSize = 24
 			LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 			LoadingLabel.Font = Enum.Font.GothamBold
+			LoadingLabel.BackgroundTransparency = 1
 			LoadingLabel.Parent = LoadingFrame
+
+			local SubtitleLabel = Instance.new("TextLabel")
+			SubtitleLabel.Size = UDim2.new(1, 0, 0, 30)
+			SubtitleLabel.Position = UDim2.new(0, 0, 0.45, 0)
+			SubtitleLabel.Text = LoadingSubtitle
+			SubtitleLabel.TextSize = 18
+			SubtitleLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+			SubtitleLabel.Font = Enum.Font.Gotham
+			SubtitleLabel.BackgroundTransparency = 1
+			SubtitleLabel.Parent = LoadingFrame
 
 			task.spawn(function()
 				wait(LoadingScreenDuration)
