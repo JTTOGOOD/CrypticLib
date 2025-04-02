@@ -58,7 +58,7 @@ function Cryptic:CreateWindow(config)
 		MainFrame.Name = "MainFrame"
 		MainFrame.Size = UDim2.new(0, 735, 0, 564)
 		MainFrame.Position = UDim2.new(0.206, 0, 0.092, 0)
-		MainFrame.BackgroundColor3 = Theme.Background -- Apply Theme Color
+		MainFrame.BackgroundColor3 = Theme.Background
 		MainFrame.BorderSizePixel = 0
 		MainFrame.Visible = false
 		MainFrame.Parent = ScreenGui
