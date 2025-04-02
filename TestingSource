@@ -138,7 +138,7 @@ function Cryptic:CreateWindow(config)
 			end
 		end)
 
-		elseif LoadingScreenEnabled then
+	elseif LoadingScreenEnabled then
 		-- No Key System, but Loading Screen is enabled
 		local function showLoadingScreen()
 			local LoadingFrame = Instance.new("Frame")
@@ -216,8 +216,8 @@ function Cryptic:CreateWindow(config)
 		local ButtonText = settings.ButtonText or "Close"
 
 		-- Replace PlayerGui with CoreGui
-                local player = game:GetService("Players").LocalPlayer
-                local CoreGui = game:GetService("CoreGui")
+		local player = game:GetService("Players").LocalPlayer
+		local CoreGui = game:GetService("CoreGui")
 
 
 		-- Create Notification UI
@@ -723,6 +723,81 @@ function Cryptic:CreateWindow(config)
 				end)
 
 				return Dropdown
+			end,
+
+			CreateTimer = function(self, config)
+				local TimerName = config.Name or "Timer"
+				local Mode = config.Mode or "CountDown"
+				local AutoStart = config.AutoStart or false
+
+				-- Countdown properties
+				local Countdown = config.Countdown or {}
+				local SecondDuration = Countdown.SecondDuration or 60
+				local MinuteDuration = Countdown.MinuteDuration or 60
+				local HourDuration = Countdown.HourDuration or 24
+
+				-- Stopwatch properties
+				local StopWatch = config.StopWatch or {}
+				local StopStopWatch = StopWatch.StopStopWatch or false
+
+				-- Create Timer UI
+				local TimerFrame = Instance.new("Frame")
+				TimerFrame.Name = TimerName
+				TimerFrame.Size = UDim2.new(0, 200, 0, 50)
+				TimerFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+				TimerFrame.Parent = self.Frame  -- Uses self.Frame instead of MainFrame
+
+				local TimerLabel = Instance.new("TextLabel")
+				TimerLabel.Size = UDim2.new(1, 0, 1, 0)
+				TimerLabel.BackgroundTransparency = 1
+				TimerLabel.Text = "00:00:00"
+				TimerLabel.Font = Enum.Font.GothamBold
+				TimerLabel.TextSize = 16
+				TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				TimerLabel.Parent = TimerFrame
+
+				-- Start button (if AutoStart is false)
+				local StartButton
+				if not AutoStart then
+					StartButton = Instance.new("TextButton")
+					StartButton.Size = UDim2.new(0, 60, 0, 30)
+					StartButton.Position = UDim2.new(0.5, -30, 1, 5)
+					StartButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+					StartButton.Text = "Start"
+					StartButton.Parent = TimerFrame
+				end
+
+				local running = false
+				local seconds = (HourDuration * 3600) + (MinuteDuration * 60) + SecondDuration
+
+				local function formatTime(s)
+					local h = math.floor(s / 3600)
+					local m = math.floor((s % 3600) / 60)
+					local sec = s % 60
+					return string.format("%02d:%02d:%02d", h, m, sec)
+				end
+
+				local function startTimer()
+					if running then return end
+					running = true
+					while running and seconds > 0 do
+						wait(1)
+						if Mode == "CountDown" then
+							seconds = seconds - 1
+						else
+							seconds = seconds + 1
+						end
+						TimerLabel.Text = formatTime(seconds)
+					end
+				end
+
+				if AutoStart then
+					startTimer()
+				elseif StartButton then
+					StartButton.MouseButton1Click:Connect(startTimer)
+				end
+
+				return TimerFrame
 			end,
 
 			CreateSlider = function(self, config)
