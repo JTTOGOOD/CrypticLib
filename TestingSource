@@ -756,9 +756,9 @@ function Cryptic:CreateWindow(config)
 				TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 				TimerLabel.Parent = TimerFrame
 
-				-- Start button (if AutoStart is false)
+				-- Start/Stop button (if AutoStart is false)
 				local StartButton
-				if not AutoStart then
+				if not AutoStart or StopStopWatch then
 					StartButton = Instance.new("TextButton")
 					StartButton.Size = UDim2.new(0, 60, 0, 30)
 					StartButton.Position = UDim2.new(0.5, -30, 1, 5)
@@ -768,7 +768,7 @@ function Cryptic:CreateWindow(config)
 				end
 
 				local running = false
-				local seconds = (HourDuration * 3600) + (MinuteDuration * 60) + SecondDuration
+				local seconds = (Mode == "CountDown") and (HourDuration * 3600 + MinuteDuration * 60 + SecondDuration) or 0
 
 				local function formatTime(s)
 					local h = math.floor(s / 3600)
@@ -780,10 +780,17 @@ function Cryptic:CreateWindow(config)
 				local function startTimer()
 					if running then return end
 					running = true
-					while running and seconds > 0 do
+					StartButton.Text = "Stop"  -- Change button text
+
+					while running do
 						wait(1)
 						if Mode == "CountDown" then
 							seconds = seconds - 1
+							if seconds <= 0 then
+								running = false
+								StartButton.Text = "Start"
+								break
+							end
 						else
 							seconds = seconds + 1
 						end
@@ -791,10 +798,21 @@ function Cryptic:CreateWindow(config)
 					end
 				end
 
+				local function stopTimer()
+					running = false
+					StartButton.Text = "Start"
+				end
+
 				if AutoStart then
 					startTimer()
 				elseif StartButton then
-					StartButton.MouseButton1Click:Connect(startTimer)
+					StartButton.MouseButton1Click:Connect(function()
+						if running then
+							stopTimer()
+						else
+							startTimer()
+						end
+					end)
 				end
 
 				return TimerFrame
