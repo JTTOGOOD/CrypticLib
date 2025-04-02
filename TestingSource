@@ -24,7 +24,7 @@ function Cryptic:CreateWindow(config)
 		["Red"] = { Background = Color3.fromRGB(204, 0, 0), Text = Color3.fromRGB(255, 255, 255) } -- Red Theme
 	}
 
-	local Theme = Themes[config.Theme] or { Background = Color3.fromRGB(39, 39, 39), Text = Color3.fromRGB(255, 255, 255) }
+	local Theme = Themes[config.Theme] or Themes["Dark"] -- Default to Dark theme
 
 	-- Debug function
 	local function debugPrint(elementName, success, errMsg)
