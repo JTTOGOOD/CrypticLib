@@ -12,14 +12,12 @@ function NovaLib:CreateWindow(options)
         WindowDraggable = options.WindowDraggable ~= false,
     }
 
-    -- Create ScreenGui in CoreGui
     local NovaUI = Instance.new("ScreenGui")
     NovaUI.Name = "NovaUI"
     NovaUI.Parent = CoreGui
     NovaUI.ResetOnSpawn = false
     NovaUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- Main Window Frame
     local Window = Instance.new("Frame")
     Window.Name = "Window"
     Window.Parent = NovaUI
@@ -28,20 +26,16 @@ function NovaLib:CreateWindow(options)
     Window.BorderSizePixel = 0
     Window.Position = UDim2.new(0.329665959, 0, 0.210223049, 0)
     Window.Size = UDim2.new(0, 350, 0, 400)
-    Window.Active = true
-    Window.Draggable = WindowData.WindowDraggable
 
     local WindowCorner = Instance.new("UICorner")
-    WindowCorner.Name = "WindowCorner"
     WindowCorner.CornerRadius = UDim.new(0, 11)
     WindowCorner.Parent = Window
 
-    -- Title Label
+    -- TitleBar used for dragging
     local NoveUITitle = Instance.new("TextLabel")
     NoveUITitle.Name = "NoveUITitle"
     NoveUITitle.Parent = Window
     NoveUITitle.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
-    NoveUITitle.BorderColor3 = Color3.new(0, 0, 0)
     NoveUITitle.BorderSizePixel = 0
     NoveUITitle.Position = UDim2.new(0.0485714301, 0, 0, 0)
     NoveUITitle.Size = UDim2.new(0, 310, 0, 50)
@@ -50,30 +44,35 @@ function NovaLib:CreateWindow(options)
     NoveUITitle.TextColor3 = Color3.new(1, 1, 1)
     NoveUITitle.TextSize = 21
     NoveUITitle.TextXAlignment = Enum.TextXAlignment.Left
+    NoveUITitle.Active = true
+    NoveUITitle.Draggable = WindowData.WindowDraggable
 
     local TitleUICorner = Instance.new("UICorner")
-    TitleUICorner.Name = "TitleUICorner"
     TitleUICorner.CornerRadius = UDim.new(0, 11)
     TitleUICorner.Parent = NoveUITitle
 
-    -- Line Separator
     local lineLane = Instance.new("Frame")
     lineLane.Name = "lineLane"
     lineLane.Parent = Window
     lineLane.BackgroundColor3 = Color3.new(0.152941, 0.152941, 0.152941)
-    lineLane.BorderColor3 = Color3.new(0, 0, 0)
     lineLane.BorderSizePixel = 0
     lineLane.Position = UDim2.new(0, 0, 0.11, 0)
     lineLane.Size = UDim2.new(0, 350, 0, 2)
 
-    -- Close Button
+    -- Main Content Holder
+    local ContentHolder = Instance.new("Frame")
+    ContentHolder.Name = "ContentHolder"
+    ContentHolder.Parent = Window
+    ContentHolder.BackgroundTransparency = 1
+    ContentHolder.Position = UDim2.new(0, 0, 0.125, 0)
+    ContentHolder.Size = UDim2.new(1, 0, 0.875, 0)
+
+    -- Add your tab/buttons/components to ContentHolder instead of Window
+
     local CloseButton = Instance.new("TextButton")
     CloseButton.Name = "CloseButton"
     CloseButton.Parent = Window
-    CloseButton.BackgroundColor3 = Color3.new(1, 1, 1)
     CloseButton.BackgroundTransparency = 1
-    CloseButton.BorderColor3 = Color3.new(0, 0, 0)
-    CloseButton.BorderSizePixel = 0
     CloseButton.Position = UDim2.new(0.888571441, 0, 0.025, 0)
     CloseButton.Size = UDim2.new(0, 30, 0, 30)
     CloseButton.Font = Enum.Font.SourceSans
@@ -84,14 +83,10 @@ function NovaLib:CreateWindow(options)
         Window.Visible = false
     end)
 
-    -- Minimize Button
     local MinimizeButton = Instance.new("TextButton")
     MinimizeButton.Name = "MinimizeButton"
     MinimizeButton.Parent = Window
-    MinimizeButton.BackgroundColor3 = Color3.new(1, 1, 1)
     MinimizeButton.BackgroundTransparency = 1
-    MinimizeButton.BorderColor3 = Color3.new(0, 0, 0)
-    MinimizeButton.BorderSizePixel = 0
     MinimizeButton.Position = UDim2.new(0.785714269, 0, 0.025, 0)
     MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
     MinimizeButton.Font = Enum.Font.SourceSansBold
@@ -99,14 +94,9 @@ function NovaLib:CreateWindow(options)
     MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
     MinimizeButton.TextSize = 30
     MinimizeButton.MouseButton1Click:Connect(function()
-        for _, child in pairs(Window:GetChildren()) do
-            if child:IsA("Frame") and child.Name ~= "lineLane" then
-                child.Visible = not child.Visible
-            end
-        end
+        ContentHolder.Visible = not ContentHolder.Visible
     end)
 
-    -- Toggle UI visibility with key
     if WindowData.ToggleWindowVisibility then
         UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed and input.KeyCode == Enum.KeyCode[WindowData.WindowVisibilityToggle] then
@@ -115,6 +105,8 @@ function NovaLib:CreateWindow(options)
         end)
     end
 
+    WindowData.Main = Window
+    WindowData.Content = ContentHolder
     return setmetatable(WindowData, NovaLib)
 end
 
