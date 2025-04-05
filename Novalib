@@ -5,109 +5,113 @@ local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
 
 function NovaLib:CreateWindow(options)
-    local WindowData = {
-        Name = options.Name or "Nova UI",
-        ToggleWindowVisibility = options.ToggleWindowVisibility ~= false,
-        WindowVisibilityToggle = options.WindowVisibilityToggle or "LeftControl",
-        WindowDraggable = options.WindowDraggable ~= false,
-    }
+	local WindowData = {
+		Name = options.Name or "Nova UI",
+		ToggleWindowVisibility = options.ToggleWindowVisibility ~= false,
+		WindowVisibilityToggle = options.WindowVisibilityToggle or "LeftControl",
+		WindowDraggable = options.WindowDraggable ~= false,
+	}
 
-    local NovaUI = Instance.new("ScreenGui")
-    NovaUI.Name = "NovaUI"
-    NovaUI.Parent = CoreGui
-    NovaUI.ResetOnSpawn = false
-    NovaUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	-- ScreenGui
+	local NovaUI = Instance.new("ScreenGui")
+	NovaUI.Name = "NovaUI"
+	NovaUI.Parent = CoreGui
+	NovaUI.ResetOnSpawn = false
+	NovaUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    local Window = Instance.new("Frame")
-    Window.Name = "Window"
-    Window.Parent = NovaUI
-    Window.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
-    Window.BorderColor3 = Color3.new(0, 0, 0.980392)
-    Window.BorderSizePixel = 0
-    Window.Position = UDim2.new(0.329665959, 0, 0.210223049, 0)
-    Window.Size = UDim2.new(0, 350, 0, 400)
+	-- Main Window Frame
+	local Window = Instance.new("Frame")
+	Window.Name = "Window"
+	Window.Parent = NovaUI
+	Window.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	Window.BorderColor3 = Color3.fromRGB(0, 0, 250)
+	Window.BorderSizePixel = 0
+	Window.Position = UDim2.new(0.33, 0, 0.21, 0)
+	Window.Size = UDim2.new(0, 350, 0, 400)
 
-    local WindowCorner = Instance.new("UICorner")
-    WindowCorner.CornerRadius = UDim.new(0, 11)
-    WindowCorner.Parent = Window
+	local WindowCorner = Instance.new("UICorner")
+	WindowCorner.CornerRadius = UDim.new(0, 11)
+	WindowCorner.Parent = Window
 
-    -- TitleBar used for dragging
-    local NoveUITitle = Instance.new("TextLabel")
-    NoveUITitle.Name = "NoveUITitle"
-    NoveUITitle.Parent = Window
-    NoveUITitle.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
-    NoveUITitle.BorderSizePixel = 0
-    NoveUITitle.Position = UDim2.new(0.0485714301, 0, 0, 0)
-    NoveUITitle.Size = UDim2.new(0, 310, 0, 50)
-    NoveUITitle.Font = Enum.Font.ArialBold
-    NoveUITitle.Text = WindowData.Name
-    NoveUITitle.TextColor3 = Color3.new(1, 1, 1)
-    NoveUITitle.TextSize = 21
-    NoveUITitle.TextXAlignment = Enum.TextXAlignment.Left
-    NoveUITitle.Active = true
-    NoveUITitle.Draggable = WindowData.WindowDraggable
+	-- Title Bar
+	local NovaUITitle = Instance.new("TextLabel")
+	NovaUITitle.Name = "NovaUITitle"
+	NovaUITitle.Parent = Window
+	NovaUITitle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	NovaUITitle.BorderSizePixel = 0
+	NovaUITitle.Position = UDim2.new(0.05, 0, 0, 0)
+	NovaUITitle.Size = UDim2.new(0, 310, 0, 50)
+	NovaUITitle.Font = Enum.Font.ArialBold
+	NovaUITitle.Text = WindowData.Name
+	NovaUITitle.TextColor3 = Color3.new(1, 1, 1)
+	NovaUITitle.TextSize = 21
+	NovaUITitle.TextXAlignment = Enum.TextXAlignment.Left
+	NovaUITitle.Active = true
+	NovaUITitle.Draggable = WindowData.WindowDraggable
 
-    local TitleUICorner = Instance.new("UICorner")
-    TitleUICorner.CornerRadius = UDim.new(0, 11)
-    TitleUICorner.Parent = NoveUITitle
+	local TitleUICorner = Instance.new("UICorner")
+	TitleUICorner.CornerRadius = UDim.new(0, 11)
+	TitleUICorner.Parent = NovaUITitle
 
-    local lineLane = Instance.new("Frame")
-    lineLane.Name = "lineLane"
-    lineLane.Parent = Window
-    lineLane.BackgroundColor3 = Color3.new(0.152941, 0.152941, 0.152941)
-    lineLane.BorderSizePixel = 0
-    lineLane.Position = UDim2.new(0, 0, 0.11, 0)
-    lineLane.Size = UDim2.new(0, 350, 0, 2)
+	-- Separator Line
+	local lineLane = Instance.new("Frame")
+	lineLane.Name = "lineLane"
+	lineLane.Parent = Window
+	lineLane.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
+	lineLane.BorderSizePixel = 0
+	lineLane.Position = UDim2.new(0, 0, 0.11, 0)
+	lineLane.Size = UDim2.new(0, 350, 0, 2)
 
-    -- Main Content Holder
-    local ContentHolder = Instance.new("Frame")
-    ContentHolder.Name = "ContentHolder"
-    ContentHolder.Parent = Window
-    ContentHolder.BackgroundTransparency = 1
-    ContentHolder.Position = UDim2.new(0, 0, 0.125, 0)
-    ContentHolder.Size = UDim2.new(1, 0, 0.875, 0)
+	-- Main Content Holder
+	local ContentHolder = Instance.new("Frame")
+	ContentHolder.Name = "ContentHolder"
+	ContentHolder.Parent = Window
+	ContentHolder.BackgroundTransparency = 1
+	ContentHolder.Position = UDim2.new(0, 0, 0.125, 0)
+	ContentHolder.Size = UDim2.new(1, 0, 0.875, 0)
 
-    -- Add your tab/buttons/components to ContentHolder instead of Window
+	-- Close Button
+	local CloseButton = Instance.new("TextButton")
+	CloseButton.Name = "CloseButton"
+	CloseButton.Parent = Window
+	CloseButton.BackgroundTransparency = 1
+	CloseButton.Position = UDim2.new(0.89, 0, 0.025, 0)
+	CloseButton.Size = UDim2.new(0, 30, 0, 30)
+	CloseButton.Font = Enum.Font.SourceSans
+	CloseButton.Text = "✖"
+	CloseButton.TextColor3 = Color3.new(0, 0, 0)
+	CloseButton.TextSize = 25
+	CloseButton.MouseButton1Click:Connect(function()
+		Window.Visible = false
+	end)
 
-    local CloseButton = Instance.new("TextButton")
-    CloseButton.Name = "CloseButton"
-    CloseButton.Parent = Window
-    CloseButton.BackgroundTransparency = 1
-    CloseButton.Position = UDim2.new(0.888571441, 0, 0.025, 0)
-    CloseButton.Size = UDim2.new(0, 30, 0, 30)
-    CloseButton.Font = Enum.Font.SourceSans
-    CloseButton.Text = "✖"
-    CloseButton.TextColor3 = Color3.new(0, 0, 0)
-    CloseButton.TextSize = 25
-    CloseButton.MouseButton1Click:Connect(function()
-        Window.Visible = false
-    end)
+	-- Minimize Button
+	local MinimizeButton = Instance.new("TextButton")
+	MinimizeButton.Name = "MinimizeButton"
+	MinimizeButton.Parent = Window
+	MinimizeButton.BackgroundTransparency = 1
+	MinimizeButton.Position = UDim2.new(0.785, 0, 0.025, 0)
+	MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+	MinimizeButton.Font = Enum.Font.SourceSansBold
+	MinimizeButton.Text = "-"
+	MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
+	MinimizeButton.TextSize = 30
+	MinimizeButton.MouseButton1Click:Connect(function()
+		ContentHolder.Visible = not ContentHolder.Visible
+	end)
 
-    local MinimizeButton = Instance.new("TextButton")
-    MinimizeButton.Name = "MinimizeButton"
-    MinimizeButton.Parent = Window
-    MinimizeButton.BackgroundTransparency = 1
-    MinimizeButton.Position = UDim2.new(0.785714269, 0, 0.025, 0)
-    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
-    MinimizeButton.Font = Enum.Font.SourceSansBold
-    MinimizeButton.Text = "-"
-    MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
-    MinimizeButton.TextSize = 30
-    MinimizeButton.MouseButton1Click:Connect(function()
-        ContentHolder.Visible = not ContentHolder.Visible
-    end)
+	-- Toggle Visibility with Keybind
+	if WindowData.ToggleWindowVisibility then
+		UserInputService.InputBegan:Connect(function(input, gameProcessed)
+			if not gameProcessed and input.KeyCode == Enum.KeyCode[WindowData.WindowVisibilityToggle] then
+				Window.Visible = not Window.Visible
+			end
+		end)
+	end
 
-    if WindowData.ToggleWindowVisibility then
-        UserInputService.InputBegan:Connect(function(input, gameProcessed)
-            if not gameProcessed and input.KeyCode == Enum.KeyCode[WindowData.WindowVisibilityToggle] then
-                Window.Visible = not Window.Visible
-            end
-        end)
-    end
-
-    WindowData.Main = Window
-    WindowData.Content = ContentHolder
-    return setmetatable(WindowData, NovaLib)
+	WindowData.Main = Window
+	WindowData.Content = ContentHolder
+	return setmetatable(WindowData, NovaLib)
 end
 
 return NovaLib
