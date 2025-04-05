@@ -3,6 +3,7 @@ NovaLib.__index = NovaLib
 
 local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 function NovaLib:CreateWindow(options)
 	local WindowData = {
@@ -47,7 +48,6 @@ function NovaLib:CreateWindow(options)
 	NovaUITitle.TextSize = 21
 	NovaUITitle.TextXAlignment = Enum.TextXAlignment.Left
 	NovaUITitle.Active = true
-	NovaUITitle.Draggable = WindowData.WindowDraggable
 
 	local TitleUICorner = Instance.new("UICorner")
 	TitleUICorner.CornerRadius = UDim.new(0, 11)
@@ -105,6 +105,48 @@ function NovaLib:CreateWindow(options)
 		UserInputService.InputBegan:Connect(function(input, gameProcessed)
 			if not gameProcessed and input.KeyCode == Enum.KeyCode[WindowData.WindowVisibilityToggle] then
 				Window.Visible = not Window.Visible
+			end
+		end)
+	end
+
+	-- Custom Dragging for Window
+	if WindowData.WindowDraggable then
+		local dragging = false
+		local dragInput, dragStart, startPos
+
+		local function update(input)
+			local delta = input.Position - dragStart
+			Window.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+
+		Window.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
+				dragStart = input.Position
+				startPos = Window.Position
+
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						dragging = false
+					end
+				end)
+			end
+		end)
+
+		Window.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+				dragInput = input
+			end
+		end)
+
+		RunService.RenderStepped:Connect(function()
+			if dragging and dragInput then
+				update(dragInput)
 			end
 		end)
 	end
