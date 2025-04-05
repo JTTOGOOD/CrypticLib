@@ -158,4 +158,90 @@ function NovaLib:CreateWindow(options)
 	return setmetatable(WindowData, NovaLib)
 end
 
+function Window:NewTab(tabName)
+	local TabButton = Instance.new("TextButton")
+	TabButton.Name = tabName .. "_Button"
+	TabButton.Parent = self.Tablist or Instance.new("ScrollingFrame", self.Window)
+	TabButton.BackgroundTransparency = 1
+	TabButton.Size = UDim2.new(0, 70, 0, 16)
+	TabButton.Font = Enum.Font.SourceSansBold
+	TabButton.Text = tabName
+	TabButton.TextColor3 = Color3.fromRGB(141, 141, 141)
+	TabButton.TextSize = 18
+	TabButton.TextWrapped = true
+
+	local UICorner = Instance.new("UICorner")
+	UICorner.CornerRadius = UDim.new(0, 4)
+	UICorner.Parent = TabButton
+
+	-- Tab content frame
+	local TabFrame = Instance.new("ScrollingFrame")
+	TabFrame.Name = tabName .. "_Content"
+	TabFrame.Parent = self.Window
+	TabFrame.Size = UDim2.new(0, 330, 0, 293)
+	TabFrame.Position = UDim2.new(0.0314, 0, 0.245, 0)
+	TabFrame.BackgroundTransparency = 1
+	TabFrame.Visible = false
+	TabFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+	TabFrame.ScrollBarThickness = 4
+
+	local Layout = Instance.new("UIListLayout")
+	Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	Layout.SortOrder = Enum.SortOrder.LayoutOrder
+	Layout.Parent = TabFrame
+
+	-- Initialize tablist if not already done
+	if not self.Tablist then
+		local Tablist = Instance.new("ScrollingFrame")
+		Tablist.Name = "Tablist"
+		Tablist.Parent = self.Window
+		Tablist.Active = true
+		Tablist.BackgroundTransparency = 1
+		Tablist.Position = UDim2.new(0.04857, 0, 0.14, 0)
+		Tablist.Size = UDim2.new(0, 317, 0, 32)
+		Tablist.CanvasSize = UDim2.new(0, 1000, 0, 32)
+		Tablist.HorizontalScrollBarInset = Enum.ScrollBarInset.Always
+		Tablist.ScrollBarThickness = 2
+
+		local TabLayout = Instance.new("UIListLayout", Tablist)
+		TabLayout.FillDirection = Enum.FillDirection.Horizontal
+		TabLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		TabLayout.Padding = UDim.new(0, 6)
+
+		self.Tablist = Tablist
+	end
+
+	-- Store references
+	self.Tabs = self.Tabs or {}
+	self.Tabs[tabName] = {Button = TabButton, Frame = TabFrame}
+
+	-- Tab switch logic
+	TabButton.MouseButton1Click:Connect(function()
+		for _, tab in pairs(self.Tabs) do
+			tab.Frame.Visible = false
+			tab.Button.BackgroundTransparency = 1
+			tab.Button.TextColor3 = Color3.fromRGB(141, 141, 141)
+			tab.Button.TextSize = 18
+			tab.Button.TextStrokeTransparency = 1
+			tab.Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		end
+
+		TabFrame.Visible = true
+		TabButton.BackgroundTransparency = 0
+		TabButton.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
+		TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TabButton.TextSize = 20
+		TabButton.TextStrokeTransparency = 0
+	end)
+
+	-- Auto-select first tab
+	if not self.SelectedTab then
+		TabButton:MouseButton1Click()
+		self.SelectedTab = TabFrame
+	end
+
+	return TabFrame
+end
+
+
 return NovaLib
