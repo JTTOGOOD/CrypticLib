@@ -6,30 +6,31 @@ local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
+-- CreateWindow
 function NovaLib:CreateWindow(options)
 	local WindowData = {
 		Name = options.Name or "Nova UI",
 		ToggleWindowVisibility = options.ToggleWindowVisibility ~= false,
 		WindowVisibilityToggle = options.WindowVisibilityToggle or "LeftControl",
 		WindowDraggable = options.WindowDraggable ~= false,
+		Tabs = {}
 	}
 
 	-- ScreenGui
 	local NovaUI = Instance.new("ScreenGui")
 	NovaUI.Name = "NovaUI"
-	NovaUI.Parent = CoreGui
 	NovaUI.ResetOnSpawn = false
 	NovaUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	NovaUI.Parent = CoreGui
 
-	-- Main Window Frame
+	-- Main Frame
 	local Window = Instance.new("Frame")
 	Window.Name = "Window"
-	Window.Parent = NovaUI
-	Window.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-	Window.BorderColor3 = Color3.fromRGB(0, 0, 250)
-	Window.BorderSizePixel = 0
-	Window.Position = UDim2.new(0.33, 0, 0.21, 0)
 	Window.Size = UDim2.new(0, 350, 0, 400)
+	Window.Position = UDim2.new(0.33, 0, 0.21, 0)
+	Window.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	Window.BorderSizePixel = 0
+	Window.Parent = NovaUI
 
 	local WindowCorner = Instance.new("UICorner")
 	WindowCorner.CornerRadius = UDim.new(0, 11)
@@ -54,22 +55,44 @@ function NovaLib:CreateWindow(options)
 	TitleUICorner.CornerRadius = UDim.new(0, 11)
 	TitleUICorner.Parent = NovaUITitle
 
-	-- Separator Line
+	-- Tablist (Top)
+	local Tablist = Instance.new("ScrollingFrame")
+	Tablist.Name = "Tablist"
+	Tablist.Parent = Window
+	Tablist.Active = true
+	Tablist.BackgroundTransparency = 1
+	Tablist.Position = UDim2.new(0.048, 0, 0.13, 0)
+	Tablist.Size = UDim2.new(0, 317, 0, 32)
+	Tablist.CanvasSize = UDim2.new(0, 1000, 0, 0)
+	Tablist.HorizontalScrollBarInset = Enum.ScrollBarInset.Always
+	Tablist.ScrollBarThickness = 2
+	Tablist.ScrollingDirection = Enum.ScrollingDirection.X
+
+	-- Line
 	local Line = Instance.new("Frame")
 	Line.Name = "Line"
 	Line.Parent = Window
 	Line.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
 	Line.BorderSizePixel = 0
-	Line.Position = UDim2.new(0, 0, 0.11, 0)
+	Line.Position = UDim2.new(0, 0, 0.21, 0)
 	Line.Size = UDim2.new(1, 0, 0, 2)
 
-	-- Content Holder
+	-- ContentHolder
 	local ContentHolder = Instance.new("Frame")
 	ContentHolder.Name = "ContentHolder"
 	ContentHolder.Parent = Window
 	ContentHolder.BackgroundTransparency = 1
-	ContentHolder.Position = UDim2.new(0, 0, 0.125, 0)
-	ContentHolder.Size = UDim2.new(1, 0, 0.875, 0)
+	ContentHolder.Position = UDim2.new(0, 0, 0.22, 0)
+	ContentHolder.Size = UDim2.new(1, 0, 0.78, 0)
+
+	-- Toggle Visibility
+	if WindowData.ToggleWindowVisibility then
+		UserInputService.InputBegan:Connect(function(input, gp)
+			if not gp and input.KeyCode == Enum.KeyCode[WindowData.WindowVisibilityToggle] then
+				Window.Visible = not Window.Visible
+			end
+		end)
+	end
 
 	-- Close Button
 	local CloseButton = Instance.new("TextButton")
@@ -101,16 +124,7 @@ function NovaLib:CreateWindow(options)
 		ContentHolder.Visible = not ContentHolder.Visible
 	end)
 
-	-- Toggle Visibility Keybind
-	if WindowData.ToggleWindowVisibility then
-		UserInputService.InputBegan:Connect(function(input, gameProcessed)
-			if not gameProcessed and input.KeyCode == Enum.KeyCode[WindowData.WindowVisibilityToggle] then
-				Window.Visible = not Window.Visible
-			end
-		end)
-	end
-
-	-- Dragging
+	-- Drag
 	if WindowData.WindowDraggable then
 		local dragging = false
 		local dragInput, dragStart, startPos
@@ -152,7 +166,52 @@ function NovaLib:CreateWindow(options)
 		end)
 	end
 
-	-- Return the table
+	-- Tab Creation Function
+	function WindowData:CreateTab(tabName)
+		local tab = {}
+
+		local TabButton = Instance.new("TextButton")
+		TabButton.Name = "Tab_" .. tabName
+		TabButton.Parent = Tablist
+		TabButton.Size = UDim2.new(0, 70, 0, 24)
+		TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		TabButton.TextColor3 = Color3.new(1, 1, 1)
+		TabButton.TextSize = 16
+		TabButton.Text = tabName
+		TabButton.Font = Enum.Font.SourceSansBold
+		TabButton.BorderSizePixel = 0
+
+		local UICorner = Instance.new("UICorner")
+		UICorner.CornerRadius = UDim.new(0, 5)
+		UICorner.Parent = TabButton
+
+		local TabFrame = Instance.new("Frame")
+		TabFrame.Name = "Content_" .. tabName
+		TabFrame.Size = UDim2.new(1, 0, 1, 0)
+		TabFrame.BackgroundTransparency = 1
+		TabFrame.Visible = false
+		TabFrame.Parent = ContentHolder
+
+		tab.Button = TabButton
+		tab.Frame = TabFrame
+
+		-- Select Logic
+		TabButton.MouseButton1Click:Connect(function()
+			for _, v in pairs(WindowData.Tabs) do
+				v.Frame.Visible = false
+			end
+			TabFrame.Visible = true
+		end)
+
+		-- Auto-select if first tab
+		if #WindowData.Tabs == 0 then
+			TabFrame.Visible = true
+		end
+
+		table.insert(WindowData.Tabs, tab)
+		return tab
+	end
+
 	WindowData.Main = Window
 	WindowData.Content = ContentHolder
 	return setmetatable(WindowData, NovaLib)
