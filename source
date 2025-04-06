@@ -44,6 +44,8 @@ function Cryptic:CreateWindow(config)
 	end)
 	debugPrint("ScreenGui", success, err)
 
+	-- Store reference for destroy method
+	self._ScreenGui = ScreenGui
 
 	-- Main UI Frame
 	local MainFrame = Instance.new("Frame")
@@ -71,6 +73,20 @@ function Cryptic:CreateWindow(config)
 	TitleLabel.Font = Enum.Font.GothamBold
 	TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 	TitleLabel.Parent = MainFrame
+
+	-- Return self to allow method chaining
+	return self
+end
+
+function Cryptic:destroy()
+	if self._ScreenGui then
+		self._ScreenGui:Destroy()
+		self._ScreenGui = nil
+		warn("[CroxieLib] UI destroyed and all features disabled.")
+	else
+		warn("[CroxieLib] No UI found to destroy.")
+	end
+end
 
 	-- 🛑 Key System
 	if KeySystemEnabled then
