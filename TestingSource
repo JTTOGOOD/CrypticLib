@@ -29,34 +29,36 @@ function Cryptic:CreateWindow(config)
 		end
 	end
 
-
+	-- Destroy old instance if it exists
 	local existingUI = game:GetService("CoreGui"):FindFirstChild("CroxieLib")
 	if existingUI then
-		existingUI:Destroy() -- Remove old instance before creating a new one
+		existingUI:Destroy()
 	end
 
 	-- Create ScreenGui
 	local ScreenGui = Instance.new("ScreenGui")
 	local success, err = pcall(function()
 		ScreenGui.Name = "CroxieLib"
-		ScreenGui.Parent = game:GetService("CoreGui") 
+		ScreenGui.Parent = game:GetService("CoreGui")
 		ScreenGui.ResetOnSpawn = false
 	end)
 	debugPrint("ScreenGui", success, err)
+
+	-- Save reference to allow .destroy() access later
+	self._ScreenGui = ScreenGui
 
 	-- 🖼️ Main UI Frame (Updated)
 	local MainFrame = Instance.new("Frame")
 	success, err = pcall(function()
 		MainFrame.Name = "MainFrame"
-		MainFrame.Size = UDim2.new(0, 735, 0, 564) -- Updated size
-		MainFrame.Position = UDim2.new(0.20653908, 0, 0.0923520923, 0) -- Updated position
-		MainFrame.BackgroundColor3 = Color3.fromRGB(39, 39, 39) -- Updated background color
+		MainFrame.Size = UDim2.new(0, 735, 0, 564)
+		MainFrame.Position = UDim2.new(0.20653908, 0, 0.0923520923, 0)
+		MainFrame.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
 		MainFrame.BorderSizePixel = 0
 		MainFrame.Visible = false
 		MainFrame.Parent = ScreenGui
 	end)
 	debugPrint("MainFrame", success, err)
-
 
 	local UICorner = Instance.new("UICorner")
 	UICorner.CornerRadius = UDim.new(0, 10)
@@ -66,16 +68,30 @@ function Cryptic:CreateWindow(config)
 	success, err = pcall(function()
 		TitleLabel.Name = "TitleLabel"
 		TitleLabel.Size = UDim2.new(0, 727, 0, 50)
-		TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0) -- Same position
+		TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0)
 		TitleLabel.BackgroundTransparency = 1
-		TitleLabel.Text = Name -- Uses the Name from config
+		TitleLabel.Text = Name
 		TitleLabel.Font = Enum.Font.GothamBold
-		TitleLabel.TextSize = 32 -- Increased text size
-		TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0) -- Kept same color
+		TitleLabel.TextSize = 32
+		TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0)
 		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 		TitleLabel.Parent = MainFrame
 	end)
 	debugPrint("TitleLabel", success, err)
+
+	return self
+end
+
+-- 💣 Destroy Method
+function Cryptic:destroy()
+	if self._ScreenGui then
+		self._ScreenGui:Destroy()
+		self._ScreenGui = nil
+		warn("[CroxieLib] UI successfully destroyed.")
+	else
+		warn("[CroxieLib] No UI found to destroy.")
+	end
+end
 
 
 	if KeySystemEnabled then
