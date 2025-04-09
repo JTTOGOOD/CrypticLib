@@ -449,7 +449,7 @@ function Cryptic:CreateWindow(config)
     TextBox.Font = Enum.Font.Gotham
     TextBox.PlaceholderText = PlaceholderText
     TextBox.Text = ""
-    TextBox.ClearTextOnFocus = not ClearTextOnInput  -- Will clear text if `ClearTextOnInput` is true
+    TextBox.ClearTextOnFocus = true -- Always clear text when focusing
     TextBox.Parent = InputFrame
     TextBox.TextSize = 18
 
@@ -486,7 +486,6 @@ function Cryptic:CreateWindow(config)
         end
     }
 end,
-
 
 			CreateButton = function(self, config)
 				local Button = Instance.new("TextButton")
