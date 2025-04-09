@@ -652,9 +652,6 @@ function Cryptic:CreateWindow(config)
 				local ButtonCorner = Instance.new("UICorner", DropdownButton)
 				ButtonCorner.CornerRadius = UDim.new(0, 6)
 
-				-- Add arrow rotation
-				local ArrowRotation = Instance.new("UIRotation", DropdownButton)
-
 				-- Dropdown Container (resizes with list)
 				local DropdownContainer = Instance.new("Frame")
 				DropdownContainer.Size = UDim2.new(1, 0, 0, 60)
@@ -712,7 +709,7 @@ function Cryptic:CreateWindow(config)
 								DropdownList.Visible = false
 							end)
 							DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true)
-							TweenService:Create(ArrowRotation, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 0}):Play()
+							TweenService:Create(DropdownButton, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 0}):Play()
 						end
 					end)
 				end
@@ -728,19 +725,18 @@ function Cryptic:CreateWindow(config)
 						DropdownList.Visible = true
 						DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
 						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60 + newHeight), "Out", "Quad", 0.3, true)
-						TweenService:Create(ArrowRotation, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 180}):Play()
+						TweenService:Create(DropdownButton, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 180}):Play()
 					else
 						DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
 							DropdownList.Visible = false
 						end)
 						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true)
-						TweenService:Create(ArrowRotation, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 0}):Play()
+						TweenService:Create(DropdownButton, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 0}):Play()
 					end
 				end)
 
 				return Dropdown
 			end,
-
 
 			CreateTimer = function(self, config)
 				local TimerName = config.Name or "Timer"
