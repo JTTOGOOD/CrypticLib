@@ -1,4 +1,4 @@
-warn("Report to (@MynamesJT) on Discord if you come across any issues.")
+warn("Report to (@.vaytrix) on Discord if you come across any issues.")
 
 local TweenService = game:GetService("TweenService") -- Move this to the top!
 
