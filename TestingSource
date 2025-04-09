@@ -537,59 +537,73 @@ function Cryptic:CreateTab(tabName)
 
 
 		CreateToggle = function(self, config)
-			local ToggleState = config.ToggleState or false
-			local ToggleName = config.Name or "Toggle"
-			local ToggleScript = config.Script or function() end
+	local ToggleState = config.ToggleState or false
+	local ToggleName = config.Name or "Toggle"
+	local ToggleScript = config.Script or function() end
 
-			local ToggleFrame = Instance.new("Frame")
-			ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
-			ToggleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-			ToggleFrame.Parent = self.Frame
+	local ToggleFrame = Instance.new("Frame")
+	ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
+	ToggleFrame.BackgroundTransparency = 1
+	ToggleFrame.Parent = self.Frame
 
-			local FrameCorner = Instance.new("UICorner")
-			FrameCorner.CornerRadius = UDim.new(0, 6)
-			FrameCorner.Parent = ToggleFrame
+	local ToggleLabel = Instance.new("TextLabel")
+	ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
+	ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+	ToggleLabel.Text = ToggleName
+	ToggleLabel.Font = Enum.Font.GothamBold
+	ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	ToggleLabel.BackgroundTransparency = 1
+	ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	ToggleLabel.TextSize = 24
+	ToggleLabel.Parent = ToggleFrame
 
-			local ToggleLabel = Instance.new("TextLabel")
-			ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
-			ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
-			ToggleLabel.Text = ToggleName
-			ToggleLabel.Font = Enum.Font.GothamBold
-			ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-			ToggleLabel.BackgroundTransparency = 1
-			ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-			ToggleLabel.Parent = ToggleFrame
-			ToggleLabel.TextSize = 24
+	-- Switch background
+	local Switch = Instance.new("Frame")
+	Switch.Size = UDim2.new(0, 50, 0, 25)
+	Switch.Position = UDim2.new(1, -60, 0.5, -12)
+	Switch.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
+	Switch.BorderSizePixel = 0
+	Switch.Parent = ToggleFrame
 
-			local ToggleButton = Instance.new("TextButton")
-			ToggleButton.Size = UDim2.new(0, 50, 0.8, 0)
-			ToggleButton.Position = UDim2.new(1, -60, 0.1, 0)
-			ToggleButton.Text = ToggleState and "ON" or "OFF"
-			ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-			ToggleButton.Font = Enum.Font.GothamBold
-			ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-			ToggleButton.Parent = ToggleFrame
+	local SwitchCorner = Instance.new("UICorner")
+	SwitchCorner.CornerRadius = UDim.new(1, 0)
+	SwitchCorner.Parent = Switch
 
-			local ButtonCorner = Instance.new("UICorner")
-			ButtonCorner.CornerRadius = UDim.new(0, 6)
-			ButtonCorner.Parent = ToggleButton
+	-- Switch knob
+	local Knob = Instance.new("Frame")
+	Knob.Size = UDim2.new(0, 20, 0, 20)
+	Knob.Position = ToggleState and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+	Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Knob.Parent = Switch
 
-			local function UpdateToggle(state)
-				ToggleState = state
-				ToggleButton.Text = ToggleState and "ON" or "OFF"
-				ToggleButton.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(10, 10, 10)
-				pcall(ToggleScript, ToggleState)
-			end
+	local KnobCorner = Instance.new("UICorner")
+	KnobCorner.CornerRadius = UDim.new(1, 0)
+	KnobCorner.Parent = Knob
 
-			ToggleButton.MouseButton1Click:Connect(function()
-				UpdateToggle(not ToggleState)
-			end)
+	-- Tween service
+	local TweenService = game:GetService("TweenService")
+	local function UpdateToggle(state)
+		ToggleState = state
+		local bgColor = state and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
+		local knobPosition = state and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
 
-			return {
-				Frame = ToggleFrame,
-				SetState = UpdateToggle
-			}
-		end,
+		TweenService:Create(Switch, TweenInfo.new(0.2), { BackgroundColor3 = bgColor }):Play()
+		TweenService:Create(Knob, TweenInfo.new(0.2), { Position = knobPosition }):Play()
+
+		pcall(ToggleScript, ToggleState)
+	end
+
+	Switch.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			UpdateToggle(not ToggleState)
+		end
+	end)
+
+	return {
+		Frame = ToggleFrame,
+		SetState = UpdateToggle
+	}
+end,
 
 		CreateDropdown = function(self, config)
 			local Name = config.Name or "Dropdown"
