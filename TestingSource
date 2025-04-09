@@ -533,73 +533,88 @@ end,
 
 
 			CreateToggle = function(self, config)
-				local ToggleState = config.ToggleState or false
-				local ToggleName = config.Name or "Toggle"
-				local ToggleScript = config.Script or function() end
+    local ToggleState = config.ToggleState or false
+    local ToggleName = config.Name or "Toggle"
+    local ToggleDescription = config.Description or "No description provided"
+    local ToggleScript = config.Script or function() end
 
-				local ToggleFrame = Instance.new("Frame")
-				ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
-				ToggleFrame.BackgroundTransparency = 1
-				ToggleFrame.Parent = self.Frame
+    local ToggleFrame = Instance.new("Frame")
+    ToggleFrame.Size = UDim2.new(1, -10, 0, 80)  -- Increased height to fit description
+    ToggleFrame.BackgroundTransparency = 1
+    ToggleFrame.Parent = self.Frame
 
-				local ToggleLabel = Instance.new("TextLabel")
-				ToggleLabel.Size = UDim2.new(1, -70, 1, 0)
-				ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
-				ToggleLabel.Text = ToggleName
-				ToggleLabel.Font = Enum.Font.GothamBold
-				ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-				ToggleLabel.BackgroundTransparency = 1
-				ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-				ToggleLabel.TextSize = 24
-				ToggleLabel.Parent = ToggleFrame
+    -- Toggle Name (top-left, 2% smaller)
+    local ToggleLabel = Instance.new("TextLabel")
+    ToggleLabel.Size = UDim2.new(1, -70, 0, 20)
+    ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+    ToggleLabel.Text = ToggleName
+    ToggleLabel.Font = Enum.Font.GothamBold
+    ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleLabel.BackgroundTransparency = 1
+    ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    ToggleLabel.TextSize = 24 * 0.98  -- 2% smaller
+    ToggleLabel.Parent = ToggleFrame
 
-				-- Switch background
-				local Switch = Instance.new("Frame")
-				Switch.Size = UDim2.new(0, 50, 0, 25)
-				Switch.Position = UDim2.new(1, -60, 0.5, -12)
-				Switch.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
-				Switch.BorderSizePixel = 0
-				Switch.Parent = ToggleFrame
+    -- Description (below the name, wrapped)
+    local DescriptionLabel = Instance.new("TextLabel")
+    DescriptionLabel.Size = UDim2.new(1, -70, 0, 40)  -- Adjust size for wrapping
+    DescriptionLabel.Position = UDim2.new(0, 10, 0, 22)  -- Position below the name
+    DescriptionLabel.Text = ToggleDescription
+    DescriptionLabel.Font = Enum.Font.Gotham
+    DescriptionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    DescriptionLabel.BackgroundTransparency = 1
+    DescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    DescriptionLabel.TextSize = 18
+    DescriptionLabel.TextWrapped = true  -- Enable text wrapping
+    DescriptionLabel.Parent = ToggleFrame
 
-				local SwitchCorner = Instance.new("UICorner")
-				SwitchCorner.CornerRadius = UDim.new(1, 0)
-				SwitchCorner.Parent = Switch
+    -- Switch background
+    local Switch = Instance.new("Frame")
+    Switch.Size = UDim2.new(0, 50, 0, 25)
+    Switch.Position = UDim2.new(1, -60, 0.5, -12)
+    Switch.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
+    Switch.BorderSizePixel = 0
+    Switch.Parent = ToggleFrame
 
-				-- Switch knob
-				local Knob = Instance.new("Frame")
-				Knob.Size = UDim2.new(0, 20, 0, 20)
-				Knob.Position = ToggleState and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
-				Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-				Knob.Parent = Switch
+    local SwitchCorner = Instance.new("UICorner")
+    SwitchCorner.CornerRadius = UDim.new(1, 0)
+    SwitchCorner.Parent = Switch
 
-				local KnobCorner = Instance.new("UICorner")
-				KnobCorner.CornerRadius = UDim.new(1, 0)
-				KnobCorner.Parent = Knob
+    -- Switch knob
+    local Knob = Instance.new("Frame")
+    Knob.Size = UDim2.new(0, 20, 0, 20)
+    Knob.Position = ToggleState and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+    Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Knob.Parent = Switch
 
-				-- Tween service
-				local TweenService = game:GetService("TweenService")
-				local function UpdateToggle(state)
-					ToggleState = state
-					local bgColor = state and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
-					local knobPosition = state and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+    local KnobCorner = Instance.new("UICorner")
+    KnobCorner.CornerRadius = UDim.new(1, 0)
+    KnobCorner.Parent = Knob
 
-					TweenService:Create(Switch, TweenInfo.new(0.2), { BackgroundColor3 = bgColor }):Play()
-					TweenService:Create(Knob, TweenInfo.new(0.2), { Position = knobPosition }):Play()
+    -- Tween service
+    local TweenService = game:GetService("TweenService")
+    local function UpdateToggle(state)
+        ToggleState = state
+        local bgColor = state and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
+        local knobPosition = state and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
 
-					pcall(ToggleScript, ToggleState)
-				end
+        TweenService:Create(Switch, TweenInfo.new(0.2), { BackgroundColor3 = bgColor }):Play()
+        TweenService:Create(Knob, TweenInfo.new(0.2), { Position = knobPosition }):Play()
 
-				Switch.InputBegan:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						UpdateToggle(not ToggleState)
-					end
-				end)
+        pcall(ToggleScript, ToggleState)
+    end
 
-				return {
-					Frame = ToggleFrame,
-					SetState = UpdateToggle
-				}
-			end,
+    Switch.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            UpdateToggle(not ToggleState)
+        end
+    end)
+
+    return {
+        Frame = ToggleFrame,
+        SetState = UpdateToggle
+    }
+end,
 
 			CreateDropdown = function(self, config)
 				local Name = config.Name or "Dropdown"
