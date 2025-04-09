@@ -605,139 +605,142 @@ function Cryptic:CreateTab(tabName)
 	}
 end,
 
-		CreateDropdown = function(self, config)
-			local Name = config.Name or "Dropdown"
-			local Options = config.Options or {"Option 1", "Option 2", "Option 3"}
-			local CurrentOption = config.CurrentOption or Options[1]
-			local MultiSelect = config.MultiSelect or false
-			local Callback = config.Script or function() end
+		local TweenService = game:GetService("TweenService")
 
-			local SelectedOptions = {} -- Stores selected options (for MultiSelect)
+CreateDropdown = function(self, config)
+	local Name = config.Name or "Dropdown"
+	local Options = config.Options or {"Option 1", "Option 2", "Option 3"}
+	local CurrentOption = config.CurrentOption or Options[1]
+	local MultiSelect = config.MultiSelect or false
+	local Callback = config.Script or function() end
 
-			-- Main Dropdown Frame
-			local Dropdown = Instance.new("Frame")
-			Dropdown.Size = UDim2.new(1, 0, 0, 60)
-			Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-			Dropdown.Parent = self.Frame
-			Dropdown.ClipsDescendants = false
+	local SelectedOptions = {} -- For MultiSelect
 
-			local UICorner = Instance.new("UICorner", Dropdown)
-			UICorner.CornerRadius = UDim.new(0, 6)
+	-- Main Dropdown Frame
+	local Dropdown = Instance.new("Frame")
+	Dropdown.Size = UDim2.new(1, 0, 0, 60)
+	Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	Dropdown.ClipsDescendants = false
+	Dropdown.Parent = self.Frame
 
-			-- Dropdown Display
-			local DropdownDisplay = Instance.new("TextLabel")
-			DropdownDisplay.Size = UDim2.new(0.75, -10, 1, 0)
-			DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
-			DropdownDisplay.BackgroundTransparency = 1
-			DropdownDisplay.Text = Name .. ": " .. (MultiSelect and "Select item" or CurrentOption)
-			DropdownDisplay.TextSize = 25
-			DropdownDisplay.Font = Enum.Font.GothamBold
-			DropdownDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
-			DropdownDisplay.TextXAlignment = Enum.TextXAlignment.Left
-			DropdownDisplay.Parent = Dropdown
+	local UICorner = Instance.new("UICorner", Dropdown)
+	UICorner.CornerRadius = UDim.new(0, 6)
 
-			-- Dropdown Button
-			local DropdownButton = Instance.new("TextButton")
-			DropdownButton.Size = UDim2.new(0.2, -5, 1, -10)
-			DropdownButton.Position = UDim2.new(0.8, 0, 0, 5)
-			DropdownButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-			DropdownButton.Text = "▼"
-			DropdownButton.TextSize = 36
-			DropdownButton.Font = Enum.Font.GothamBold
-			DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-			DropdownButton.Parent = Dropdown
+	-- Display Text
+	local DropdownDisplay = Instance.new("TextLabel")
+	DropdownDisplay.Size = UDim2.new(0.75, -10, 1, 0)
+	DropdownDisplay.Position = UDim2.new(0, 10, 0, 0)
+	DropdownDisplay.BackgroundTransparency = 1
+	DropdownDisplay.Text = Name .. ": " .. (MultiSelect and "Select item" or CurrentOption)
+	DropdownDisplay.TextSize = 25
+	DropdownDisplay.Font = Enum.Font.GothamBold
+	DropdownDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
+	DropdownDisplay.TextXAlignment = Enum.TextXAlignment.Left
+	DropdownDisplay.Parent = Dropdown
 
-			local ButtonCorner = Instance.new("UICorner", DropdownButton)
-			ButtonCorner.CornerRadius = UDim.new(0, 6)
+	-- Arrow Button
+	local DropdownButton = Instance.new("TextButton")
+	DropdownButton.Size = UDim2.new(0.2, -5, 1, -10)
+	DropdownButton.Position = UDim2.new(0.8, 0, 0, 5)
+	DropdownButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	DropdownButton.Text = "▼"
+	DropdownButton.TextSize = 36
+	DropdownButton.Font = Enum.Font.GothamBold
+	DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	DropdownButton.Parent = Dropdown
 
-			-- Dropdown Menu
-			local DropdownList = Instance.new("Frame")
-			DropdownList.Size = UDim2.new(1, 0, 0, 0)
-			DropdownList.Position = UDim2.new(0, 0, 1, 0)
-			DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			DropdownList.Visible = false
-			DropdownList.Parent = Dropdown
+	local ButtonCorner = Instance.new("UICorner", DropdownButton)
+	ButtonCorner.CornerRadius = UDim.new(0, 6)
 
-			local UIListLayout = Instance.new("UIListLayout", DropdownList)
-			UIListLayout.Padding = UDim.new(0, 4)
-			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	-- Add arrow rotation
+	local ArrowRotation = Instance.new("UIRotation", DropdownButton)
 
-			local DropdownContainer = Instance.new("Frame")
-			DropdownContainer.Size = UDim2.new(1, 0, 0, 60)
-			DropdownContainer.BackgroundTransparency = 1
-			DropdownContainer.Parent = self.Frame
+	-- Dropdown Container (resizes with list)
+	local DropdownContainer = Instance.new("Frame")
+	DropdownContainer.Size = UDim2.new(1, 0, 0, 60)
+	DropdownContainer.BackgroundTransparency = 1
+	DropdownContainer.Parent = self.Frame
 
-			Dropdown.Parent = DropdownContainer
+	Dropdown.Parent = DropdownContainer
 
+	-- Dropdown List
+	local DropdownList = Instance.new("Frame")
+	DropdownList.Size = UDim2.new(1, 0, 0, 0)
+	DropdownList.Position = UDim2.new(0, 0, 1, 0)
+	DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	DropdownList.Visible = false
+	DropdownList.ClipsDescendants = true
+	DropdownList.Parent = Dropdown
 
-			for _, option in pairs(Options) do
-				local OptionButton = Instance.new("TextButton")
-				OptionButton.Size = UDim2.new(1, 0, 0, 50)
-				OptionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-				OptionButton.Text = option
-				OptionButton.TextSize = 32
-				OptionButton.Font = Enum.Font.GothamBold
-				OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-				OptionButton.Parent = DropdownList
+	local UIListLayout = Instance.new("UIListLayout", DropdownList)
+	UIListLayout.Padding = UDim.new(0, 4)
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-				OptionButton.MouseButton1Click:Connect(function()
-					if MultiSelect then
-						-- Toggle Selection
-						if SelectedOptions[option] then
-							SelectedOptions[option] = nil -- Deselect
-						else
-							SelectedOptions[option] = true -- Select
-						end
+	local OptionButtons = {}
 
-						-- Update Dropdown Display
-						local selectedText = "Select item"
-						local selectedItems = {}
-						for key in pairs(SelectedOptions) do
-							table.insert(selectedItems, key)
-						end
+	for _, option in ipairs(Options) do
+		local OptionButton = Instance.new("TextButton")
+		OptionButton.Size = UDim2.new(1, 0, 0, 50)
+		OptionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		OptionButton.Text = option
+		OptionButton.TextSize = 32
+		OptionButton.Font = Enum.Font.GothamBold
+		OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		OptionButton.Parent = DropdownList
 
-						if #selectedItems > 0 then
-							selectedText = "Select item: " .. table.concat(selectedItems, ", ")
-						end
+		table.insert(OptionButtons, OptionButton)
 
-						DropdownDisplay.Text = selectedText
-						Callback(selectedItems) -- Return all selected items
-					else
-						DropdownDisplay.Text = Name .. ": " .. option
-						Callback(option)
+		OptionButton.MouseButton1Click:Connect(function()
+			if MultiSelect then
+				SelectedOptions[option] = not SelectedOptions[option] and true or nil
 
-						-- Close Dropdown
-						DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
-							DropdownList.Visible = false
-						end)
-						DropdownButton.Text = "▼"
-						DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true)
-					end
-				end)
-			end
-
-			-- 🔥 Dropdown Toggle (Expands Space)
-			local isExpanded = false
-			DropdownButton.MouseButton1Click:Connect(function()
-				isExpanded = not isExpanded
-
-				if isExpanded then
-					DropdownList.Visible = true
-					local newHeight = (#Options * 50) + 10
-					DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
-					DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60 + newHeight), "Out", "Quad", 0.3, true) 
-					DropdownButton.Text = "▲"
-				else
-					DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
-						DropdownList.Visible = false
-					end)
-					DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true)
-					DropdownButton.Text = "▼"
+				local selectedItems = {}
+				for key in pairs(SelectedOptions) do
+					table.insert(selectedItems, key)
 				end
-			end)
 
-			return Dropdown
-		end,
+				local selectedText = #selectedItems > 0 and "Select item: " .. table.concat(selectedItems, ", ") or "Select item"
+				DropdownDisplay.Text = selectedText
+				Callback(selectedItems)
+			else
+				DropdownDisplay.Text = Name .. ": " .. option
+				Callback(option)
+
+				-- Close dropdown
+				isExpanded = false
+				DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
+					DropdownList.Visible = false
+				end)
+				DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true)
+				TweenService:Create(ArrowRotation, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 0}):Play()
+			end
+		end)
+	end
+
+	-- Expand Toggle
+	local isExpanded = false
+	DropdownButton.MouseButton1Click:Connect(function()
+		isExpanded = not isExpanded
+
+		local newHeight = (#OptionButtons * 54) + 10 -- 50 height + 4 padding
+
+		if isExpanded then
+			DropdownList.Visible = true
+			DropdownList:TweenSize(UDim2.new(1, 0, 0, newHeight), "Out", "Quad", 0.3, true)
+			DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60 + newHeight), "Out", "Quad", 0.3, true)
+			TweenService:Create(ArrowRotation, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 180}):Play()
+		else
+			DropdownList:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true, function()
+				DropdownList.Visible = false
+			end)
+			DropdownContainer:TweenSize(UDim2.new(1, 0, 0, 60), "Out", "Quad", 0.3, true)
+			TweenService:Create(ArrowRotation, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Rotation = 0}):Play()
+		end
+	end)
+
+	return Dropdown
+end,
+
 
 		CreateTimer = function(self, config)
 			local TimerName = config.Name or "Timer"
