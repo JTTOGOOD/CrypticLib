@@ -416,81 +416,76 @@ function Cryptic:CreateWindow(config)
 
 
 			CreateInput = function(self, config)
-				local InputName = config.Name or "Input"
-				local PlaceholderText = config.TextboxText or "Enter Text"
-				local InputScript = config.script or function() end
+    local InputName = config.Name or "Input"
+    local PlaceholderText = config.PlaceholderText or "Enter Text" -- Renamed
+    local InputScript = config.script or function() end
+    local ClearTextOnInput = config.ClearTextOnInput or false -- New option for clearing text on input
 
+    local InputFrame = Instance.new("Frame")
+    InputFrame.Size = UDim2.new(1, -10, 0, 40)
+    InputFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    InputFrame.Parent = self.Frame
 
-				local InputFrame = Instance.new("Frame")
-				InputFrame.Size = UDim2.new(1, -10, 0, 40)
-				InputFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-				InputFrame.Parent = self.Frame
+    local FrameCorner = Instance.new("UICorner")
+    FrameCorner.CornerRadius = UDim.new(0, 6)
+    FrameCorner.Parent = InputFrame
 
+    local InputLabel = Instance.new("TextLabel")
+    InputLabel.Size = UDim2.new(1, -10, 0, 20)
+    InputLabel.Position = UDim2.new(0, 10, 0, 0)
+    InputLabel.Text = InputName
+    InputLabel.Font = Enum.Font.GothamBold
+    InputLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    InputLabel.BackgroundTransparency = 1
+    InputLabel.TextXAlignment = Enum.TextXAlignment.Left
+    InputLabel.Parent = InputFrame
+    InputLabel.TextSize = 24
 
-				local FrameCorner = Instance.new("UICorner")
-				FrameCorner.CornerRadius = UDim.new(0, 6)
-				FrameCorner.Parent = InputFrame
+    local TextBox = Instance.new("TextBox")
+    TextBox.Size = UDim2.new(1, -20, 0, 20)
+    TextBox.Position = UDim2.new(0, 10, 0, 20)
+    TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextBox.Font = Enum.Font.Gotham
+    TextBox.PlaceholderText = PlaceholderText
+    TextBox.Text = ""
+    TextBox.ClearTextOnFocus = not ClearTextOnInput  -- Will clear text if `ClearTextOnInput` is true
+    TextBox.Parent = InputFrame
+    TextBox.TextSize = 18
 
+    local TextBoxCorner = Instance.new("UICorner")
+    TextBoxCorner.CornerRadius = UDim.new(0, 4)
+    TextBoxCorner.Parent = TextBox
 
-				local InputLabel = Instance.new("TextLabel")
-				InputLabel.Size = UDim2.new(1, -10, 0, 20)
-				InputLabel.Position = UDim2.new(0, 10, 0, 0)
-				InputLabel.Text = InputName
-				InputLabel.Font = Enum.Font.GothamBold
-				InputLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-				InputLabel.BackgroundTransparency = 1
-				InputLabel.TextXAlignment = Enum.TextXAlignment.Left
-				InputLabel.Parent = InputFrame
-				InputLabel.TextSize = 24
+    local function ResetPlaceholder()
+        if TextBox.Text == "" then
+            TextBox.Text = ""
+            TextBox.PlaceholderText = PlaceholderText
+        end
+    end
 
+    TextBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            InputScript(TextBox.Text) -- Call script function
+            if ClearTextOnInput then -- Clear text only if `ClearTextOnInput` is true
+                TextBox.Text = ""
+            end
+            ResetPlaceholder()
+        end
+    end)
 
-				local TextBox = Instance.new("TextBox")
-				TextBox.Size = UDim2.new(1, -20, 0, 20)
-				TextBox.Position = UDim2.new(0, 10, 0, 20)
-				TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-				TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-				TextBox.Font = Enum.Font.Gotham
-				TextBox.PlaceholderText = PlaceholderText
-				TextBox.Text = ""
-				TextBox.ClearTextOnFocus = false
-				TextBox.Parent = InputFrame
-				TextBox.TextSize = 18  
+    TextBox.FocusLost:Connect(ResetPlaceholder)
 
-
-				local TextBoxCorner = Instance.new("UICorner")
-				TextBoxCorner.CornerRadius = UDim.new(0, 4)
-				TextBoxCorner.Parent = TextBox
-
-
-				local function ResetPlaceholder()
-					if TextBox.Text == "" then
-						TextBox.Text = ""
-						TextBox.PlaceholderText = PlaceholderText
-					end
-				end
-
-
-				TextBox.FocusLost:Connect(function(enterPressed)
-					if enterPressed then
-						InputScript(TextBox.Text) -- Call script function
-						TextBox.Text = "" -- Clear text
-						ResetPlaceholder()
-					end
-				end)
-
-
-				TextBox.FocusLost:Connect(ResetPlaceholder)
-
-				return {
-					Frame = InputFrame,
-					SetText = function(text)
-						TextBox.Text = text
-					end,
-					GetText = function()
-						return TextBox.Text
-					end
-				}
-			end,
+    return {
+        Frame = InputFrame,
+        SetText = function(text)
+            TextBox.Text = text
+        end,
+        GetText = function()
+            return TextBox.Text
+        end
+    }
+end,
 
 
 			CreateButton = function(self, config)
