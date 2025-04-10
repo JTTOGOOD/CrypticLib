@@ -416,76 +416,76 @@ function Cryptic:CreateWindow(config)
 
 
 			CreateInput = function(self, config)
-    local InputName = config.Name or "Input"
-    local PlaceholderText = config.PlaceholderText or "Enter Text" -- Renamed
-    local InputScript = config.script or function() end
-    local ClearTextOnInput = config.ClearTextOnInput or false -- New option for clearing text on input
+				local InputName = config.Name or "Input"
+				local PlaceholderText = config.PlaceholderText or "Enter Text" -- Renamed
+				local InputScript = config.script or function() end
+				local ClearTextOnInput = config.ClearTextOnInput or false -- New option for clearing text on input
 
-    local InputFrame = Instance.new("Frame")
-    InputFrame.Size = UDim2.new(1, -10, 0, 40)
-    InputFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    InputFrame.Parent = self.Frame
+				local InputFrame = Instance.new("Frame")
+				InputFrame.Size = UDim2.new(1, -10, 0, 40)
+				InputFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				InputFrame.Parent = self.Frame
 
-    local FrameCorner = Instance.new("UICorner")
-    FrameCorner.CornerRadius = UDim.new(0, 6)
-    FrameCorner.Parent = InputFrame
+				local FrameCorner = Instance.new("UICorner")
+				FrameCorner.CornerRadius = UDim.new(0, 6)
+				FrameCorner.Parent = InputFrame
 
-    local InputLabel = Instance.new("TextLabel")
-    InputLabel.Size = UDim2.new(1, -10, 0, 20)
-    InputLabel.Position = UDim2.new(0, 10, 0, 0)
-    InputLabel.Text = InputName
-    InputLabel.Font = Enum.Font.GothamBold
-    InputLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    InputLabel.BackgroundTransparency = 1
-    InputLabel.TextXAlignment = Enum.TextXAlignment.Left
-    InputLabel.Parent = InputFrame
-    InputLabel.TextSize = 24
+				local InputLabel = Instance.new("TextLabel")
+				InputLabel.Size = UDim2.new(1, -10, 0, 20)
+				InputLabel.Position = UDim2.new(0, 10, 0, 0)
+				InputLabel.Text = InputName
+				InputLabel.Font = Enum.Font.GothamBold
+				InputLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				InputLabel.BackgroundTransparency = 1
+				InputLabel.TextXAlignment = Enum.TextXAlignment.Left
+				InputLabel.Parent = InputFrame
+				InputLabel.TextSize = 24
 
-    local TextBox = Instance.new("TextBox")
-    TextBox.Size = UDim2.new(1, -20, 0, 20)
-    TextBox.Position = UDim2.new(0, 10, 0, 20)
-    TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TextBox.Font = Enum.Font.Gotham
-    TextBox.PlaceholderText = PlaceholderText
-    TextBox.Text = ""
-    TextBox.ClearTextOnFocus = true -- Always clear text when focusing
-    TextBox.Parent = InputFrame
-    TextBox.TextSize = 18
+				local TextBox = Instance.new("TextBox")
+				TextBox.Size = UDim2.new(1, -20, 0, 20)
+				TextBox.Position = UDim2.new(0, 10, 0, 20)
+				TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+				TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+				TextBox.Font = Enum.Font.Gotham
+				TextBox.PlaceholderText = PlaceholderText
+				TextBox.Text = ""
+				TextBox.ClearTextOnFocus = true -- Always clear text when focusing
+				TextBox.Parent = InputFrame
+				TextBox.TextSize = 18
 
-    local TextBoxCorner = Instance.new("UICorner")
-    TextBoxCorner.CornerRadius = UDim.new(0, 4)
-    TextBoxCorner.Parent = TextBox
+				local TextBoxCorner = Instance.new("UICorner")
+				TextBoxCorner.CornerRadius = UDim.new(0, 4)
+				TextBoxCorner.Parent = TextBox
 
-    local function ResetPlaceholder()
-        if TextBox.Text == "" then
-            TextBox.Text = ""
-            TextBox.PlaceholderText = PlaceholderText
-        end
-    end
+				local function ResetPlaceholder()
+					if TextBox.Text == "" then
+						TextBox.Text = ""
+						TextBox.PlaceholderText = PlaceholderText
+					end
+				end
 
-    TextBox.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            InputScript(TextBox.Text) -- Call script function
-            if ClearTextOnInput then -- Clear text only if `ClearTextOnInput` is true
-                TextBox.Text = ""
-            end
-            ResetPlaceholder()
-        end
-    end)
+				TextBox.FocusLost:Connect(function(enterPressed)
+					if enterPressed then
+						InputScript(TextBox.Text) -- Call script function
+						if ClearTextOnInput then -- Clear text only if `ClearTextOnInput` is true
+							TextBox.Text = ""
+						end
+						ResetPlaceholder()
+					end
+				end)
 
-    TextBox.FocusLost:Connect(ResetPlaceholder)
+				TextBox.FocusLost:Connect(ResetPlaceholder)
 
-    return {
-        Frame = InputFrame,
-        SetText = function(text)
-            TextBox.Text = text
-        end,
-        GetText = function()
-            return TextBox.Text
-        end
-    }
-end,
+				return {
+					Frame = InputFrame,
+					SetText = function(text)
+						TextBox.Text = text
+					end,
+					GetText = function()
+						return TextBox.Text
+					end
+				}
+			end,
 
 			CreateButton = function(self, config)
 				local Button = Instance.new("TextButton")
@@ -533,88 +533,88 @@ end,
 
 
 			CreateToggle = function(self, config)
-    local ToggleState = config.ToggleState or false
-    local ToggleName = config.Name or "Toggle"
-    local ToggleDescription = config.Description or "No description provided"
-    local ToggleScript = config.Script or function() end
+				local ToggleState = config.ToggleState or false
+				local ToggleName = config.Name or "Toggle"
+				local ToggleDescription = config.Description or "No description provided"
+				local ToggleScript = config.Script or function() end
 
-    local ToggleFrame = Instance.new("Frame")
-    ToggleFrame.Size = UDim2.new(1, -10, 0, 80)  -- Increased height to fit description
-    ToggleFrame.BackgroundTransparency = 1
-    ToggleFrame.Parent = self.Frame
+				local ToggleFrame = Instance.new("Frame")
+				ToggleFrame.Size = UDim2.new(1, -10, 0, 80)  -- Increased height to fit description
+				ToggleFrame.BackgroundTransparency = 1
+				ToggleFrame.Parent = self.Frame
 
-    -- Toggle Name (top-left, 2% smaller)
-    local ToggleLabel = Instance.new("TextLabel")
-    ToggleLabel.Size = UDim2.new(1, -70, 0, 20)
-    ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
-    ToggleLabel.Text = ToggleName
-    ToggleLabel.Font = Enum.Font.GothamBold
-    ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleLabel.BackgroundTransparency = 1
-    ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    ToggleLabel.TextSize = 24 * 0.98  -- 2% smaller
-    ToggleLabel.Parent = ToggleFrame
+				-- Toggle Name (top-left, 2% smaller)
+				local ToggleLabel = Instance.new("TextLabel")
+				ToggleLabel.Size = UDim2.new(1, -70, 0, 20)
+				ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+				ToggleLabel.Text = ToggleName
+				ToggleLabel.Font = Enum.Font.GothamBold
+				ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				ToggleLabel.BackgroundTransparency = 1
+				ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+				ToggleLabel.TextSize = 24 * 0.98  -- 2% smaller
+				ToggleLabel.Parent = ToggleFrame
 
-    -- Description (below the name, wrapped)
-    local DescriptionLabel = Instance.new("TextLabel")
-    DescriptionLabel.Size = UDim2.new(1, -70, 0, 40)  -- Adjust size for wrapping
-    DescriptionLabel.Position = UDim2.new(0, 10, 0, 22)  -- Position below the name
-    DescriptionLabel.Text = ToggleDescription
-    DescriptionLabel.Font = Enum.Font.Gotham
-    DescriptionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    DescriptionLabel.BackgroundTransparency = 1
-    DescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-    DescriptionLabel.TextSize = 18
-    DescriptionLabel.TextWrapped = true  -- Enable text wrapping
-    DescriptionLabel.Parent = ToggleFrame
+				-- Description (below the name, wrapped)
+				local DescriptionLabel = Instance.new("TextLabel")
+				DescriptionLabel.Size = UDim2.new(1, -70, 0, 40)  -- Adjust size for wrapping
+				DescriptionLabel.Position = UDim2.new(0, 10, 0, 22)  -- Position below the name
+				DescriptionLabel.Text = ToggleDescription
+				DescriptionLabel.Font = Enum.Font.Gotham
+				DescriptionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+				DescriptionLabel.BackgroundTransparency = 1
+				DescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+				DescriptionLabel.TextSize = 18
+				DescriptionLabel.TextWrapped = true  -- Enable text wrapping
+				DescriptionLabel.Parent = ToggleFrame
 
-    -- Switch background
-    local Switch = Instance.new("Frame")
-    Switch.Size = UDim2.new(0, 50, 0, 25)
-    Switch.Position = UDim2.new(1, -60, 0.5, -12)
-    Switch.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
-    Switch.BorderSizePixel = 0
-    Switch.Parent = ToggleFrame
+				-- Switch background
+				local Switch = Instance.new("Frame")
+				Switch.Size = UDim2.new(0, 50, 0, 25)
+				Switch.Position = UDim2.new(1, -60, 0.5, -12)
+				Switch.BackgroundColor3 = ToggleState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
+				Switch.BorderSizePixel = 0
+				Switch.Parent = ToggleFrame
 
-    local SwitchCorner = Instance.new("UICorner")
-    SwitchCorner.CornerRadius = UDim.new(1, 0)
-    SwitchCorner.Parent = Switch
+				local SwitchCorner = Instance.new("UICorner")
+				SwitchCorner.CornerRadius = UDim.new(1, 0)
+				SwitchCorner.Parent = Switch
 
-    -- Switch knob
-    local Knob = Instance.new("Frame")
-    Knob.Size = UDim2.new(0, 20, 0, 20)
-    Knob.Position = ToggleState and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
-    Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Knob.Parent = Switch
+				-- Switch knob
+				local Knob = Instance.new("Frame")
+				Knob.Size = UDim2.new(0, 20, 0, 20)
+				Knob.Position = ToggleState and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+				Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Knob.Parent = Switch
 
-    local KnobCorner = Instance.new("UICorner")
-    KnobCorner.CornerRadius = UDim.new(1, 0)
-    KnobCorner.Parent = Knob
+				local KnobCorner = Instance.new("UICorner")
+				KnobCorner.CornerRadius = UDim.new(1, 0)
+				KnobCorner.Parent = Knob
 
-    -- Tween service
-    local TweenService = game:GetService("TweenService")
-    local function UpdateToggle(state)
-        ToggleState = state
-        local bgColor = state and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
-        local knobPosition = state and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+				-- Tween service
+				local TweenService = game:GetService("TweenService")
+				local function UpdateToggle(state)
+					ToggleState = state
+					local bgColor = state and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 30)
+					local knobPosition = state and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
 
-        TweenService:Create(Switch, TweenInfo.new(0.2), { BackgroundColor3 = bgColor }):Play()
-        TweenService:Create(Knob, TweenInfo.new(0.2), { Position = knobPosition }):Play()
+					TweenService:Create(Switch, TweenInfo.new(0.2), { BackgroundColor3 = bgColor }):Play()
+					TweenService:Create(Knob, TweenInfo.new(0.2), { Position = knobPosition }):Play()
 
-        pcall(ToggleScript, ToggleState)
-    end
+					pcall(ToggleScript, ToggleState)
+				end
 
-    Switch.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            UpdateToggle(not ToggleState)
-        end
-    end)
+				Switch.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then
+						UpdateToggle(not ToggleState)
+					end
+				end)
 
-    return {
-        Frame = ToggleFrame,
-        SetState = UpdateToggle
-    }
-end,
+				return {
+					Frame = ToggleFrame,
+					SetState = UpdateToggle
+				}
+			end,
 
 			CreateDropdown = function(self, config)
 				local Name = config.Name or "Dropdown"
@@ -850,7 +850,7 @@ end,
 				local Script = config.Script or function() end
 
 				local SliderFrame = Instance.new("Frame")
-				SliderFrame.Size = UDim2.new(1, -10, 0, 50)
+				SliderFrame.Size = UDim2.new(1, -10, 0, 60)  -- Increased height for better label space
 				SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 				SliderFrame.Parent = self.Frame
 
@@ -862,8 +862,9 @@ end,
 				SliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 				SliderLabel.BackgroundTransparency = 1
 				SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+				SliderLabel.TextSize = 18
+				SliderLabel.TextWrapped = true  -- Enable wrapping for long labels
 				SliderLabel.Parent = SliderFrame
-				SliderLabel.TextSize = 24
 
 				local SliderBar = Instance.new("Frame")
 				SliderBar.Size = UDim2.new(1, -10, 0, 8)
@@ -887,9 +888,10 @@ end,
 				ButtonCorner.CornerRadius = UDim.new(1, 0)
 				ButtonCorner.Parent = SliderButton
 
+				-- Function to update the slider based on the input position
 				local function UpdateSlider(input)
 					local Position = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
-					local NewValue = math.floor((MinValue + (MaxValue - MinValue) * Position) / Increment) * Increment
+					local NewValue = math.round((MinValue + (MaxValue - MinValue) * Position) / Increment) * Increment
 
 					SliderFill.Size = UDim2.new(Position, 0, 1, 0)
 					SliderButton.Position = UDim2.new(Position, -7, -0.25, 0)
@@ -898,6 +900,7 @@ end,
 					pcall(Script, NewValue)
 				end
 
+				-- Handle slider button input
 				SliderButton.InputBegan:Connect(function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						UpdateSlider(input)
@@ -917,7 +920,7 @@ end,
 					end
 				end)
 
-
+				-- Return the frame and a setter function for external use
 				return {
 					Frame = SliderFrame,
 					SetValue = function(value)
