@@ -1,10 +1,227 @@
+warn("Report to (@.vaytrix) on Discord if you come across any issues.")
+
+local TweenService = game:GetService("TweenService") -- Move this to the top!
+
+local Cryptic = {}
+
+function Cryptic:CreateWindow(config)
+	local Name = config.Name or "Cryptic UI"
+	local LoadingScreenEnabled = config.LoadingScreen or false
+	local LoadingScreenDuration = config.LoadingScreenDuration or 2
+	local LoadingTitle = config.LoadingTitle or "Loading..."
+	local LoadingSubtitle = config.LoadingSubtitle or "Please wait"
+	local Theme = config.Theme or Color3.fromRGB(25, 25, 25)
+	local DebugMode = config.LibraryElementObservation or false
+
+	-- Key System Configurations
+	local KeySystemEnabled = config.KeySystem or false
+	local CorrectKey = config.Key or "Hello"
+	local KeyTitle = config.KeyTitle or "Key System"
+	local KeySubTitle = config.KeySubTitle or "Enter Key below"
+	local TextboxPlaceholder = config.TextboxText or "Enter Key"
+
+	-- Debug function
+	local function debugPrint(elementName, success, errMsg)
+		if DebugMode then
+			if success then
+				print("✅ " .. elementName .. " passed!")
+			else
+				warn("❌ Error with " .. elementName .. ": " .. errMsg)
+			end
+		end
+	end
+
+
+	local existingUI = game:GetService("CoreGui"):FindFirstChild("CroxieLib")
+	if existingUI then
+		existingUI:Destroy() -- Remove old instance before creating a new one
+	end
+
+	-- Create ScreenGui
+	local ScreenGui = Instance.new("ScreenGui")
+	local success, err = pcall(function()
+		ScreenGui.Name = "CroxieLib"
+		ScreenGui.Parent = game:GetService("CoreGui") 
+		ScreenGui.ResetOnSpawn = false
+	end)
+	debugPrint("ScreenGui", success, err)
+
+	-- 🖼️ Main UI Frame (Updated)
+	local MainFrame = Instance.new("Frame")
+	success, err = pcall(function()
+		MainFrame.Name = "MainFrame"
+		MainFrame.Size = UDim2.new(0, 735, 0, 564) -- Updated size
+		MainFrame.Position = UDim2.new(0.20653908, 0, 0.0923520923, 0) -- Updated position
+		MainFrame.BackgroundColor3 = Color3.fromRGB(39, 39, 39) -- Updated background color
+		MainFrame.BorderSizePixel = 0
+		MainFrame.Visible = false
+		MainFrame.Parent = ScreenGui
+	end)
+	debugPrint("MainFrame", success, err)
+
+
+	local UICorner = Instance.new("UICorner")
+	UICorner.CornerRadius = UDim.new(0, 10)
+	UICorner.Parent = MainFrame
+
+	local TitleLabel = Instance.new("TextLabel")
+	success, err = pcall(function()
+		TitleLabel.Name = "TitleLabel"
+		TitleLabel.Size = UDim2.new(0, 727, 0, 50)
+		TitleLabel.Position = UDim2.new(0.0170940179, 0, 0, 0) -- Same position
+		TitleLabel.BackgroundTransparency = 1
+		TitleLabel.Text = Name -- Uses the Name from config
+		TitleLabel.Font = Enum.Font.GothamBold
+		TitleLabel.TextSize = 32 -- Increased text size
+		TitleLabel.TextColor3 = Color3.new(1, 0.333333, 0) -- Kept same color
+		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+		TitleLabel.Parent = MainFrame
+	end)
+	debugPrint("TitleLabel", success, err)
+
+
+	if KeySystemEnabled then
+		local KeySystemFrame = Instance.new("Frame")
+		KeySystemFrame.Size = UDim2.new(0, 400, 0, 200)
+		KeySystemFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+		KeySystemFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+		KeySystemFrame.Parent = ScreenGui
+
+		local KeyTitleLabel = Instance.new("TextLabel")
+		KeyTitleLabel.Text = KeyTitle
+		KeyTitleLabel.Size = UDim2.new(1, 0, 0, 30)
+		KeyTitleLabel.TextSize = 20
+		KeyTitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		KeyTitleLabel.Parent = KeySystemFrame
+
+		local KeySubTitleLabel = Instance.new("TextLabel")
+		KeySubTitleLabel.Text = KeySubTitle
+		KeySubTitleLabel.Size = UDim2.new(1, 0, 0, 20)
+		KeySubTitleLabel.Position = UDim2.new(0, 0, 0, 30)
+		KeySubTitleLabel.TextSize = 14
+		KeySubTitleLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+		KeySubTitleLabel.Parent = KeySystemFrame
+
+		local KeyTextBox = Instance.new("TextBox")
+		KeyTextBox.Size = UDim2.new(0.8, 0, 0, 30)
+		KeyTextBox.Position = UDim2.new(0.1, 0, 0, 60)
+		KeyTextBox.Text = TextboxPlaceholder
+		KeyTextBox.ClearTextOnFocus = false
+		KeyTextBox.TextSize = 16
+		KeyTextBox.Parent = KeySystemFrame
+
+		local EnterButton = Instance.new("TextButton")
+		EnterButton.Size = UDim2.new(0.8, 0, 0, 30)
+		EnterButton.Position = UDim2.new(0.1, 0, 0, 100)
+		EnterButton.Text = "Enter"
+		EnterButton.TextSize = 16
+		EnterButton.Parent = KeySystemFrame
+
+		local ErrorMessage = Instance.new("TextLabel")
+		ErrorMessage.Size = UDim2.new(1, 0, 0, 20)
+		ErrorMessage.Position = UDim2.new(0, 0, 0, 140)
+		ErrorMessage.TextColor3 = Color3.fromRGB(255, 0, 0)
+		ErrorMessage.Text = ""
+		ErrorMessage.Visible = false
+		ErrorMessage.Parent = KeySystemFrame
+
+
+		EnterButton.MouseButton1Click:Connect(function()
+			if KeyTextBox.Text == CorrectKey then
+				KeySystemFrame:Destroy() -- Remove Key System UI
+				if LoadingScreenEnabled then
+					showLoadingScreen() -- Call loading screen
+				else
+					MainFrame.Visible = true
+				end
+			else
+				ErrorMessage.Text = "Incorrect Key! Try Again."
+				ErrorMessage.Visible = true
+			end
+		end)
+
+	elseif LoadingScreenEnabled then
+		-- No Key System, but Loading Screen is enabled
+		local function showLoadingScreen()
+			local LoadingFrame = Instance.new("Frame")
+			LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+			LoadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+			LoadingFrame.Parent = ScreenGui
+
+			local LoadingLabel = Instance.new("TextLabel")
+			LoadingLabel.Size = UDim2.new(1, 0, 0, 50)
+			LoadingLabel.Position = UDim2.new(0, 0, 0.4, -25)
+			LoadingLabel.Text = LoadingTitle
+			LoadingLabel.TextSize = 24
+			LoadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+			LoadingLabel.Font = Enum.Font.GothamBold
+			LoadingLabel.BackgroundTransparency = 1
+			LoadingLabel.Parent = LoadingFrame
+
+			local SubtitleLabel = Instance.new("TextLabel")
+			SubtitleLabel.Size = UDim2.new(1, 0, 0, 30)
+			SubtitleLabel.Position = UDim2.new(0, 0, 0.45, 0)
+			SubtitleLabel.Text = LoadingSubtitle
+			SubtitleLabel.TextSize = 18
+			SubtitleLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+			SubtitleLabel.Font = Enum.Font.Gotham
+			SubtitleLabel.BackgroundTransparency = 1
+			SubtitleLabel.Parent = LoadingFrame
+
+			task.spawn(function()
+				wait(LoadingScreenDuration)
+				LoadingFrame:Destroy()
+				MainFrame.Visible = true
+			end)
+		end
+		showLoadingScreen()
+	else
+		-- No Key System and No Loading Screen, show UI instantly
+		MainFrame.Visible = true
+	end
+
+
+	local Dragging, DragInput, DragStart, StartPos
+
+	TitleLabel.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			Dragging = true
+			DragStart = input.Position
+			StartPos = MainFrame.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					Dragging = false
+				end
+			end)
+		end
+	end)
+
+	TitleLabel.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
+			DragInput = input
+		end
+	end)
+
+	game:GetService("UserInputService").InputChanged:Connect(function(input)
+		if input == DragInput and Dragging then
+			local delta = input.Position - DragStart
+			MainFrame.Position = UDim2.new(StartPos.X.Scale, StartPos.X.Offset + delta.X, StartPos.Y.Scale, StartPos.Y.Offset + delta.Y)
+		end
+	end)
+
+
+	-- Keep track of on-screen notifications
+local activeNotifications = {}
+local notificationQueue = {}
+local maxVisible = 5
+local spacing = 110 -- Space between each notification
+
 function CroxieLib:Notify(settings)
     local title = settings.Title or "Notification"
     local description = settings.Description or "This is a notification."
     local duration = settings.Duration or 5
     local notiType = settings.Type or "normal"
 
-    -- Theme colors per Type
     local typeColors = {
         normal = Color3.fromRGB(70, 130, 255),
         success = Color3.fromRGB(46, 204, 113),
@@ -13,86 +230,108 @@ function CroxieLib:Notify(settings)
     }
 
     local borderColor = typeColors[notiType] or typeColors["normal"]
-
     local PlayerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-    local ScreenGui = Instance.new("ScreenGui", PlayerGui)
-    ScreenGui.ResetOnSpawn = false
-    ScreenGui.Name = "CroxieNotification"
 
-    local Notification = Instance.new("Frame")
-    Notification.Size = UDim2.new(0, 320, 0, 100)
-    Notification.Position = UDim2.new(1, 350, 1, -150) -- start off-screen
-    Notification.AnchorPoint = Vector2.new(1, 1)
-    Notification.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    Notification.BorderSizePixel = 0
-    Notification.Parent = ScreenGui
-    Notification.ClipsDescendants = true
-    Notification.BackgroundTransparency = 0
+    local function createNotification()
+        local ScreenGui = Instance.new("ScreenGui")
+        ScreenGui.ResetOnSpawn = false
+        ScreenGui.Name = "CroxieNotification"
+        ScreenGui.Parent = PlayerGui
 
-    -- Rounded corners
-    local UICorner = Instance.new("UICorner", Notification)
-    UICorner.CornerRadius = UDim.new(0, 10)
+        local Notification = Instance.new("Frame")
+        Notification.Size = UDim2.new(0, 320, 0, 100)
+        Notification.Position = UDim2.new(1, 350, 1, -150)
+        Notification.AnchorPoint = Vector2.new(1, 1)
+        Notification.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Notification.BorderSizePixel = 0
+        Notification.ClipsDescendants = true
+        Notification.Parent = ScreenGui
 
-    -- Animated Stroke Line
-    local UIStroke = Instance.new("UIStroke", Notification)
-    UIStroke.Color = borderColor
-    UIStroke.Thickness = 2
-    UIStroke.Transparency = 0
-    UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        local UICorner = Instance.new("UICorner", Notification)
+        UICorner.CornerRadius = UDim.new(0, 10)
 
-    -- Stroke Animation
-    task.spawn(function()
-        local angle = 0
-        while Notification and Notification.Parent do
-            angle += 1
-            UIStroke.LineJoinMode = Enum.LineJoinMode.Round
-            UIStroke.DashOffset = math.sin(tick() * 2) * 5
-            task.wait(0.02)
+        local UIStroke = Instance.new("UIStroke", Notification)
+        UIStroke.Color = borderColor
+        UIStroke.Thickness = 2
+        UIStroke.Transparency = 0
+        UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+        task.spawn(function()
+            while Notification and Notification.Parent do
+                UIStroke.DashOffset = math.sin(tick() * 2) * 5
+                task.wait(0.02)
+            end
+        end)
+
+        local TitleLabel = Instance.new("TextLabel", Notification)
+        TitleLabel.Text = title
+        TitleLabel.Size = UDim2.new(1, -20, 0, 30)
+        TitleLabel.Position = UDim2.new(0, 10, 0, 5)
+        TitleLabel.BackgroundTransparency = 1
+        TitleLabel.TextColor3 = borderColor
+        TitleLabel.Font = Enum.Font.GothamBold
+        TitleLabel.TextSize = 18
+        TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+        local DescriptionLabel = Instance.new("TextLabel", Notification)
+        DescriptionLabel.Text = description
+        DescriptionLabel.Size = UDim2.new(1, -20, 0, 50)
+        DescriptionLabel.Position = UDim2.new(0, 10, 0, 35)
+        DescriptionLabel.BackgroundTransparency = 1
+        DescriptionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+        DescriptionLabel.Font = Enum.Font.Gotham
+        DescriptionLabel.TextSize = 14
+        DescriptionLabel.TextWrapped = true
+        DescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+        DescriptionLabel.TextYAlignment = Enum.TextYAlignment.Top
+
+        return Notification
+    end
+
+    local function showNotification()
+        local Notification = createNotification()
+        table.insert(activeNotifications, Notification)
+
+        -- Reposition all notifications
+        for i, notif in ipairs(activeNotifications) do
+            local targetY = -((i - 1) * spacing + 20)
+            TweenService:Create(notif, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {
+                Position = UDim2.new(1, -20, 1, targetY)
+            }):Play()
         end
-    end)
 
-    -- Title
-    local TitleLabel = Instance.new("TextLabel", Notification)
-    TitleLabel.Text = title
-    TitleLabel.Size = UDim2.new(1, -20, 0, 30)
-    TitleLabel.Position = UDim2.new(0, 10, 0, 5)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.TextColor3 = borderColor
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextSize = 18
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-    -- Description
-    local DescriptionLabel = Instance.new("TextLabel", Notification)
-    DescriptionLabel.Text = description
-    DescriptionLabel.Size = UDim2.new(1, -20, 0, 50)
-    DescriptionLabel.Position = UDim2.new(0, 10, 0, 35)
-    DescriptionLabel.BackgroundTransparency = 1
-    DescriptionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    DescriptionLabel.Font = Enum.Font.Gotham
-    DescriptionLabel.TextSize = 14
-    DescriptionLabel.TextWrapped = true
-    DescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-    DescriptionLabel.TextYAlignment = Enum.TextYAlignment.Top
-
-    -- Tween in
-    local TweenService = game:GetService("TweenService")
-    local tweenIn = TweenService:Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
-        Position = UDim2.new(1, -20, 1, -150)
-    })
-    tweenIn:Play()
-
-    -- Auto remove after duration
-    task.delay(duration, function()
-        if Notification and Notification.Parent then
-            local tweenOut = TweenService:Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
-                Position = UDim2.new(1, 350, 1, -150)
+        -- Auto-remove after delay
+        task.delay(duration, function()
+            local tweenOut = TweenService:Create(Notification, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {
+                Position = UDim2.new(1, 350, 1, Notification.Position.Y.Offset)
             })
             tweenOut:Play()
             tweenOut.Completed:Wait()
             Notification:Destroy()
-        end
-    end)
+
+            -- Clean and reposition
+            table.remove(activeNotifications, table.find(activeNotifications, Notification))
+
+            for i, notif in ipairs(activeNotifications) do
+                local targetY = -((i - 1) * spacing + 20)
+                TweenService:Create(notif, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {
+                    Position = UDim2.new(1, -20, 1, targetY)
+                }):Play()
+            end
+
+            -- Show next in queue
+            if #notificationQueue > 0 then
+                local nextSettings = table.remove(notificationQueue, 1)
+                CroxieLib:Notify(nextSettings)
+            end
+        end)
+    end
+
+    if #activeNotifications >= maxVisible then
+        table.insert(notificationQueue, settings)
+    else
+        showNotification()
+    end
 end
 
 	local TabList = Instance.new("ScrollingFrame")
