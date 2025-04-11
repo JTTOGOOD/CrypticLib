@@ -209,130 +209,94 @@ function Cryptic:CreateWindow(config)
 		end
 	end)
 
+function Cryptic:Notify(settings)
+    local Title = settings.Title or "Notification"
+    local Description = settings.Description or "No Description Provided"
+    local Duration = settings.Duration or 5
+    local CloseButton = settings.CloseButton or false
+    local ButtonText = settings.ButtonText or "Close"
 
-	-- Keep track of on-screen notifications
-local activeNotifications = {}
-local notificationQueue = {}
-local maxVisible = 5
-local spacing = 110 -- Space between each notification
+    -- Use CoreGui for notification (ensure correct player and gui)
+    local CoreGui = game:GetService("CoreGui")
 
-function CroxieLib:Notify(settings)
-    local title = settings.Title or "Notification"
-    local description = settings.Description or "This is a notification."
-    local duration = settings.Duration or 5
-    local notiType = settings.Type or "normal"
+    -- Create Notification UI
+    local NotificationFrame = Instance.new("Frame")
+    NotificationFrame.Size = UDim2.new(0, 468, 0, 80)
+    NotificationFrame.Position = UDim2.new(0.75, 0, 0.75, 0)
+    NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    NotificationFrame.BackgroundTransparency = 0.1
+    NotificationFrame.Visible = true  -- Ensure it's visible immediately
+    NotificationFrame.Parent = CoreGui
 
-    local typeColors = {
-        normal = Color3.fromRGB(70, 130, 255),
-        success = Color3.fromRGB(46, 204, 113),
-        warn = Color3.fromRGB(241, 196, 15),
-        error = Color3.fromRGB(231, 76, 60)
-    }
+    -- Title Label
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Text = Title
+    TitleLabel.Size = UDim2.new(1, -12, 0, 30)
+    TitleLabel.Position = UDim2.new(0, 6, 0, 6)
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextSize = 20
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLabel.TextWrapped = true
+    TitleLabel.Parent = NotificationFrame
 
-    local borderColor = typeColors[notiType] or typeColors["normal"]
-    local PlayerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    -- Description Label
+    local DescLabel = Instance.new("TextLabel")
+    DescLabel.Text = Description
+    DescLabel.Position = UDim2.new(0, 6, 0, 36)
+    DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    DescLabel.Size = UDim2.new(1, -12, 0, 40)
+    DescLabel.TextSize = 18
+    DescLabel.TextWrapped = true
+    DescLabel.BackgroundTransparency = 1
+    DescLabel.Font = Enum.Font.Gotham
+    DescLabel.TextXAlignment = Enum.TextXAlignment.Left
+    DescLabel.TextYAlignment = Enum.TextYAlignment.Top
+    DescLabel.Parent = NotificationFrame
 
-    local function createNotification()
-        local ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.ResetOnSpawn = false
-        ScreenGui.Name = "CroxieNotification"
-        ScreenGui.Parent = PlayerGui
+    -- Adjust size of notification frame based on text height
+    task.wait(0.05)  -- Small delay to calculate text size properly
+    local textSize = game:GetService("TextService"):GetTextSize(Description, 18, Enum.Font.Gotham, Vector2.new(440, math.huge))
+    local newHeight = math.clamp(textSize.Y + 50, 80, 200)
+    NotificationFrame.Size = UDim2.new(0, 468, 0, newHeight)
+    DescLabel.Size = UDim2.new(1, -12, 0, newHeight - 50)
 
-        local Notification = Instance.new("Frame")
-        Notification.Size = UDim2.new(0, 320, 0, 100)
-        Notification.Position = UDim2.new(1, 350, 1, -150)
-        Notification.AnchorPoint = Vector2.new(1, 1)
-        Notification.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        Notification.BorderSizePixel = 0
-        Notification.ClipsDescendants = true
-        Notification.Parent = ScreenGui
+    -- Close Button (if enabled)
+    if CloseButton then
+        local CloseBtn = Instance.new("TextButton")
+        CloseBtn.Text = ButtonText
+        CloseBtn.Position = UDim2.new(0.5, -40, 1, -30)
+        CloseBtn.Size = UDim2.new(0.4, 0, 0, 25)
+        CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        CloseBtn.Parent = NotificationFrame
 
-        local UICorner = Instance.new("UICorner", Notification)
-        UICorner.CornerRadius = UDim.new(0, 10)
-
-        local UIStroke = Instance.new("UIStroke", Notification)
-        UIStroke.Color = borderColor
-        UIStroke.Thickness = 2
-        UIStroke.Transparency = 0
-        UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
-        task.spawn(function()
-            while Notification and Notification.Parent do
-                UIStroke.DashOffset = math.sin(tick() * 2) * 5
-                task.wait(0.02)
-            end
-        end)
-
-        local TitleLabel = Instance.new("TextLabel", Notification)
-        TitleLabel.Text = title
-        TitleLabel.Size = UDim2.new(1, -20, 0, 30)
-        TitleLabel.Position = UDim2.new(0, 10, 0, 5)
-        TitleLabel.BackgroundTransparency = 1
-        TitleLabel.TextColor3 = borderColor
-        TitleLabel.Font = Enum.Font.GothamBold
-        TitleLabel.TextSize = 18
-        TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-        local DescriptionLabel = Instance.new("TextLabel", Notification)
-        DescriptionLabel.Text = description
-        DescriptionLabel.Size = UDim2.new(1, -20, 0, 50)
-        DescriptionLabel.Position = UDim2.new(0, 10, 0, 35)
-        DescriptionLabel.BackgroundTransparency = 1
-        DescriptionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-        DescriptionLabel.Font = Enum.Font.Gotham
-        DescriptionLabel.TextSize = 14
-        DescriptionLabel.TextWrapped = true
-        DescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-        DescriptionLabel.TextYAlignment = Enum.TextYAlignment.Top
-
-        return Notification
-    end
-
-    local function showNotification()
-        local Notification = createNotification()
-        table.insert(activeNotifications, Notification)
-
-        -- Reposition all notifications
-        for i, notif in ipairs(activeNotifications) do
-            local targetY = -((i - 1) * spacing + 20)
-            TweenService:Create(notif, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {
-                Position = UDim2.new(1, -20, 1, targetY)
-            }):Play()
-        end
-
-        -- Auto-remove after delay
-        task.delay(duration, function()
-            local tweenOut = TweenService:Create(Notification, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {
-                Position = UDim2.new(1, 350, 1, Notification.Position.Y.Offset)
-            })
-            tweenOut:Play()
-            tweenOut.Completed:Wait()
-            Notification:Destroy()
-
-            -- Clean and reposition
-            table.remove(activeNotifications, table.find(activeNotifications, Notification))
-
-            for i, notif in ipairs(activeNotifications) do
-                local targetY = -((i - 1) * spacing + 20)
-                TweenService:Create(notif, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {
-                    Position = UDim2.new(1, -20, 1, targetY)
-                }):Play()
-            end
-
-            -- Show next in queue
-            if #notificationQueue > 0 then
-                local nextSettings = table.remove(notificationQueue, 1)
-                CroxieLib:Notify(nextSettings)
-            end
+        CloseBtn.MouseButton1Click:Connect(function()
+            NotificationFrame:Destroy()
         end)
     end
 
-    if #activeNotifications >= maxVisible then
-        table.insert(notificationQueue, settings)
-    else
-        showNotification()
-    end
+    -- Tween effects to fade the notification in and out
+    local TweenService = game:GetService("TweenService")
+    local TweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+    -- Play tween animations
+    TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 0.1}):Play()
+    TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 0}):Play()
+    TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 0}):Play()
+
+    -- Automatically destroy notification after Duration
+    task.wait(Duration)
+    TweenService:Create(NotificationFrame, TweenInfo, {BackgroundTransparency = 1}):Play()
+    TweenService:Create(TitleLabel, TweenInfo, {TextTransparency = 1}):Play()
+    TweenService:Create(DescLabel, TweenInfo, {TextTransparency = 1}):Play()
+
+    -- Wait for the tween to complete before destroying
+    task.wait(0.5)  -- Ensure the fade-out is completed before destroying the frame
+    NotificationFrame:Destroy()
 end
+
 
 	local TabList = Instance.new("ScrollingFrame")
 	TabList.Size = UDim2.new(1, 0, 0, 30)
