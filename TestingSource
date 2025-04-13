@@ -531,166 +531,242 @@ end
     local DefaultColor = config.DefaultColor or Color3.fromRGB(255, 255, 255)
     local ColorScript = config.Script or function() end
 
-    local ColorFrame = Instance.new("Frame")
-    ColorFrame.Size = UDim2.new(1, -10, 0, 150)
-    ColorFrame.BackgroundTransparency = 1
-    ColorFrame.Parent = self.Frame
+    local PickerWindow = Instance.new("Frame") -- The main window
+    PickerWindow.Size = UDim2.new(0, 450, 0, 300) -- Adjust size
+    PickerWindow.Position = UDim2.new(0.5, -225, 0.5, -150) -- Center on screen (example)
+    PickerWindow.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Dark background
+    PickerWindow.BorderSizePixel = 1
+    PickerWindow.BorderColor3 = Color3.fromRGB(80, 80, 80)
+    PickerWindow.Parent = self.Frame -- Assuming this is where you want to parent the picker
 
-    -- Label
-    local ColorLabel = Instance.new("TextLabel")
-    ColorLabel.Size = UDim2.new(1, -70, 0, 24)
-    ColorLabel.Position = UDim2.new(0, 10, 0, 4)
-    ColorLabel.Text = ColorPickerName
-    ColorLabel.Font = Enum.Font.GothamBold
-    ColorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ColorLabel.BackgroundTransparency = 1
-    ColorLabel.TextXAlignment = Enum.TextXAlignment.Left
-    ColorLabel.TextSize = 22
-    ColorLabel.Parent = ColorFrame
+    local WindowCorner = Instance.new("UICorner")
+    WindowCorner.CornerRadius = UDim.new(0, 8)
+    WindowCorner.Parent = PickerWindow
 
-    -- Color Preview / Button
-    local ColorButton = Instance.new("TextButton")
-    ColorButton.Size = UDim2.new(0, 50, 0, 25)
-    ColorButton.Position = UDim2.new(1, -60, 0, 4)
-    ColorButton.BackgroundColor3 = DefaultColor
-    ColorButton.Text = ""
-    ColorButton.AutoButtonColor = false
-    ColorButton.Parent = ColorFrame
+    -- Title Bar (Optional, but good practice)
+    local TitleBar = Instance.new("Frame")
+    TitleBar.Size = UDim2.new(1, 0, 0, 30)
+    TitleBar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    TitleBar.Parent = PickerWindow
 
-    local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 6)
-    ButtonCorner.Parent = ColorButton
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Size = UDim2.new(1, -30, 1, 0)
+    TitleLabel.Text = ColorPickerName
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLabel.TextSize = 18
+    TitleLabel.Position = UDim2.new(0, 10, 0, 5)
+    TitleLabel.Parent = TitleBar
 
-    -- Color Picker popup (main menu)
-    local PickerPopup = Instance.new("Frame")
-    PickerPopup.Size = UDim2.new(0, 400, 0, 200)
-    PickerPopup.Position = UDim2.new(0, 10, 0, 40)
-    PickerPopup.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    PickerPopup.Visible = false
-    PickerPopup.Parent = ColorFrame
+    -- **Basic Colors Section**
+    local BasicColorsFrame = Instance.new("Frame")
+    BasicColorsFrame.Size = UDim2.new(0.45, 0, 0.6, 0) -- Adjust size and position
+    BasicColorsFrame.Position = UDim2.new(0.05, 0, 0.1, 0)
+    BasicColorsFrame.BackgroundTransparency = 1
+    BasicColorsFrame.Parent = PickerWindow
 
-    local PopupCorner = Instance.new("UICorner")
-    PopupCorner.CornerRadius = UDim.new(0, 6)
-    PopupCorner.Parent = PickerPopup
+    local BasicColorsLabel = Instance.new("TextLabel")
+    BasicColorsLabel.Size = UDim2.new(1, 0, 0, 20)
+    BasicColorsLabel.Text = "Basic colors"
+    BasicColorsLabel.Font = Enum.Font.Gotham
+    BasicColorsLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+    BasicColorsLabel.BackgroundTransparency = 1
+    BasicColorsLabel.TextXAlignment = Enum.TextXAlignment.Left
+    BasicColorsLabel.Parent = BasicColorsFrame
 
-    -- Full Color Hue Gradient (horizontal)
-    local Hue = Instance.new("Frame")
-    Hue.Name = "Hue"
-    Hue.Position = UDim2.new(0, 10, 0, 10)
-    Hue.Size = UDim2.new(0, 240, 0, 30)
-    Hue.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Hue.BorderSizePixel = 0
-    Hue.ClipsDescendants = true
-    Hue.Parent = PickerPopup
+    local basicColorPalette = {
+        Color3.fromRGB(0, 0, 0), Color3.fromRGB(128, 128, 128), Color3.fromRGB(192, 192, 192), Color3.fromRGB(255, 255, 255),
+        Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 165, 0), Color3.fromRGB(255, 255, 0), Color3.fromRGB(0, 255, 0),
+        Color3.fromRGB(0, 128, 128), Color3.fromRGB(0, 0, 255), Color3.fromRGB(128, 0, 128), Color3.fromRGB(255, 0, 255),
+        -- Add more basic colors as needed to match the grid
+        Color3.fromRGB(80, 0, 0), Color3.fromRGB(128, 80, 0), Color3.fromRGB(128, 128, 0), Color3.fromRGB(0, 128, 0),
+        Color3.fromRGB(0, 80, 80), Color3.fromRGB(0, 0, 80), Color3.fromRGB(80, 0, 80), Color3.fromRGB(128, 0, 80),
+        -- ... and so on for the grid layout
+    }
 
-    local HueGradient = Instance.new("UIGradient")
-    HueGradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(0.17, Color3.fromRGB(255, 255, 0)),
-        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(0, 255, 0)),
-        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 255, 255)),
-        ColorSequenceKeypoint.new(0.67, Color3.fromRGB(0, 0, 255)),
-        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(255, 0, 255)),
-        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 0))
-    })
-    HueGradient.Rotation = 0 -- Left to right
-    HueGradient.Parent = Hue
+    local swatchSize = UDim2.new(0, 30, 0, 30)
+    local swatchPadding = 5
+    local startX = swatchPadding
+    local startY = 25 -- Below the label
+    local columns = 8 -- Adjust based on desired grid
+    local row = 0
+    local col = 0
 
-    -- Color selection knob for the hue gradient
-    local HueKnob = Instance.new("Frame")
-    HueKnob.Size = UDim2.new(0, 16, 0, 16)
-    HueKnob.Position = UDim2.new(0, 0, 0, 7) -- Centered vertically in the Hue bar
-    HueKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    HueKnob.BorderSizePixel = 0
-    HueKnob.AnchorPoint = Vector2.new(0.5, 0.5)
-    HueKnob.Parent = Hue
+    for i, color in ipairs(basicColorPalette) do
+        local swatch = Instance.new("TextButton")
+        swatch.Size = swatchSize
+        swatch.Position = UDim2.new(0, startX + col * (swatchSize.X.Offset + swatchPadding), 0, startY + row * (swatchSize.Y.Offset + swatchPadding))
+        swatch.BackgroundColor3 = color
+        swatch.Text = ""
+        swatch.AutoButtonColor = false
+        swatch.Parent = BasicColorsFrame
 
-    -- Brightness slider (vertical)
+        local swatchCorner = Instance.new("UICorner")
+        swatchCorner.CornerRadius = UDim.new(0, 3)
+        swatchCorner.Parent = swatch
+
+        swatch.MouseButton1Click:Connect(function()
+            ColorButton.BackgroundColor3 = color -- Update the preview button
+            if ColorValueDisplay then
+                ColorValueDisplay.BackgroundColor3 = color
+            end
+            pcall(ColorScript, color)
+        end)
+
+        col = col + 1
+        if col >= columns then
+            col = 0
+            row = row + 1
+        end
+    end
+
+    -- **Hue/Saturation/Brightness Selection Area**
+    local ColorGradientFrame = Instance.new("Frame")
+    ColorGradientFrame.Size = UDim2.new(0, 150, 0, 120) -- Adjust size
+    ColorGradientFrame.Position = UDim2.new(0.55, 0, 0.1, 0)
+    ColorGradientFrame.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    ColorGradientFrame.BorderSizePixel = 1
+    ColorGradientFrame.BorderColor3 = Color3.fromRGB(120, 120, 120)
+    ColorGradientFrame.ClipsDescendants = true
+    ColorGradientFrame.Parent = PickerWindow
+
+    -- Implement your hue/saturation selection logic here (this will be more involved, likely using Mouse.Hit or InputBegan/Changed/Ended)
+    -- You'll need to create a visual gradient and a draggable selector.
+
+    -- **Brightness Slider**
     local BrightnessSlider = Instance.new("Frame")
-    BrightnessSlider.Position = UDim2.new(0, 260, 0, 10)
+    BrightnessSlider.Position = UDim2.new(0.75, 0, 0.1, 0)
     BrightnessSlider.Size = UDim2.new(0, 20, 0, 120)
-    BrightnessSlider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    BrightnessSlider.Parent = PickerPopup
+    BrightnessSlider.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    BrightnessSlider.BorderSizePixel = 1
+    BrightnessSlider.BorderColor3 = Color3.fromRGB(120, 120, 120)
+    BrightnessSlider.Parent = PickerWindow
 
     local BrightnessGradient = Instance.new("UIGradient")
     BrightnessGradient.Color = ColorSequence.new({
         ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
         ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
     })
-    BrightnessGradient.Rotation = 90 -- Vertical gradient
+    BrightnessGradient.Rotation = 90
     BrightnessGradient.Parent = BrightnessSlider
 
-    local BrightnessKnob = Instance.new("Frame")
-    BrightnessKnob.Size = UDim2.new(0, 16, 0, 16)
-    BrightnessKnob.Position = UDim2.new(0, 2, 0, 100)
-    BrightnessKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    BrightnessKnob.BorderSizePixel = 0
-    BrightnessKnob.AnchorPoint = Vector2.new(0.5, 0.5)
-    BrightnessKnob.Parent = BrightnessSlider
+    -- Implement brightness slider interaction (InputBegan, Changed, Ended)
 
-    -- Basic color buttons grid (on the right side)
-    local BasicColors = {
-        Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 255),
-        Color3.fromRGB(255, 255, 0), Color3.fromRGB(255, 255, 255), Color3.fromRGB(0, 0, 0),
-        Color3.fromRGB(255, 165, 0), Color3.fromRGB(128, 0, 128)
-    }
+    -- **Color Preview**
+    local ColorPreviewFrame = Instance.new("Frame")
+    ColorPreviewFrame.Size = UDim2.new(0, 60, 0, 30)
+    ColorPreviewFrame.Position = UDim2.new(0.55, 0, 0.55, 0)
+    ColorPreviewFrame.BackgroundColor3 = DefaultColor
+    ColorPreviewFrame.BorderSizePixel = 1
+    ColorPreviewFrame.BorderColor3 = Color3.fromRGB(120, 120, 120)
+    ColorPreviewFrame.Parent = PickerWindow
 
-    for i, color in ipairs(BasicColors) do
-        local ColorButton = Instance.new("TextButton")
-        ColorButton.Size = UDim2.new(0, 40, 0, 40)
-        ColorButton.Position = UDim2.new(0, 10 + (i % 4) * 50, 0, 40 + math.floor((i - 1) / 4) * 50)
-        ColorButton.BackgroundColor3 = color
-        ColorButton.Text = ""
-        ColorButton.Parent = PickerPopup
+    local ColorValueDisplay = ColorPreviewFrame -- Keep a reference for updating
 
-        ColorButton.MouseButton1Click:Connect(function()
-            ColorButton.BackgroundColor3 = color
-            pcall(ColorScript, color)
-        end)
-    end
+    -- **Input Fields** (Conceptual - you'd need to add TextBoxes and labels)
+    -- ... (Hue, Sat, Val, Red, Green, Blue, HTML)
 
-    -- Update the color preview when the hue knob is dragged
-    local function updateColorFromHue(xPos)
-        local hueValue = xPos / Hue.Size.X.Offset
-        local color = Color3.fromHSV(hueValue, 1, 1) -- Full saturation and brightness
-        ColorButton.BackgroundColor3 = color
-        pcall(ColorScript, color)
-    end
+    -- **Pick Screen Color Button** (More complex - requires specific Roblox API if available)
+    local PickScreenColorButton = Instance.new("TextButton")
+    PickScreenColorButton.Size = UDim2.new(0, 120, 0, 25)
+    PickScreenColorButton.Position = UDim2.new(0.05, 0, 0.75, 0)
+    PickScreenColorButton.Text = "Pick Screen Color"
+    PickScreenColorButton.Font = Enum.Font.Gotham
+    PickScreenColorButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    PickScreenColorButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    PickScreenColorButton.AutoButtonColor = false
+    PickScreenColorButton.Parent = PickerWindow
+    local pickCorner = Instance.new("UICorner")
+    pickCorner.CornerRadius = UDim.new(0, 4)
+    pickCorner.Parent = PickScreenColorButton
+    -- Add functionality to pick screen color here (if possible within your context)
 
-    -- Update the brightness when the brightness knob is dragged
-    local function updateBrightness(yPos)
-        local brightnessValue = 1 - (yPos / BrightnessSlider.Size.Y.Offset)
-        local currentColor = ColorButton.BackgroundColor3
-        local finalColor = Color3.fromHSV(currentColor.Hue, 1, brightnessValue)
-        ColorButton.BackgroundColor3 = finalColor
-        pcall(ColorScript, finalColor)
-    end
+    -- **Custom Colors Section**
+    local CustomColorsFrame = Instance.new("Frame")
+    CustomColorsFrame.Size = UDim2.new(0.45, 0, 0.15, 0)
+    CustomColorsFrame.Position = UDim2.new(0.05, 0, 0.85, 0)
+    CustomColorsFrame.BackgroundTransparency = 1
+    CustomColorsFrame.Parent = PickerWindow
+    -- Add logic to display custom color swatches
 
-    -- Input handling
-    Hue.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local xPos = input.Position.X - Hue.AbsolutePosition.X
-            updateColorFromHue(xPos)
-        end
+    local AddToCustomButton = Instance.new("TextButton")
+    AddToCustomButton.Size = UDim2.new(0, 120, 0, 25)
+    AddToCustomButton.Position = UDim2.new(0.05, 0, 0, 0)
+    AddToCustomButton.Text = "Add to Custom Colors"
+    AddToCustomButton.Font = Enum.Font.Gotham
+    AddToCustomButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    AddToCustomButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    AddToCustomButton.AutoButtonColor = false
+    AddToCustomButton.Parent = CustomColorsFrame
+    local addCorner = Instance.new("UICorner")
+    addCorner.CornerRadius = UDim.new(0, 4)
+    addCorner.Parent = AddToCustomButton
+    -- Add functionality to add current color to custom colors
+
+    -- **OK and Cancel Buttons**
+    local OKButton = Instance.new("TextButton")
+    OKButton.Size = UDim2.new(0, 80, 0, 25)
+    OKButton.Position = UDim2.new(0.85, 0, 0.85, 0)
+    OKButton.Text = "OK"
+    OKButton.Font = Enum.Font.Gotham
+    OKButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    OKButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    OKButton.AutoButtonColor = false
+    OKButton.Parent = PickerWindow
+    local okCorner = Instance.new("UICorner")
+    okCorner.CornerRadius = UDim.new(0, 4)
+    okCorner.Parent = OKButton
+    OKButton.MouseButton1Click:Connect(function()
+        PickerWindow.Visible = false
+        -- Return the selected color or perform other actions
     end)
 
-    BrightnessSlider.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local yPos = input.Position.Y - BrightnessSlider.AbsolutePosition.Y
-            updateBrightness(yPos)
-        end
+    local CancelButton = Instance.new("TextButton")
+    CancelButton.Size = UDim2.new(0, 80, 0, 25)
+    CancelButton.Position = UDim2.new(0.65, 0, 0.85, 0)
+    CancelButton.Text = "Cancel"
+    CancelButton.Font = Enum.Font.Gotham
+    CancelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CancelButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    CancelButton.AutoButtonColor = false
+    CancelButton.Parent = PickerWindow
+    local cancelCorner = Instance.new("UICorner")
+    cancelCorner.CornerRadius = UDim.new(0, 4)
+    cancelCorner.Parent = CancelButton
+    CancelButton.MouseButton1Click:Connect(function()
+        PickerWindow.Visible = false
+        -- Revert to the original color or perform other actions
     end)
 
-    -- Toggle the picker
+    -- Color Preview / Button (the smaller button that triggers the popup)
+    local ColorButton = Instance.new("TextButton")
+    ColorButton.Size = UDim2.new(0, 50, 0, 25)
+    ColorButton.Position = UDim2.new(1, -60, 0, 4)
+    ColorButton.BackgroundColor3 = DefaultColor
+    ColorButton.Text = ""
+    ColorButton.AutoButtonColor = false
+    ColorButton.Parent = self.Frame -- Keep this in the original frame
+
+    local ButtonCorner = Instance.new("UICorner")
+    ButtonCorner.CornerRadius = UDim.new(0, 6)
+    ButtonCorner.Parent = ColorButton
+
+    -- Toggle the picker window
     ColorButton.MouseButton1Click:Connect(function()
-        PickerPopup.Visible = not PickerPopup.Visible
+        PickerWindow.Visible = not PickerWindow.Visible
     end)
 
     local ColorObject = {
-        Frame = ColorFrame,
+        Frame = self.Frame, -- Keep the original frame reference
+        PickerWindow = PickerWindow, -- Reference to the main picker window
         SetColor = function(self, newColor)
             if ColorButton then
                 ColorButton.BackgroundColor3 = newColor
+                if ColorValueDisplay then
+                    ColorValueDisplay.BackgroundColor3 = newColor
+                end
                 pcall(ColorScript, newColor)
             end
         end,
