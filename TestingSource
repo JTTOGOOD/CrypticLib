@@ -526,6 +526,104 @@ end
 				return ButtonObject
 			end,
 
+                        CreateColorPicker = function(self, config)
+	local ColorPickerName = config.Name or "Color Picker"
+	local DefaultColor = config.DefaultColor or Color3.fromRGB(255, 255, 255)
+	local ColorScript = config.Script or function() end
+
+	local ColorFrame = Instance.new("Frame")
+	ColorFrame.Size = UDim2.new(1, -10, 0, 60)
+	ColorFrame.BackgroundTransparency = 1
+	ColorFrame.Parent = self.Frame
+
+	-- Label
+	local ColorLabel = Instance.new("TextLabel")
+	ColorLabel.Size = UDim2.new(1, -70, 0, 24)
+	ColorLabel.Position = UDim2.new(0, 10, 0, 4)
+	ColorLabel.Text = ColorPickerName
+	ColorLabel.Font = Enum.Font.GothamBold
+	ColorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	ColorLabel.BackgroundTransparency = 1
+	ColorLabel.TextXAlignment = Enum.TextXAlignment.Left
+	ColorLabel.TextSize = 22
+	ColorLabel.Parent = ColorFrame
+
+	-- Color Preview / Button
+	local ColorButton = Instance.new("TextButton")
+	ColorButton.Size = UDim2.new(0, 50, 0, 25)
+	ColorButton.Position = UDim2.new(1, -60, 0, 4)
+	ColorButton.BackgroundColor3 = DefaultColor
+	ColorButton.Text = ""
+	ColorButton.AutoButtonColor = false
+	ColorButton.Parent = ColorFrame
+
+	local ButtonCorner = Instance.new("UICorner")
+	ButtonCorner.CornerRadius = UDim.new(0, 6)
+	ButtonCorner.Parent = ColorButton
+
+	-- Color Picker popup (basic implementation using a Frame with default colors)
+	local PickerPopup = Instance.new("Frame")
+	PickerPopup.Size = UDim2.new(0, 150, 0, 100)
+	PickerPopup.Position = UDim2.new(1, -150, 0, 35)
+	PickerPopup.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	PickerPopup.Visible = false
+	PickerPopup.Parent = ColorFrame
+
+	local PopupCorner = Instance.new("UICorner")
+	PopupCorner.CornerRadius = UDim.new(0, 6)
+	PopupCorner.Parent = PickerPopup
+
+	-- Sample colors (can be extended)
+	local SampleColors = {
+		Color3.fromRGB(255, 0, 0),
+		Color3.fromRGB(0, 255, 0),
+		Color3.fromRGB(0, 0, 255),
+		Color3.fromRGB(255, 255, 0),
+		Color3.fromRGB(255, 255, 255),
+		Color3.fromRGB(0, 0, 0),
+		Color3.fromRGB(255, 165, 0),
+		Color3.fromRGB(128, 0, 128)
+	}
+
+	for i, color in ipairs(SampleColors) do
+		local ColorOption = Instance.new("TextButton")
+		ColorOption.Size = UDim2.new(0, 30, 0, 30)
+		ColorOption.Position = UDim2.new(0, ((i - 1) % 5) * 32 + 10, 0, math.floor((i - 1) / 5) * 32 + 10)
+		ColorOption.BackgroundColor3 = color
+		ColorOption.Text = ""
+		ColorOption.Parent = PickerPopup
+
+		local OptionCorner = Instance.new("UICorner")
+		OptionCorner.CornerRadius = UDim.new(1, 0)
+		OptionCorner.Parent = ColorOption
+
+		ColorOption.MouseButton1Click:Connect(function()
+			ColorButton.BackgroundColor3 = color
+			PickerPopup.Visible = false
+			pcall(ColorScript, color)
+		end)
+	end
+
+	ColorButton.MouseButton1Click:Connect(function()
+		PickerPopup.Visible = not PickerPopup.Visible
+	end)
+
+	local ColorObject = {
+		Frame = ColorFrame,
+		SetColor = function(self, newColor)
+			if ColorButton then
+				ColorButton.BackgroundColor3 = newColor
+				pcall(ColorScript, newColor)
+			end
+		end,
+		GetColor = function()
+			return ColorButton.BackgroundColor3
+		end
+	}
+
+	return ColorObject
+end,
+
 
 			CreateToggle = function(self, config)
 				local ToggleState = config.ToggleState or false
