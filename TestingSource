@@ -622,7 +622,7 @@ end
 	}
 
 	return ColorObject
-end
+end,
 
 
 			CreateToggle = function(self, config)
