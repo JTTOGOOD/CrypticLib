@@ -527,101 +527,142 @@ end
 			end,
 
                         CreateColorPicker = function(self, config)
-	local ColorPickerName = config.Name or "Color Picker"
-	local DefaultColor = config.DefaultColor or Color3.fromRGB(255, 255, 255)
-	local ColorScript = config.Script or function() end
+	local Picker = {}
+	local SelectedColor = config.Default or Color3.fromRGB(255, 255, 255)
 
-	local ColorFrame = Instance.new("Frame")
-	ColorFrame.Size = UDim2.new(1, -10, 0, 60)
-	ColorFrame.BackgroundTransparency = 1
-	ColorFrame.Parent = self.Frame
+	local Section = Instance.new("Frame")
+	Section.Name = config.Name or "ColorPicker"
+	Section.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	Section.Size = UDim2.new(1, 0, 0, 160)
+	Section.BorderSizePixel = 0
+	Section.Parent = self.Frame
 
-	-- Label
-	local ColorLabel = Instance.new("TextLabel")
-	ColorLabel.Size = UDim2.new(1, -70, 0, 24)
-	ColorLabel.Position = UDim2.new(0, 10, 0, 4)
-	ColorLabel.Text = ColorPickerName
-	ColorLabel.Font = Enum.Font.GothamBold
-	ColorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-	ColorLabel.BackgroundTransparency = 1
-	ColorLabel.TextXAlignment = Enum.TextXAlignment.Left
-	ColorLabel.TextSize = 22
-	ColorLabel.Parent = ColorFrame
+	local Title = Instance.new("TextLabel")
+	Title.Name = "Title"
+	Title.Size = UDim2.new(1, -10, 0, 20)
+	Title.Position = UDim2.new(0, 5, 0, 5)
+	Title.Text = config.Name or "Color Picker"
+	Title.TextColor3 = Color3.new(1, 1, 1)
+	Title.Font = Enum.Font.SourceSansSemibold
+	Title.TextSize = 16
+	Title.BackgroundTransparency = 1
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.Parent = Section
 
-	-- Color Preview / Button
-	local ColorButton = Instance.new("TextButton")
-	ColorButton.Size = UDim2.new(0, 50, 0, 25)
-	ColorButton.Position = UDim2.new(1, -60, 0, 4)
-	ColorButton.BackgroundColor3 = DefaultColor
-	ColorButton.Text = ""
-	ColorButton.AutoButtonColor = false
-	ColorButton.Parent = ColorFrame
+	local Preview = Instance.new("Frame")
+	Preview.Size = UDim2.new(0, 30, 0, 20)
+	Preview.Position = UDim2.new(1, -40, 0, 5)
+	Preview.BackgroundColor3 = SelectedColor
+	Preview.BorderSizePixel = 0
+	Preview.Parent = Section
 
-	local ButtonCorner = Instance.new("UICorner")
-	ButtonCorner.CornerRadius = UDim.new(0, 6)
-	ButtonCorner.Parent = ColorButton
+	local GradientFrame = Instance.new("Frame")
+	GradientFrame.Position = UDim2.new(0, 10, 0, 30)
+	GradientFrame.Size = UDim2.new(0, 120, 0, 100)
+	GradientFrame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+	GradientFrame.ClipsDescendants = true
+	GradientFrame.Parent = Section
 
-	-- Color Picker popup (basic implementation using a Frame with default colors)
-	local PickerPopup = Instance.new("Frame")
-	PickerPopup.Size = UDim2.new(0, 150, 0, 100)
-	PickerPopup.Position = UDim2.new(1, -150, 0, 35)
-	PickerPopup.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-	PickerPopup.Visible = false
-	PickerPopup.Parent = ColorFrame
-
-	local PopupCorner = Instance.new("UICorner")
-	PopupCorner.CornerRadius = UDim.new(0, 6)
-	PopupCorner.Parent = PickerPopup
-
-	-- Sample colors (can be extended)
-	local SampleColors = {
-		Color3.fromRGB(255, 0, 0),
-		Color3.fromRGB(0, 255, 0),
-		Color3.fromRGB(0, 0, 255),
-		Color3.fromRGB(255, 255, 0),
-		Color3.fromRGB(255, 255, 255),
-		Color3.fromRGB(0, 0, 0),
-		Color3.fromRGB(255, 165, 0),
-		Color3.fromRGB(128, 0, 128)
+	local Gradient = Instance.new("UIGradient")
+	Gradient.Color = ColorSequence.new{
+		ColorSequenceKeypoint.new(0.00, Color3.fromHSV(0, 1, 1)),
+		ColorSequenceKeypoint.new(0.25, Color3.fromHSV(0.25, 1, 1)),
+		ColorSequenceKeypoint.new(0.50, Color3.fromHSV(0.5, 1, 1)),
+		ColorSequenceKeypoint.new(0.75, Color3.fromHSV(0.75, 1, 1)),
+		ColorSequenceKeypoint.new(1.00, Color3.fromHSV(1, 1, 1))
 	}
+	Gradient.Rotation = 0
+	Gradient.Parent = GradientFrame
 
-	for i, color in ipairs(SampleColors) do
-		local ColorOption = Instance.new("TextButton")
-		ColorOption.Size = UDim2.new(0, 30, 0, 30)
-		ColorOption.Position = UDim2.new(0, ((i - 1) % 5) * 32 + 10, 0, math.floor((i - 1) / 5) * 32 + 10)
-		ColorOption.BackgroundColor3 = color
-		ColorOption.Text = ""
-		ColorOption.Parent = PickerPopup
-
-		local OptionCorner = Instance.new("UICorner")
-		OptionCorner.CornerRadius = UDim.new(1, 0)
-		OptionCorner.Parent = ColorOption
-
-		ColorOption.MouseButton1Click:Connect(function()
-			ColorButton.BackgroundColor3 = color
-			PickerPopup.Visible = false
-			pcall(ColorScript, color)
-		end)
+	local function createInput(name, posX)
+		local input = Instance.new("TextBox")
+		input.PlaceholderText = name
+		input.Size = UDim2.new(0, 40, 0, 20)
+		input.Position = UDim2.new(0, posX, 1, -30)
+		input.Text = ""
+		input.TextColor3 = Color3.new(1, 1, 1)
+		input.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+		input.BorderSizePixel = 0
+		input.Parent = Section
+		return input
 	end
 
-	ColorButton.MouseButton1Click:Connect(function()
-		PickerPopup.Visible = not PickerPopup.Visible
+	local RInput = createInput("R", 10)
+	local GInput = createInput("G", 55)
+	local BInput = createInput("B", 100)
+
+	local HexBox = createInput("#Hex", 150)
+	HexBox.Size = UDim2.new(0, 90, 0, 20)
+
+	local function updateInputs(color)
+		local r, g, b = math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255)
+		RInput.Text = tostring(r)
+		GInput.Text = tostring(g)
+		BInput.Text = tostring(b)
+		HexBox.Text = string.format("#%02X%02X%02X", r, g, b)
+	end
+
+	local function updateColor(color)
+		SelectedColor = color
+		Preview.BackgroundColor3 = color
+		updateInputs(color)
+		if config.Script then
+			config.Script(color)
+		end
+	end
+
+	local function inputChanged()
+		local r = tonumber(RInput.Text)
+		local g = tonumber(GInput.Text)
+		local b = tonumber(BInput.Text)
+		if r and g and b then
+			updateColor(Color3.fromRGB(math.clamp(r, 0, 255), math.clamp(g, 0, 255), math.clamp(b, 0, 255)))
+		end
+	end
+
+	RInput.FocusLost:Connect(inputChanged)
+	GInput.FocusLost:Connect(inputChanged)
+	BInput.FocusLost:Connect(inputChanged)
+
+	HexBox.FocusLost:Connect(function()
+		local hex = HexBox.Text:gsub("#", "")
+		if #hex == 6 then
+			local success, r, g, b = pcall(function()
+				return tonumber(hex:sub(1,2),16), tonumber(hex:sub(3,4),16), tonumber(hex:sub(5,6),16)
+			end)
+			if success then
+				updateColor(Color3.fromRGB(r, g, b))
+			end
+		end
 	end)
 
-	local ColorObject = {
-		Frame = ColorFrame,
-		SetColor = function(self, newColor)
-			if ColorButton then
-				ColorButton.BackgroundColor3 = newColor
-				pcall(ColorScript, newColor)
-			end
-		end,
-		GetColor = function()
-			return ColorButton.BackgroundColor3
-		end
-	}
+	local UIS = game:GetService("UserInputService")
+	local dragging = false
 
-	return ColorObject
+	GradientFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			local relX = (input.Position.X - GradientFrame.AbsolutePosition.X) / GradientFrame.AbsoluteSize.X
+			updateColor(Color3.fromHSV(math.clamp(relX, 0, 1), 1, 1))
+		end
+	end)
+
+	UIS.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local relX = (input.Position.X - GradientFrame.AbsolutePosition.X) / GradientFrame.AbsoluteSize.X
+			updateColor(Color3.fromHSV(math.clamp(relX, 0, 1), 1, 1))
+		end
+	end)
+
+	updateColor(SelectedColor)
+
+	return Picker
 end,
 
 
