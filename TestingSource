@@ -532,7 +532,7 @@ end
     local ColorScript = config.Script or function() end
 
     local ColorFrame = Instance.new("Frame")
-    ColorFrame.Size = UDim2.new(1, -10, 0, 60)
+    ColorFrame.Size = UDim2.new(1, -10, 0, 150)
     ColorFrame.BackgroundTransparency = 1
     ColorFrame.Parent = self.Frame
 
@@ -561,10 +561,10 @@ end
     ButtonCorner.CornerRadius = UDim.new(0, 6)
     ButtonCorner.Parent = ColorButton
 
-    -- Color Picker popup (basic implementation using a Frame with default colors)
+    -- Color Picker popup (main menu)
     local PickerPopup = Instance.new("Frame")
-    PickerPopup.Size = UDim2.new(0, 150, 0, 100)
-    PickerPopup.Position = UDim2.new(1, -150, 0, 35)
+    PickerPopup.Size = UDim2.new(0, 400, 0, 200)
+    PickerPopup.Position = UDim2.new(0, 10, 0, 40)
     PickerPopup.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     PickerPopup.Visible = false
     PickerPopup.Parent = ColorFrame
@@ -573,11 +573,11 @@ end
     PopupCorner.CornerRadius = UDim.new(0, 6)
     PopupCorner.Parent = PickerPopup
 
-    -- Full RGB Hue Gradient (horizontal)
+    -- Full Color Hue Gradient (horizontal)
     local Hue = Instance.new("Frame")
     Hue.Name = "Hue"
-    Hue.Position = UDim2.new(0, 10, 0, 35)
-    Hue.Size = UDim2.new(0, 120, 0, 30)
+    Hue.Position = UDim2.new(0, 10, 0, 10)
+    Hue.Size = UDim2.new(0, 240, 0, 30)
     Hue.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Hue.BorderSizePixel = 0
     Hue.ClipsDescendants = true
@@ -596,14 +596,77 @@ end
     HueGradient.Rotation = 0 -- Left to right
     HueGradient.Parent = Hue
 
-    -- Color option selection
+    -- Color selection knob for the hue gradient
+    local HueKnob = Instance.new("Frame")
+    HueKnob.Size = UDim2.new(0, 16, 0, 16)
+    HueKnob.Position = UDim2.new(0, 0, 0, 7) -- Centered vertically in the Hue bar
+    HueKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    HueKnob.BorderSizePixel = 0
+    HueKnob.AnchorPoint = Vector2.new(0.5, 0.5)
+    HueKnob.Parent = Hue
+
+    -- Brightness slider (vertical)
+    local BrightnessSlider = Instance.new("Frame")
+    BrightnessSlider.Position = UDim2.new(0, 260, 0, 10)
+    BrightnessSlider.Size = UDim2.new(0, 20, 0, 120)
+    BrightnessSlider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    BrightnessSlider.Parent = PickerPopup
+
+    local BrightnessGradient = Instance.new("UIGradient")
+    BrightnessGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    })
+    BrightnessGradient.Rotation = 90 -- Vertical gradient
+    BrightnessGradient.Parent = BrightnessSlider
+
+    local BrightnessKnob = Instance.new("Frame")
+    BrightnessKnob.Size = UDim2.new(0, 16, 0, 16)
+    BrightnessKnob.Position = UDim2.new(0, 2, 0, 100)
+    BrightnessKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    BrightnessKnob.BorderSizePixel = 0
+    BrightnessKnob.AnchorPoint = Vector2.new(0.5, 0.5)
+    BrightnessKnob.Parent = BrightnessSlider
+
+    -- Basic color buttons grid (on the right side)
+    local BasicColors = {
+        Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 255),
+        Color3.fromRGB(255, 255, 0), Color3.fromRGB(255, 255, 255), Color3.fromRGB(0, 0, 0),
+        Color3.fromRGB(255, 165, 0), Color3.fromRGB(128, 0, 128)
+    }
+
+    for i, color in ipairs(BasicColors) do
+        local ColorButton = Instance.new("TextButton")
+        ColorButton.Size = UDim2.new(0, 40, 0, 40)
+        ColorButton.Position = UDim2.new(0, 10 + (i % 4) * 50, 0, 40 + math.floor((i - 1) / 4) * 50)
+        ColorButton.BackgroundColor3 = color
+        ColorButton.Text = ""
+        ColorButton.Parent = PickerPopup
+
+        ColorButton.MouseButton1Click:Connect(function()
+            ColorButton.BackgroundColor3 = color
+            pcall(ColorScript, color)
+        end)
+    end
+
+    -- Update the color preview when the hue knob is dragged
     local function updateColorFromHue(xPos)
         local hueValue = xPos / Hue.Size.X.Offset
-        local color = Color3.fromHSV(hueValue, 1, 1) -- Full saturation and brightness (pure RGB)
+        local color = Color3.fromHSV(hueValue, 1, 1) -- Full saturation and brightness
         ColorButton.BackgroundColor3 = color
         pcall(ColorScript, color)
     end
 
+    -- Update the brightness when the brightness knob is dragged
+    local function updateBrightness(yPos)
+        local brightnessValue = 1 - (yPos / BrightnessSlider.Size.Y.Offset)
+        local currentColor = ColorButton.BackgroundColor3
+        local finalColor = Color3.fromHSV(currentColor.Hue, 1, brightnessValue)
+        ColorButton.BackgroundColor3 = finalColor
+        pcall(ColorScript, finalColor)
+    end
+
+    -- Input handling
     Hue.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             local xPos = input.Position.X - Hue.AbsolutePosition.X
@@ -611,13 +674,14 @@ end
         end
     end)
 
-    Hue.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            local xPos = input.Position.X - Hue.AbsolutePosition.X
-            updateColorFromHue(xPos)
+    BrightnessSlider.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            local yPos = input.Position.Y - BrightnessSlider.AbsolutePosition.Y
+            updateBrightness(yPos)
         end
     end)
 
+    -- Toggle the picker
     ColorButton.MouseButton1Click:Connect(function()
         PickerPopup.Visible = not PickerPopup.Visible
     end)
@@ -637,6 +701,7 @@ end
 
     return ColorObject
 end,
+
 
 			CreateToggle = function(self, config)
 				local ToggleState = config.ToggleState or false
