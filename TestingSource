@@ -536,7 +536,6 @@ end
 	ColorFrame.BackgroundTransparency = 1
 	ColorFrame.Parent = self.Frame
 
-	-- Label
 	local ColorLabel = Instance.new("TextLabel")
 	ColorLabel.Size = UDim2.new(1, -70, 0, 24)
 	ColorLabel.Position = UDim2.new(0, 10, 0, 4)
@@ -548,7 +547,6 @@ end
 	ColorLabel.TextSize = 22
 	ColorLabel.Parent = ColorFrame
 
-	-- Preview
 	local ColorButton = Instance.new("TextButton")
 	ColorButton.Size = UDim2.new(0, 50, 0, 25)
 	ColorButton.Position = UDim2.new(1, -60, 0, 4)
@@ -561,7 +559,6 @@ end
 	ButtonCorner.CornerRadius = UDim.new(0, 6)
 	ButtonCorner.Parent = ColorButton
 
-	-- Picker Popup
 	local PickerPopup = Instance.new("Frame")
 	PickerPopup.Size = UDim2.new(0, 300, 0, 120)
 	PickerPopup.Position = UDim2.new(0, 10, 0, 35)
@@ -574,7 +571,6 @@ end
 	PopupCorner.CornerRadius = UDim.new(0, 6)
 	PopupCorner.Parent = PickerPopup
 
-	-- Color Field (Hue/Saturation)
 	local ColorField = Instance.new("Frame")
 	ColorField.Size = UDim2.new(0, 150, 0, 100)
 	ColorField.Position = UDim2.new(0, 10, 0, 10)
@@ -598,7 +594,7 @@ end
 
 	local WhiteOverlay = Instance.new("ImageLabel")
 	WhiteOverlay.BackgroundTransparency = 1
-	WhiteOverlay.Image = "rbxassetid://4155801252" -- White gradient image (top)
+	WhiteOverlay.Image = "rbxassetid://4155801252"
 	WhiteOverlay.Size = UDim2.new(1, 0, 1, 0)
 	WhiteOverlay.ImageColor3 = Color3.fromRGB(255, 255, 255)
 	WhiteOverlay.ImageTransparency = 0
@@ -606,7 +602,7 @@ end
 
 	local BlackOverlay = Instance.new("ImageLabel")
 	BlackOverlay.BackgroundTransparency = 1
-	BlackOverlay.Image = "rbxassetid://4155801252" -- Black gradient image (bottom)
+	BlackOverlay.Image = "rbxassetid://4155801252"
 	BlackOverlay.Size = UDim2.new(1, 0, 1, 0)
 	BlackOverlay.ImageColor3 = Color3.fromRGB(0, 0, 0)
 	BlackOverlay.ImageTransparency = 0
@@ -620,7 +616,6 @@ end
 	Knob.Position = UDim2.new(0, 0, 0, 0)
 	Knob.Parent = ColorField
 
-	-- Brightness Bar
 	local BrightnessBar = Instance.new("Frame")
 	BrightnessBar.Size = UDim2.new(0, 15, 0, 100)
 	BrightnessBar.Position = UDim2.new(0, 170, 0, 10)
@@ -643,7 +638,6 @@ end
 	BrightnessKnob.BorderSizePixel = 0
 	BrightnessKnob.Parent = BrightnessBar
 
-	-- Basic Colors
 	local BasicColors = {
 		Color3.fromRGB(255, 0, 0),
 		Color3.fromRGB(0, 255, 0),
@@ -669,7 +663,6 @@ end
 		end)
 	end
 
-	-- Interaction logic
 	local hue, sat, val = 0, 1, 1
 	local draggingColor, draggingBrightness = false, false
 
@@ -709,13 +702,13 @@ end
 			local x = math.clamp(rel.X / ColorField.AbsoluteSize.X, 0, 1)
 			local y = math.clamp(rel.Y / ColorField.AbsoluteSize.Y, 0, 1)
 			hue, sat = x, 1 - y
-			Knob.Position = UDim2.new(x, -3, y, -3)
+			Knob.Position = UDim2.new(x, 0, 1 - sat, 0)
 			updateColor()
 		elseif draggingBrightness and input.UserInputType == Enum.UserInputType.MouseMovement then
 			local rel = input.Position - BrightnessBar.AbsolutePosition
 			local y = math.clamp(rel.Y / BrightnessBar.AbsoluteSize.Y, 0, 1)
 			val = 1 - y
-			BrightnessKnob.Position = UDim2.new(0, 0, y, -1)
+			BrightnessKnob.Position = UDim2.new(0, 0, y, 0)
 			updateColor()
 		end
 	end)
@@ -735,9 +728,8 @@ end
 		end
 	}
 
-	return ColorObject
+	return ColorObject -- updated code
 end,
-
 
 			CreateToggle = function(self, config)
 				local ToggleState = config.ToggleState or false
