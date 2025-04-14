@@ -531,13 +531,13 @@ end
     local DefaultColor = config.DefaultColor or Color3.fromRGB(255, 255, 255)
     local ColorScript = config.Script or function() end
 
-    local PickerWindow = Instance.new("Frame") -- The main window
-    PickerWindow.Size = UDim2.new(0, 450, 0, 400) -- Adjust size
-    PickerWindow.Position = UDim2.new(0.5, -225, 0.5, -200) -- Center on screen
-    PickerWindow.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Dark background
+    local PickerWindow = Instance.new("Frame")
+    PickerWindow.Size = UDim2.new(0, 450, 0, 400)
+    PickerWindow.Position = UDim2.new(0.5, -225, 0.5, -200)
+    PickerWindow.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     PickerWindow.BorderSizePixel = 1
     PickerWindow.BorderColor3 = Color3.fromRGB(80, 80, 80)
-    PickerWindow.Parent = self.Frame -- Assuming this is where you want to parent the picker
+    PickerWindow.Parent = self.Frame
 
     local WindowCorner = Instance.new("UICorner")
     WindowCorner.CornerRadius = UDim.new(0, 8)
@@ -569,7 +569,7 @@ end
     ColorPreviewFrame.BorderColor3 = Color3.fromRGB(120, 120, 120)
     ColorPreviewFrame.Parent = PickerWindow
 
-    local ColorValueDisplay = ColorPreviewFrame -- Keep a reference for updating
+    local ColorValueDisplay = ColorPreviewFrame
 
     local ColorLabel = Instance.new("TextLabel")
     ColorLabel.Size = UDim2.new(1, 0, 0, 20)
@@ -583,7 +583,7 @@ end
 
     -- **Hue/Saturation Selection Area**
     local ColorGradientFrame = Instance.new("Frame")
-    ColorGradientFrame.Size = UDim2.new(0, 150, 0, 120) -- Adjust size
+    ColorGradientFrame.Size = UDim2.new(0, 150, 0, 120)
     ColorGradientFrame.Position = UDim2.new(0.55, 0, 0.1, 0)
     ColorGradientFrame.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     ColorGradientFrame.BorderSizePixel = 1
@@ -604,15 +604,18 @@ end
 
     -- Draggable color knob
     local ColorKnob = Instance.new("Frame")
-    ColorKnob.Size = UDim2.new(0, 10, 0, 10)
-    ColorKnob.Position = UDim2.new(0.5, -5, 0.5, -5)
+    ColorKnob.Size = UDim2.new(0, 12, 0, 12) -- Larger knob with corners
+    ColorKnob.Position = UDim2.new(0.5, -6, 0.5, -6)
     ColorKnob.BackgroundColor3 = DefaultColor
     ColorKnob.BorderSizePixel = 0
     ColorKnob.Parent = ColorGradientFrame
 
+    local ColorKnobCorner = Instance.new("UICorner")
+    ColorKnobCorner.CornerRadius = UDim.new(0, 6) -- Rounded knob
+    ColorKnobCorner.Parent = ColorKnob
+
     local function UpdateColorFromPosition(input)
         local colorPos = input.Position.X / ColorGradientFrame.AbsoluteSize.X
-        -- Calculate color based on position
         local color = Color3.fromHSV(colorPos, 1, 1)
         ColorKnob.BackgroundColor3 = color
         ColorValueDisplay.BackgroundColor3 = color
@@ -644,17 +647,20 @@ end
 
     -- Draggable brightness knob
     local BrightnessKnob = Instance.new("Frame")
-    BrightnessKnob.Size = UDim2.new(0, 10, 0, 10)
-    BrightnessKnob.Position = UDim2.new(0.5, -5, 0.5, -5)
+    BrightnessKnob.Size = UDim2.new(0, 12, 0, 12) -- Larger knob with corners
+    BrightnessKnob.Position = UDim2.new(0.5, -6, 0.5, -6)
     BrightnessKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     BrightnessKnob.BorderSizePixel = 0
     BrightnessKnob.Parent = BrightnessSlider
 
+    local BrightnessKnobCorner = Instance.new("UICorner")
+    BrightnessKnobCorner.CornerRadius = UDim.new(0, 6) -- Rounded knob
+    BrightnessKnobCorner.Parent = BrightnessKnob
+
     local function UpdateBrightness(input)
         local brightnessPos = input.Position.Y / BrightnessSlider.AbsoluteSize.Y
-        -- Update brightness based on vertical position
         local brightness = 1 - brightnessPos
-        BrightnessKnob.Position = UDim2.new(0.5, -5, brightnessPos, -5)
+        BrightnessKnob.Position = UDim2.new(0.5, -6, brightnessPos, -6)
         local color = ColorKnob.BackgroundColor3
         ColorKnob.BackgroundColor3 = color:Lerp(Color3.fromRGB(0, 0, 0), brightness)
         ColorValueDisplay.BackgroundColor3 = ColorKnob.BackgroundColor3
@@ -681,7 +687,6 @@ end
     okCorner.Parent = OKButton
     OKButton.MouseButton1Click:Connect(function()
         PickerWindow.Visible = false
-        -- Return the selected color or perform other actions
     end)
 
     local CancelButton = Instance.new("TextButton")
@@ -700,7 +705,7 @@ end
         PickerWindow.Visible = false
     end)
 
-    return PickerWindow
+    return PickerWindow -- 1.05
 end,
 
 			CreateToggle = function(self, config)
