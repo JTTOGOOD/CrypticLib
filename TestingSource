@@ -604,15 +604,14 @@ end
 
     -- Draggable color knob
     local ColorKnob = Instance.new("Frame")
-    ColorKnob.Size = UDim2.new(0, 12, 0, 12) -- Larger knob with corners
+    ColorKnob.Size = UDim2.new(0, 12, 0, 12)
     ColorKnob.Position = UDim2.new(0.5, -6, 0.5, -6)
     ColorKnob.BackgroundColor3 = DefaultColor
     ColorKnob.BorderSizePixel = 0
+    local colorKnobCorner = Instance.new("UICorner")
+    colorKnobCorner.CornerRadius = UDim.new(0, 6)
+    colorKnobCorner.Parent = ColorKnob
     ColorKnob.Parent = ColorGradientFrame
-
-    local ColorKnobCorner = Instance.new("UICorner")
-    ColorKnobCorner.CornerRadius = UDim.new(0, 6) -- Rounded knob
-    ColorKnobCorner.Parent = ColorKnob
 
     local function UpdateColorFromPosition(input)
         local colorPos = input.Position.X / ColorGradientFrame.AbsoluteSize.X
@@ -645,17 +644,16 @@ end
     BrightnessGradient.Rotation = 90
     BrightnessGradient.Parent = BrightnessSlider
 
-    -- Draggable brightness knob
+    -- Draggable brightness arrow knob
     local BrightnessKnob = Instance.new("Frame")
-    BrightnessKnob.Size = UDim2.new(0, 12, 0, 12) -- Larger knob with corners
-    BrightnessKnob.Position = UDim2.new(0.5, -6, 0.5, -6)
+    BrightnessKnob.Size = UDim2.new(0, 12, 0, 12)
+    BrightnessKnob.Position = UDim2.new(0, 4, 0, -6)
     BrightnessKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     BrightnessKnob.BorderSizePixel = 0
+    local brightnessKnobCorner = Instance.new("UICorner")
+    brightnessKnobCorner.CornerRadius = UDim.new(0, 6)
+    brightnessKnobCorner.Parent = BrightnessKnob
     BrightnessKnob.Parent = BrightnessSlider
-
-    local BrightnessKnobCorner = Instance.new("UICorner")
-    BrightnessKnobCorner.CornerRadius = UDim.new(0, 6) -- Rounded knob
-    BrightnessKnobCorner.Parent = BrightnessKnob
 
     local function UpdateBrightness(input)
         local brightnessPos = input.Position.Y / BrightnessSlider.AbsoluteSize.Y
@@ -705,7 +703,7 @@ end
         PickerWindow.Visible = false
     end)
 
-    return PickerWindow -- 1.05
+    return PickerWindow -- 1.5
 end,
 
 			CreateToggle = function(self, config)
