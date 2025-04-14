@@ -644,10 +644,10 @@ end
     BrightnessGradient.Rotation = 90
     BrightnessGradient.Parent = BrightnessSlider
 
-    -- Draggable brightness arrow knob
+    -- Draggable brightness arrow knob (placed outside color gradient)
     local BrightnessKnob = Instance.new("Frame")
     BrightnessKnob.Size = UDim2.new(0, 12, 0, 12)
-    BrightnessKnob.Position = UDim2.new(0, 4, 0, -6)
+    BrightnessKnob.Position = UDim2.new(0, 4, 0, 0)
     BrightnessKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     BrightnessKnob.BorderSizePixel = 0
     local brightnessKnobCorner = Instance.new("UICorner")
@@ -703,7 +703,7 @@ end
         PickerWindow.Visible = false
     end)
 
-    return PickerWindow -- 1.5
+    return PickerWindow - 2.0
 end,
 
 			CreateToggle = function(self, config)
