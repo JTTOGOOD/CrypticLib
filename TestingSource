@@ -229,17 +229,17 @@ function Cryptic:Notify(settings)
     NotificationFrame.Parent = CoreGui
 
     -- Title Label
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Text = Title
-    TitleLabel.Size = UDim2.new(1, -12, 0, 30)
-    TitleLabel.Position = UDim2.new(0, 6, 0, 6)
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextSize = 20
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.TextWrapped = true
-    TitleLabel.Parent = NotificationFrame
+    local NotifyTitleLabel = Instance.new("TextLabel")
+    NotifyTitleLabel.Text = Title
+    NotifyTitleLabel.Size = UDim2.new(1, -12, 0, 30)
+    NotifyTitleLabel.Position = UDim2.new(0, 6, 0, 6)
+    NotifyTitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NotifyTitleLabel.BackgroundTransparency = 1
+    NotifyTitleLabel.Font = Enum.Font.GothamBold
+    NotifyTitleLabel.TextSize = 20
+    NotifyTitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    NotifyTitleLabel.TextWrapped = true
+    NotifyTitleLabel.Parent = NotificationFrame
 
     -- Description Label
     local DescLabel = Instance.new("TextLabel")
