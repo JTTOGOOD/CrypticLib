@@ -1,5 +1,7 @@
 local NovaLib = {}
 
+local TweenService = game:GetService("TweenService")
+
 -- Theme Definitions
 local Themes = {
     Default = {
@@ -98,7 +100,8 @@ function NovaLib:CreateWindow(options)
     -- Loading Screen
     if options.LoadingScreen then
         local LoadingFrame = Instance.new("Frame")
-        LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+        LoadingFrame.Size = UDim2.new(0, 0, 0, 0) -- Start small
+        LoadingFrame.Position = UDim2.new(0.5, -250, 0.5, -200) -- Centered in the middle of the screen
         LoadingFrame.BackgroundColor3 = Theme.Background
         LoadingFrame.Parent = ScreenGui
 
@@ -123,9 +126,8 @@ function NovaLib:CreateWindow(options)
         LoadingSubtitle.Parent = LoadingFrame
 
         -- Apply Zoom-In Effect to Loading Screen
-        local TweenService = game:GetService("TweenService")
         local LoadingTweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        local ZoomInTween = TweenService:Create(LoadingFrame, LoadingTweenInfo, {Size = UDim2.new(1, 0, 1, 0)})
+        local ZoomInTween = TweenService:Create(LoadingFrame, LoadingTweenInfo, {Size = UDim2.new(0, 500, 0, 400)})
         ZoomInTween:Play()
 
         task.wait(0.5) -- Wait for zoom-in to finish
@@ -133,7 +135,7 @@ function NovaLib:CreateWindow(options)
         -- Hide the loading screen after the duration and zoom-out
         task.delay(options.LoadingScreenDuration or 2, function()
             -- Zoom-Out Animation for Loading Screen
-            local ZoomOutTween = TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 500, 0, 400)})
+            local ZoomOutTween = TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0)})
             ZoomOutTween:Play()
 
             -- Wait for Zoom-Out and then destroy loading screen and show MainFrame
