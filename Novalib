@@ -1,4 +1,4 @@
-Warn("DM Revalen._ if theres any issues")
+warn("DM Revalen._ if theres any issues")
 
 local NovaLib = {}
 
