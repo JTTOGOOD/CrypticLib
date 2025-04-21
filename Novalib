@@ -80,13 +80,15 @@ function NovaLib:CreateWindow(options)
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
 
-    -- Tab List
-    local TabList = Instance.new("Frame")
+    -- Tab List (as ScrollingFrame)
+    local TabList = Instance.new("ScrollingFrame")
     TabList.Size = UDim2.new(0, 120, 1, -40)
     TabList.Position = UDim2.new(0, 0, 0, 40)
     TabList.BackgroundColor3 = Theme.TabList
     TabList.BorderSizePixel = 0
     TabList.Parent = MainFrame
+    TabList.ClipsDescendants = true
+    TabList.CanvasSize = UDim2.new(0, 0, 0, 0)
 
     local TabListCorner = Instance.new("UICorner", TabList)
     TabListCorner.CornerRadius = UDim.new(0, 12)
@@ -151,12 +153,47 @@ function NovaLib:CreateWindow(options)
         end)
     end
 
-    -- Return window elements
-    return {
-        MainFrame = MainFrame,
-        TabList = TabList,
-        Theme = Theme
-    }
+    -- Tab Component (create tab buttons)
+function NovaLib:CreateTab(TabName, TabIconId)
+    -- Create Tab Button
+    local TabButton = Instance.new("TextButton")
+    TabButton.Size = UDim2.new(1, 0, 0, 50)
+    TabButton.BackgroundColor3 = Theme.TabButtonInactive
+    TabButton.Text = TabName
+    TabButton.Font = Enum.Font.GothamBold
+    TabButton.TextColor3 = Theme.TextColor
+    TabButton.TextSize = 18
+    TabButton.TextXAlignment = Enum.TextXAlignment.Left
+    TabButton.LayoutOrder = #TabList:GetChildren()  -- Ensure tabs are ordered correctly
+    TabButton.Parent = TabList
+
+    -- Add icon to Tab Button (right side)
+    local TabIcon = Instance.new("ImageLabel")
+    TabIcon.Size = UDim2.new(0, 24, 0, 24)  -- Adjust icon size
+    TabIcon.Position = UDim2.new(1, -30, 0.5, -12)  -- Positioned on the right side
+    TabIcon.Image = "rbxassetid://" .. tostring(TabIconId)  -- Use the provided Icon ID
+    TabIcon.BackgroundTransparency = 1
+    TabIcon.Parent = TabButton
+
+    -- Apply UICorner to TabButton for rounded corners
+    local TabButtonCorner = Instance.new("UICorner")
+    TabButtonCorner.CornerRadius = UDim.new(0, 12)  -- Adjust corner radius as needed
+    TabButtonCorner.Parent = TabButton
+
+    -- Apply hover effect to the tab
+    TabButton.MouseEnter:Connect(function()
+        TabButton.BackgroundColor3 = Theme.TabButtonActive
+    end)
+
+    TabButton.MouseLeave:Connect(function()
+        TabButton.BackgroundColor3 = Theme.TabButtonInactive
+    end)
+
+    return TabButton
+end
+
+
+    return NovaLib
 end
 
 return NovaLib
