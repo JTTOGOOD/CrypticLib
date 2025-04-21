@@ -34,6 +34,7 @@ local Themes = {
 
 -- CreateWindow Function
 function NovaLib:CreateWindow(options)
+    -- Ensure the theme is valid, or default to 'Default'
     local Theme = Themes[options.Theme] or Themes["Default"]
 
     -- ScreenGui
