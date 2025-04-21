@@ -1,51 +1,48 @@
 local NovaLib = {}
 
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
 -- Theme Definitions
 local Themes = {
     Default = {
         Background = Color3.fromRGB(20, 20, 20),
         TabList = Color3.fromRGB(15, 15, 15),
-        TabButtonActive = Color3.fromRGB(40, 40, 40),
-        TabButtonInactive = Color3.fromRGB(20, 20, 20),
+        TabButtonActive = Color3.fromRGB(60, 60, 60),
+        TabButtonInactive = Color3.fromRGB(30, 30, 30),
         TextColor = Color3.fromRGB(255, 255, 255),
     },
     Ocean = {
         Background = Color3.fromRGB(10, 30, 60),
         TabList = Color3.fromRGB(8, 20, 45),
-        TabButtonActive = Color3.fromRGB(20, 50, 80),
-        TabButtonInactive = Color3.fromRGB(10, 30, 60),
+        TabButtonActive = Color3.fromRGB(30, 70, 110),
+        TabButtonInactive = Color3.fromRGB(15, 40, 70),
         TextColor = Color3.fromRGB(180, 220, 255),
     },
     Forest = {
         Background = Color3.fromRGB(20, 40, 25),
         TabList = Color3.fromRGB(15, 30, 20),
-        TabButtonActive = Color3.fromRGB(30, 60, 35),
-        TabButtonInactive = Color3.fromRGB(20, 40, 25),
+        TabButtonActive = Color3.fromRGB(40, 80, 50),
+        TabButtonInactive = Color3.fromRGB(25, 50, 35),
         TextColor = Color3.fromRGB(200, 255, 200),
     },
     Dark = {
         Background = Color3.fromRGB(15, 15, 15),
         TabList = Color3.fromRGB(10, 10, 10),
-        TabButtonActive = Color3.fromRGB(30, 30, 30),
-        TabButtonInactive = Color3.fromRGB(15, 15, 15),
+        TabButtonActive = Color3.fromRGB(45, 45, 45),
+        TabButtonInactive = Color3.fromRGB(20, 20, 20),
         TextColor = Color3.fromRGB(255, 255, 255),
     }
 }
 
--- CreateWindow Function
 function NovaLib:CreateWindow(options)
-    -- Ensure the theme is valid, or default to 'Default'
     local Theme = Themes[options.Theme] or Themes["Default"]
 
-    -- ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "NovaUI"
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    -- Main Window (hidden initially)
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Size = UDim2.new(0, 500, 0, 400)
@@ -53,21 +50,16 @@ function NovaLib:CreateWindow(options)
     MainFrame.BackgroundColor3 = Theme.Background
     MainFrame.BorderSizePixel = 0
     MainFrame.ClipsDescendants = true
-    MainFrame.Visible = false -- Hide initially
+    MainFrame.Visible = false
     MainFrame.Parent = ScreenGui
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
-    local MainCorner = Instance.new("UICorner", MainFrame)
-    MainCorner.CornerRadius = UDim.new(0, 12)
-
-    -- Top Bar
     local TopBar = Instance.new("Frame")
     TopBar.Size = UDim2.new(1, 0, 0, 40)
     TopBar.BackgroundColor3 = Theme.Background
     TopBar.BorderSizePixel = 0
     TopBar.Parent = MainFrame
-
-    local TopBarCorner = Instance.new("UICorner", TopBar)
-    TopBarCorner.CornerRadius = UDim.new(0, 12)
+    Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 12)
 
     local Title = Instance.new("TextLabel")
     Title.Text = options.Name or "Nova Library"
@@ -80,30 +72,56 @@ function NovaLib:CreateWindow(options)
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
 
-    -- Tab List (as ScrollingFrame)
+    -- Make draggable
+    local dragging, dragInput, dragStart, startPos
+    TopBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    TopBar.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                           startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
     local TabList = Instance.new("ScrollingFrame")
-    TabList.Size = UDim2.new(0, 120, 1, -40)
+    TabList.Size = UDim2.new(0, 140, 1, -40)
     TabList.Position = UDim2.new(0, 0, 0, 40)
     TabList.BackgroundColor3 = Theme.TabList
     TabList.BorderSizePixel = 0
-    TabList.Parent = MainFrame
     TabList.ClipsDescendants = true
     TabList.CanvasSize = UDim2.new(0, 0, 0, 0)
-
-    local TabListCorner = Instance.new("UICorner", TabList)
-    TabListCorner.CornerRadius = UDim.new(0, 12)
+    TabList.ScrollBarThickness = 4
+    TabList.Parent = MainFrame
+    Instance.new("UICorner", TabList).CornerRadius = UDim.new(0, 12)
 
     local TabsLayout = Instance.new("UIListLayout", TabList)
-    TabsLayout.Padding = UDim.new(0, 5)
+    TabsLayout.Padding = UDim.new(0, 6)
     TabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    TabsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    TabsLayout.VerticalAlignment = Enum.VerticalAlignment.Top
 
     -- Loading Screen
     if options.LoadingScreen then
         local LoadingFrame = Instance.new("Frame")
-        LoadingFrame.Size = UDim2.new(0, 0, 0, 0) -- Start small
-        LoadingFrame.Position = UDim2.new(0.5, -250, 0.5, -200) -- Centered in the middle of the screen
+        LoadingFrame.Size = UDim2.new(0, 0, 0, 0)
+        LoadingFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
         LoadingFrame.BackgroundColor3 = Theme.Background
         LoadingFrame.Parent = ScreenGui
 
@@ -127,71 +145,67 @@ function NovaLib:CreateWindow(options)
         LoadingSubtitle.Position = UDim2.new(0, 0, 0.5, 0)
         LoadingSubtitle.Parent = LoadingFrame
 
-        -- Apply Zoom-In Effect to Loading Screen
-        local LoadingTweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        local ZoomInTween = TweenService:Create(LoadingFrame, LoadingTweenInfo, {Size = UDim2.new(0, 500, 0, 400)})
-        ZoomInTween:Play()
+        TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 500, 0, 400)}):Play()
+        task.wait(0.5)
 
-        task.wait(0.5) -- Wait for zoom-in to finish
-
-        -- Hide the loading screen after the duration and zoom-out
         task.delay(options.LoadingScreenDuration or 2, function()
-            -- Zoom-Out Animation for Loading Screen
-            local ZoomOutTween = TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0)})
-            ZoomOutTween:Play()
-
-            -- Wait for Zoom-Out and then destroy loading screen and show MainFrame
+            TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0)}):Play()
             task.wait(0.5)
             LoadingFrame:Destroy()
-
-            -- Show Main Frame
             MainFrame.Visible = true
-
-            -- Apply Zoom-In Effect for Main Window
-            local MainZoomInTween = TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 500, 0, 400)})
-            MainZoomInTween:Play()
+            TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 500, 0, 400)}):Play()
         end)
+    else
+        MainFrame.Visible = true
     end
 
-    -- Tab Component (create tab buttons)
-function NovaLib:CreateTab(TabName, TabIconId)
-    -- Create Tab Button
-    local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(1, 0, 0, 50)
-    TabButton.BackgroundColor3 = Theme.TabButtonInactive
-    TabButton.Text = TabName
-    TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextColor3 = Theme.TextColor
-    TabButton.TextSize = 18
-    TabButton.TextXAlignment = Enum.TextXAlignment.Left
-    TabButton.LayoutOrder = #TabList:GetChildren()  -- Ensure tabs are ordered correctly
-    TabButton.Parent = TabList
+    local currentTab
 
-    -- Add icon to Tab Button (right side)
-    local TabIcon = Instance.new("ImageLabel")
-    TabIcon.Size = UDim2.new(0, 24, 0, 24)  -- Adjust icon size
-    TabIcon.Position = UDim2.new(1, -30, 0.5, -12)  -- Positioned on the right side
-    TabIcon.Image = "rbxassetid://" .. tostring(TabIconId)  -- Use the provided Icon ID
-    TabIcon.BackgroundTransparency = 1
-    TabIcon.Parent = TabButton
-
-    -- Apply UICorner to TabButton for rounded corners
-    local TabButtonCorner = Instance.new("UICorner")
-    TabButtonCorner.CornerRadius = UDim.new(0, 12)  -- Adjust corner radius as needed
-    TabButtonCorner.Parent = TabButton
-
-    -- Apply hover effect to the tab
-    TabButton.MouseEnter:Connect(function()
-        TabButton.BackgroundColor3 = Theme.TabButtonActive
-    end)
-
-    TabButton.MouseLeave:Connect(function()
+    function NovaLib:CreateTab(TabName, TabIconId)
+        local TabButton = Instance.new("TextButton")
+        TabButton.Size = UDim2.new(1, -10, 0, 40)
+        TabButton.Position = UDim2.new(0, 5, 0, 0)
         TabButton.BackgroundColor3 = Theme.TabButtonInactive
-    end)
+        TabButton.Text = "   " .. TabName
+        TabButton.Font = Enum.Font.GothamBold
+        TabButton.TextColor3 = Theme.TextColor
+        TabButton.TextSize = 16
+        TabButton.TextXAlignment = Enum.TextXAlignment.Left
+        TabButton.Parent = TabList
 
-    return TabButton
-end
+        Instance.new("UICorner", TabButton).CornerRadius = UDim.new(0, 10)
 
+        local Icon = Instance.new("ImageLabel")
+        Icon.Size = UDim2.new(0, 20, 0, 20)
+        Icon.Position = UDim2.new(1, -28, 0.5, -10)
+        Icon.Image = "rbxassetid://" .. tostring(TabIconId or "")
+        Icon.BackgroundTransparency = 1
+        Icon.Parent = TabButton
+
+        -- Click logic
+        TabButton.MouseButton1Click:Connect(function()
+            if currentTab then
+                currentTab.BackgroundColor3 = Theme.TabButtonInactive
+            end
+            TabButton.BackgroundColor3 = Theme.TabButtonActive
+            currentTab = TabButton
+        end)
+
+        -- Hover effects
+        TabButton.MouseEnter:Connect(function()
+            if currentTab ~= TabButton then
+                TabButton.BackgroundColor3 = Theme.TabButtonActive
+            end
+        end)
+
+        TabButton.MouseLeave:Connect(function()
+            if currentTab ~= TabButton then
+                TabButton.BackgroundColor3 = Theme.TabButtonInactive
+            end
+        end)
+
+        return TabButton
+    end
 
     return NovaLib
 end
