@@ -43,39 +43,7 @@ function NovaLib:CreateWindow(options)
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    -- Loading Screen
-    if options.LoadingScreen then
-        local LoadingFrame = Instance.new("Frame")
-        LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
-        LoadingFrame.BackgroundColor3 = Theme.Background
-        LoadingFrame.Parent = ScreenGui
-
-        local LoadingTitle = Instance.new("TextLabel")
-        LoadingTitle.Text = options.LoadingTitle or "Loading..."
-        LoadingTitle.Font = Enum.Font.GothamBold
-        LoadingTitle.TextSize = 24
-        LoadingTitle.TextColor3 = Theme.TextColor
-        LoadingTitle.BackgroundTransparency = 1
-        LoadingTitle.Size = UDim2.new(1, 0, 0, 40)
-        LoadingTitle.Position = UDim2.new(0, 0, 0.5, -40)
-        LoadingTitle.Parent = LoadingFrame
-
-        local LoadingSubtitle = Instance.new("TextLabel")
-        LoadingSubtitle.Text = options.LoadingSubTitle or ""
-        LoadingSubtitle.Font = Enum.Font.Gotham
-        LoadingSubtitle.TextSize = 16
-        LoadingSubtitle.TextColor3 = Theme.TextColor
-        LoadingSubtitle.BackgroundTransparency = 1
-        LoadingSubtitle.Size = UDim2.new(1, 0, 0, 30)
-        LoadingSubtitle.Position = UDim2.new(0, 0, 0.5, 0)
-        LoadingSubtitle.Parent = LoadingFrame
-
-        task.delay(options.LoadingScreenDuration or 2, function()
-            LoadingFrame:Destroy()
-        end)
-    end
-
-    -- Main Window
+    -- Main Window (hidden initially)
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Size = UDim2.new(0, 500, 0, 400)
@@ -83,6 +51,7 @@ function NovaLib:CreateWindow(options)
     MainFrame.BackgroundColor3 = Theme.Background
     MainFrame.BorderSizePixel = 0
     MainFrame.ClipsDescendants = true
+    MainFrame.Visible = false -- Hide initially
     MainFrame.Parent = ScreenGui
 
     local MainCorner = Instance.new("UICorner", MainFrame)
@@ -125,6 +94,60 @@ function NovaLib:CreateWindow(options)
     TabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
     TabsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     TabsLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+
+    -- Loading Screen
+    if options.LoadingScreen then
+        local LoadingFrame = Instance.new("Frame")
+        LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
+        LoadingFrame.BackgroundColor3 = Theme.Background
+        LoadingFrame.Parent = ScreenGui
+
+        local LoadingTitle = Instance.new("TextLabel")
+        LoadingTitle.Text = options.LoadingTitle or "Loading..."
+        LoadingTitle.Font = Enum.Font.GothamBold
+        LoadingTitle.TextSize = 24
+        LoadingTitle.TextColor3 = Theme.TextColor
+        LoadingTitle.BackgroundTransparency = 1
+        LoadingTitle.Size = UDim2.new(1, 0, 0, 40)
+        LoadingTitle.Position = UDim2.new(0, 0, 0.5, -40)
+        LoadingTitle.Parent = LoadingFrame
+
+        local LoadingSubtitle = Instance.new("TextLabel")
+        LoadingSubtitle.Text = options.LoadingSubTitle or ""
+        LoadingSubtitle.Font = Enum.Font.Gotham
+        LoadingSubtitle.TextSize = 16
+        LoadingSubtitle.TextColor3 = Theme.TextColor
+        LoadingSubtitle.BackgroundTransparency = 1
+        LoadingSubtitle.Size = UDim2.new(1, 0, 0, 30)
+        LoadingSubtitle.Position = UDim2.new(0, 0, 0.5, 0)
+        LoadingSubtitle.Parent = LoadingFrame
+
+        -- Apply Zoom-In Effect to Loading Screen
+        local TweenService = game:GetService("TweenService")
+        local LoadingTweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        local ZoomInTween = TweenService:Create(LoadingFrame, LoadingTweenInfo, {Size = UDim2.new(1, 0, 1, 0)})
+        ZoomInTween:Play()
+
+        task.wait(0.5) -- Wait for zoom-in to finish
+
+        -- Hide the loading screen after the duration and zoom-out
+        task.delay(options.LoadingScreenDuration or 2, function()
+            -- Zoom-Out Animation for Loading Screen
+            local ZoomOutTween = TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 500, 0, 400)})
+            ZoomOutTween:Play()
+
+            -- Wait for Zoom-Out and then destroy loading screen and show MainFrame
+            task.wait(0.5)
+            LoadingFrame:Destroy()
+
+            -- Show Main Frame
+            MainFrame.Visible = true
+
+            -- Apply Zoom-In Effect for Main Window
+            local MainZoomInTween = TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 500, 0, 400)})
+            MainZoomInTween:Play()
+        end)
+    end
 
     -- Return window elements
     return {
