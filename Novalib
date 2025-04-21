@@ -1,5 +1,38 @@
 local NovaLib = {}
 
+-- Theme Definitions
+local Themes = {
+    Default = {
+        Background = Color3.fromRGB(20, 20, 20),
+        TabList = Color3.fromRGB(15, 15, 15),
+        TabButtonActive = Color3.fromRGB(40, 40, 40),
+        TabButtonInactive = Color3.fromRGB(20, 20, 20),
+        TextColor = Color3.fromRGB(255, 255, 255),
+    },
+    Ocean = {
+        Background = Color3.fromRGB(10, 30, 60),
+        TabList = Color3.fromRGB(8, 20, 45),
+        TabButtonActive = Color3.fromRGB(20, 50, 80),
+        TabButtonInactive = Color3.fromRGB(10, 30, 60),
+        TextColor = Color3.fromRGB(180, 220, 255),
+    },
+    Forest = {
+        Background = Color3.fromRGB(20, 40, 25),
+        TabList = Color3.fromRGB(15, 30, 20),
+        TabButtonActive = Color3.fromRGB(30, 60, 35),
+        TabButtonInactive = Color3.fromRGB(20, 40, 25),
+        TextColor = Color3.fromRGB(200, 255, 200),
+    },
+    Dark = {
+        Background = Color3.fromRGB(15, 15, 15),
+        TabList = Color3.fromRGB(10, 10, 10),
+        TabButtonActive = Color3.fromRGB(30, 30, 30),
+        TabButtonInactive = Color3.fromRGB(15, 15, 15),
+        TextColor = Color3.fromRGB(255, 255, 255),
+    }
+}
+
+-- CreateWindow Function
 function NovaLib:CreateWindow(options)
     local Theme = Themes[options.Theme] or Themes["Default"]
 
@@ -92,6 +125,7 @@ function NovaLib:CreateWindow(options)
     TabsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     TabsLayout.VerticalAlignment = Enum.VerticalAlignment.Top
 
+    -- Return window elements
     return {
         MainFrame = MainFrame,
         TabList = TabList,
