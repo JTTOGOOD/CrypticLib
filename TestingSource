@@ -557,7 +557,6 @@ end
 	ContentFrame.Size = UDim2.new(1, -10, 0, 0)
 	ContentFrame.Position = UDim2.new(0, 5, 0, 35)
 	ContentFrame.BackgroundTransparency = 1
-	ContentFrame.Visible = false
 	ContentFrame.ClipsDescendants = true
 	ContentFrame.Parent = self.Frame
 
@@ -566,30 +565,38 @@ end
 	Layout.SortOrder = Enum.SortOrder.LayoutOrder
 	Layout.Parent = ContentFrame
 
-	local Open = false
+	local function updateSize()
+		if ContentFrame.Visible then
+			ContentFrame.Size = UDim2.new(1, -10, 0, Layout.AbsoluteContentSize.Y)
+		else
+			ContentFrame.Size = UDim2.new(1, -10, 0, 0)
+		end
+	end
+
+	local Open = true
 	local function Toggle()
 		Open = not Open
-		Arrow.Text = Open and "▲" or "▼"
 		ContentFrame.Visible = Open
+		Arrow.Text = Open and "▲" or "▼"
+		updateSize()
 	end
+
+	Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateSize)
+	updateSize()
 
 	Title.MouseButton1Click:Connect(Toggle)
 
-	-- Return wrapper
 	local SectionObject = {
 		Instance = SectionHolder,
 		Content = ContentFrame,
 		Add = function(_, uiElement)
 			uiElement.Parent = ContentFrame
-			ContentFrame.Size = UDim2.new(1, -10, 0, Layout.AbsoluteContentSize.Y)
-			Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-				ContentFrame.Size = UDim2.new(1, -10, 0, Layout.AbsoluteContentSize.Y)
-			end)
 		end
 	}
 
 	return SectionObject
 end,
+
 
                         CreateColorPicker = function(self, config)
     local ColorPickerName = config.Name or "Color Picker"
