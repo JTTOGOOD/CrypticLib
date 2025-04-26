@@ -526,6 +526,71 @@ end
 				return ButtonObject
 			end,
 
+                        CreateSection = function(self, config)
+	local SectionHolder = Instance.new("Frame")
+	SectionHolder.Size = UDim2.new(1, -10, 0, 30)
+	SectionHolder.BackgroundTransparency = 1
+	SectionHolder.Parent = self.Frame
+
+	local Arrow = Instance.new("TextLabel")
+	Arrow.Size = UDim2.new(0, 20, 0, 20)
+	Arrow.Position = UDim2.new(1, -25, 0, 5)
+	Arrow.Text = "▼"
+	Arrow.Font = Enum.Font.GothamBold
+	Arrow.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Arrow.BackgroundTransparency = 1
+	Arrow.TextSize = 18
+	Arrow.Parent = SectionHolder
+
+	local Title = Instance.new("TextButton")
+	Title.Size = UDim2.new(1, -30, 0, 30)
+	Title.Position = UDim2.new(0, 5, 0, 0)
+	Title.BackgroundTransparency = 1
+	Title.Text = config.Text or "Section"
+	Title.Font = Enum.Font.GothamBold
+	Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.TextSize = 16
+	Title.Parent = SectionHolder
+
+	local ContentFrame = Instance.new("Frame")
+	ContentFrame.Size = UDim2.new(1, -10, 0, 0)
+	ContentFrame.Position = UDim2.new(0, 5, 0, 35)
+	ContentFrame.BackgroundTransparency = 1
+	ContentFrame.Visible = false
+	ContentFrame.ClipsDescendants = true
+	ContentFrame.Parent = self.Frame
+
+	local Layout = Instance.new("UIListLayout")
+	Layout.Padding = UDim.new(0, 6)
+	Layout.SortOrder = Enum.SortOrder.LayoutOrder
+	Layout.Parent = ContentFrame
+
+	local Open = false
+	local function Toggle()
+		Open = not Open
+		Arrow.Text = Open and "▲" or "▼"
+		ContentFrame.Visible = Open
+	end
+
+	Title.MouseButton1Click:Connect(Toggle)
+
+	-- Return wrapper
+	local SectionObject = {
+		Instance = SectionHolder,
+		Content = ContentFrame,
+		Add = function(_, uiElement)
+			uiElement.Parent = ContentFrame
+			ContentFrame.Size = UDim2.new(1, -10, 0, Layout.AbsoluteContentSize.Y)
+			Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+				ContentFrame.Size = UDim2.new(1, -10, 0, Layout.AbsoluteContentSize.Y)
+			end)
+		end
+	}
+
+	return SectionObject
+end,
+
                         CreateColorPicker = function(self, config)
     local ColorPickerName = config.Name or "Color Picker"
     local DefaultColor = config.DefaultColor or Color3.fromRGB(255, 255, 255)
