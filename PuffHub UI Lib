@@ -58,69 +58,90 @@ function Puffhub:CreateWindow(config)
     Title.Parent = MainFrame
 
     -- Loading Screen
-    if ShowLoading then
-        local LoadingFrame = Instance.new("Frame")
-        LoadingFrame.Size = UDim2.new(0, 0, 0, 0) -- Start small
-        LoadingFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-        LoadingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-        LoadingFrame.BackgroundColor3 = Theme.Accent
-        LoadingFrame.Parent = ScreenGui
+    -- Loading Screen
+if ShowLoading then
+    local LoadingFrame = Instance.new("Frame")
+    LoadingFrame.Size = UDim2.new(0, 0, 0, 0) -- Start tiny
+    LoadingFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    LoadingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    LoadingFrame.BackgroundColor3 = Theme.Accent
+    LoadingFrame.Parent = ScreenGui
 
-        local UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 12)
-        UICorner.Parent = LoadingFrame
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 12)
+    Corner.Parent = LoadingFrame
 
-        local LoadingText = Instance.new("TextLabel")
-        LoadingText.Size = UDim2.new(1, 0, 0, 60)
-        LoadingText.Position = UDim2.new(0, 0, 0, 20)
-        LoadingText.BackgroundTransparency = 1
-        LoadingText.Text = LoadingTitle
-        LoadingText.TextColor3 = Theme.TextColor
-        LoadingText.Font = Enum.Font.GothamBold
-        LoadingText.TextSize = 28
-        LoadingText.Parent = LoadingFrame
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Thickness = 2
+    Stroke.Color = Theme.TextColor
+    Stroke.Parent = LoadingFrame
 
-        local Subtitle = Instance.new("TextLabel")
-        Subtitle.Size = UDim2.new(1, 0, 0, 40)
-        Subtitle.Position = UDim2.new(0, 0, 0, 70)
-        Subtitle.BackgroundTransparency = 1
-        Subtitle.Text = LoadingSubtitle
-        Subtitle.TextColor3 = Theme.TextColor
-        Subtitle.Font = Enum.Font.Gotham
-        Subtitle.TextSize = 18
-        Subtitle.Parent = LoadingFrame
+    local Shadow = Instance.new("ImageLabel")
+    Shadow.BackgroundTransparency = 1
+    Shadow.Image = "rbxassetid://1316045217" -- Soft shadow image
+    Shadow.Size = UDim2.new(1, 60, 1, 60)
+    Shadow.Position = UDim2.new(0.5, -30, 0.5, -30)
+    Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+    Shadow.ZIndex = 0
+    Shadow.ImageTransparency = 0.5
+    Shadow.Parent = LoadingFrame
 
-        -- CapCut-style Tween animation
-        local sizeUp = TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 550, 0, 350)
-        })
+    local LoadingText = Instance.new("TextLabel")
+    LoadingText.Size = UDim2.new(1, 0, 0, 60)
+    LoadingText.Position = UDim2.new(0, 0, 0, 20)
+    LoadingText.BackgroundTransparency = 1
+    LoadingText.Text = LoadingTitle
+    LoadingText.TextColor3 = Theme.TextColor
+    LoadingText.Font = Enum.Font.GothamBold
+    LoadingText.TextSize = 28
+    LoadingText.Parent = LoadingFrame
 
-        local sizeDown = TweenService:Create(LoadingFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            Size = UDim2.new(0, 400, 0, 250)
-        })
+    local Subtitle = Instance.new("TextLabel")
+    Subtitle.Size = UDim2.new(1, 0, 0, 40)
+    Subtitle.Position = UDim2.new(0, 0, 0, 70)
+    Subtitle.BackgroundTransparency = 1
+    Subtitle.Text = LoadingSubtitle
+    Subtitle.TextColor3 = Theme.TextColor
+    Subtitle.Font = Enum.Font.Gotham
+    Subtitle.TextSize = 18
+    Subtitle.Parent = LoadingFrame
 
-        local finalShrink = TweenService:Create(LoadingFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            Size = UDim2.new(0, 0, 0, 0)
-        })
+    -- Tween Animations
+    local sizeUp = TweenService:Create(LoadingFrame, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 550, 0, 350)
+    })
 
-        local showMain = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 500, 0, 320)
-        })
+    local sizeDown = TweenService:Create(LoadingFrame, TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 420, 0, 260)
+    })
 
-        sizeUp:Play()
-        sizeUp.Completed:Wait()
-        sizeDown:Play()
-        sizeDown.Completed:Wait()
-        task.wait(0.5)
-        finalShrink:Play()
-        finalShrink.Completed:Wait()
-        LoadingFrame:Destroy()
+    local finalShrink = TweenService:Create(LoadingFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0)
+    })
 
-        MainFrame.Visible = true
-        showMain:Play()
-    else
-        MainFrame.Size = UDim2.new(0, 500, 0, 320)
-    end
+    local showMain = TweenService:Create(MainFrame, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 500, 0, 320)
+    })
+
+    -- Run Tweens in Sequence
+    sizeUp:Play()
+    sizeUp.Completed:Wait()
+
+    sizeDown:Play()
+    sizeDown.Completed:Wait()
+
+    task.wait(0.3)
+    finalShrink:Play()
+    finalShrink.Completed:Wait()
+
+    LoadingFrame:Destroy()
+
+    -- Reveal Main UI
+    MainFrame.Visible = true
+    showMain:Play()
+else
+    MainFrame.Size = UDim2.new(0, 500, 0, 320)
+end
 
     -- Open / Close Keybind
     UserInputService.InputBegan:Connect(function(input, gpe)
