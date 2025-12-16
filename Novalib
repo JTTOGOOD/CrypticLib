@@ -1,38 +1,38 @@
--- Kozalib.lua
-local Kozalib = {}
-Kozalib.__index = Kozalib
+-- Novalib (single-file, loadstring safe)
 
-local ClientModule = require(script.Client)
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 
-function Kozalib:CreateClient(data)
-    return ClientModule.new(data)
-end
+-- ======================================================
+-- Theme
+-- ======================================================
 
-return Kozalib
-
--- Theme.lua
-return {
+local Theme = {
     Background = Color3.fromRGB(18, 18, 18),
     Header = Color3.fromRGB(22, 22, 22),
-    Module = Color3.fromRGB(26, 26, 26),
     Border = Color3.fromRGB(40, 40, 40),
-    Accent = Color3.fromRGB(120, 180, 255),
     Text = Color3.fromRGB(230, 230, 230),
 
     Corner = UDim.new(0, 6),
-    TweenFast = TweenInfo.new(0.15, Enum.EasingStyle.Quad),
-    TweenSmooth = TweenInfo.new(0.25, Enum.EasingStyle.Quart)
+    Tween = TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 }
 
--- Client.lua
-local UIS = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local Theme = require(script.Theme)
+-- ======================================================
+-- Kozalib
+-- ======================================================
+
+local Kozalib = {}
+Kozalib.__index = Kozalib
+
+-- ======================================================
+-- Client
+-- ======================================================
 
 local Client = {}
 Client.__index = Client
 
-function Client.new(data)
+function Kozalib:CreateClient(data)
     local self = setmetatable({}, Client)
 
     self.ToggleKey = data.Toggle or Enum.KeyCode.LeftControl
@@ -40,15 +40,15 @@ function Client.new(data)
     self.Windows = {}
 
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "Kozalib"
+    ScreenGui.Name = "KozalibUI"
     ScreenGui.ResetOnSpawn = false
-    ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui
+    ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 
     self.ScreenGui = ScreenGui
 
-    UIS.InputBegan:Connect(function(i, gpe)
+    UIS.InputBegan:Connect(function(input, gpe)
         if gpe then return end
-        if i.KeyCode == self.ToggleKey then
+        if input.KeyCode == self.ToggleKey then
             self:SetVisible(not self.Visible)
         end
     end)
@@ -59,50 +59,42 @@ end
 function Client:SetVisible(state)
     self.Visible = state
 
-    for _, window in ipairs(self.Windows) do
-        local frame = window.Window
+    for _, win in ipairs(self.Windows) do
+        local frame = win.Window
         frame.Visible = true
 
         TweenService:Create(
             frame,
-            Theme.TweenSmooth,
+            Theme.Tween,
             {BackgroundTransparency = state and 0 or 1}
         ):Play()
 
         task.delay(0.25, function()
             frame.Visible = state
         end)
-
-        window:HideOverlays()
     end
 end
 
-function Client:CreateTabWindow(data)
-    local TabWindow = require(script.TabWindow)
-    local win = TabWindow.new(self, data)
-    table.insert(self.Windows, win)
-    return win
-end
+-- ======================================================
+-- TabWindow
+-- ======================================================
 
-return Client
-
--- TabWindow.lua
-local Theme = require(script.Parent.Theme)
 local TabWindow = {}
 TabWindow.__index = TabWindow
 
-function TabWindow.new(Client, data)
-    local self = setmetatable({}, TabWindow)
-    self.Client = Client
-    self.Overlays = {}
+function Client:CreateTabWindow(data)
+    local selfTab = setmetatable({}, TabWindow)
+    selfTab.Client = self
 
     local Window = Instance.new("Frame")
+    Window.Name = data.Name .. "_Window"
     Window.Size = data.Size or UDim2.fromOffset(230, 320)
     Window.Position = data.Position or UDim2.fromOffset(100, 100)
     Window.BackgroundColor3 = Theme.Background
-    Window.Parent = Client.ScreenGui
+    Window.BorderSizePixel = 0
     Window.Active = true
     Window.Draggable = true
+    Window.Parent = self.ScreenGui
 
     Instance.new("UICorner", Window).CornerRadius = Theme.Corner
     Instance.new("UIStroke", Window).Color = Theme.Border
@@ -110,48 +102,28 @@ function TabWindow.new(Client, data)
     local Header = Instance.new("Frame")
     Header.Size = UDim2.new(1, 0, 0, 30)
     Header.BackgroundColor3 = Theme.Header
+    Header.BorderSizePixel = 0
     Header.Parent = Window
 
     Instance.new("UICorner", Header).CornerRadius = Theme.Corner
 
     local Title = Instance.new("TextLabel")
-    Title.Text = data.Name
     Title.Size = UDim2.new(1, -12, 1, 0)
     Title.Position = UDim2.fromOffset(12, 0)
     Title.BackgroundTransparency = 1
     Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Text = data.Name
     Title.TextColor3 = Theme.Text
     Title.Parent = Header
 
-    local Container = Instance.new("ScrollingFrame")
-    Container.Position = UDim2.fromOffset(0, 30)
-    Container.Size = UDim2.new(1, 0, 1, -30)
-    Container.ScrollBarImageTransparency = 0.5
-    Container.BackgroundTransparency = 1
-    Container.Parent = Window
+    selfTab.Window = Window
 
-    local Layout = Instance.new("UIListLayout")
-    Layout.Padding = UDim.new(0, 6)
-    Layout.Parent = Container
-
-    Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        Container.CanvasSize = UDim2.fromOffset(0, Layout.AbsoluteContentSize.Y + 6)
-    end)
-
-    self.Window = Window
-    self.Container = Container
-    return self
+    table.insert(self.Windows, selfTab)
+    return selfTab
 end
 
-function TabWindow:HideOverlays()
-    for _, o in ipairs(self.Overlays) do
-        o.Visible = false
-    end
-end
+-- ======================================================
+-- RETURN
+-- ======================================================
 
-function TabWindow:CreateButton(data)
-    local Components = require(script.Components)
-    return Components.CreateButton(self, data)
-end
-
-return TabWindow
+return Kozalib
