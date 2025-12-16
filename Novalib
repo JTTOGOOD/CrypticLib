@@ -88,7 +88,7 @@ function Client:CreateTabWindow(data)
 
     local Window = Instance.new("Frame")
     Window.Name = data.Name .. "_Window"
-    Window.Size = data.Size or UDim2.fromOffset(230, 320)
+    Window.Size = data.Size or UDim2.fromOffset(345, 480) -- 1.5x scale
     Window.Position = data.Position or UDim2.fromOffset(100, 100)
     Window.BackgroundColor3 = Theme.Background
     Window.BorderSizePixel = 0
@@ -99,26 +99,38 @@ function Client:CreateTabWindow(data)
     Instance.new("UICorner", Window).CornerRadius = Theme.Corner
     Instance.new("UIStroke", Window).Color = Theme.Border
 
+    -- Header
     local Header = Instance.new("Frame")
-    Header.Size = UDim2.new(1, 0, 0, 30)
+    Header.Size = UDim2.new(1, 0, 0, 42)
     Header.BackgroundColor3 = Theme.Header
     Header.BorderSizePixel = 0
     Header.Parent = Window
 
     Instance.new("UICorner", Header).CornerRadius = Theme.Corner
 
+    -- Title
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, -12, 1, 0)
-    Title.Position = UDim2.fromOffset(12, 0)
+    Title.Size = UDim2.new(1, 0, 1, 0)
     Title.BackgroundTransparency = 1
-    Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Text = data.Name
     Title.TextColor3 = Theme.Text
+    Title.TextSize = 18
+    Title.Font = Enum.Font.GothamSemibold
+    Title.TextXAlignment = Enum.TextXAlignment.Center
+    Title.TextYAlignment = Enum.TextYAlignment.Center
     Title.Parent = Header
 
-    selfTab.Window = Window
+    -- Fade-in animation
+    Window.BackgroundTransparency = 1
+    TweenService:Create(
+        Window,
+        Theme.Tween,
+        {BackgroundTransparency = 0}
+    ):Play()
 
+    selfTab.Window = Window
     table.insert(self.Windows, selfTab)
+
     return selfTab
 end
 
