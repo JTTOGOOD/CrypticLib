@@ -4,6 +4,8 @@ local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
+local LocalPlayer = Players.LocalPlayer
+
 -- ======================================================
 -- Theme
 -- ======================================================
@@ -13,7 +15,9 @@ local Theme = {
     Header = Color3.fromRGB(22, 22, 22),
     Module = Color3.fromRGB(26, 26, 26),
     Border = Color3.fromRGB(40, 40, 40),
+    Accent = Color3.fromRGB(120, 180, 255),
     Text = Color3.fromRGB(230, 230, 230),
+    SubText = Color3.fromRGB(160, 160, 160),
 
     Corner = UDim.new(0, 6),
     Tween = TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
@@ -43,9 +47,47 @@ function Kozalib:CreateClient(data)
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "KozalibUI"
     ScreenGui.ResetOnSpawn = false
-    ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
     self.ScreenGui = ScreenGui
+
+    -- Welcome Panel
+    local Welcome = Instance.new("Frame")
+    Welcome.Size = UDim2.fromOffset(260, 70)
+    Welcome.Position = UDim2.new(1, -270, 1, -80)
+    Welcome.BackgroundColor3 = Theme.Background
+    Welcome.BorderSizePixel = 0
+    Welcome.Parent = ScreenGui
+
+    Instance.new("UICorner", Welcome).CornerRadius = Theme.Corner
+    Instance.new("UIStroke", Welcome).Color = Theme.Border
+
+    local Avatar = Instance.new("ImageLabel")
+    Avatar.Size = UDim2.fromOffset(48, 48)
+    Avatar.Position = UDim2.fromOffset(12, 11)
+    Avatar.BackgroundTransparency = 1
+    Avatar.Image = Players:GetUserThumbnailAsync(
+        LocalPlayer.UserId,
+        Enum.ThumbnailType.HeadShot,
+        Enum.ThumbnailSize.Size420x420
+    )
+    Avatar.Parent = Welcome
+
+    Instance.new("UICorner", Avatar).CornerRadius = UDim.new(1, 0)
+
+    local WelcomeText = Instance.new("TextLabel")
+    WelcomeText.Size = UDim2.new(1, -72, 1, 0)
+    WelcomeText.Position = UDim2.fromOffset(72, 0)
+    WelcomeText.BackgroundTransparency = 1
+    WelcomeText.Text = "Welcome " .. LocalPlayer.Name
+    WelcomeText.TextColor3 = Theme.Text
+    WelcomeText.TextSize = 16
+    WelcomeText.Font = Enum.Font.GothamSemibold
+    WelcomeText.TextXAlignment = Enum.TextXAlignment.Left
+    WelcomeText.TextYAlignment = Enum.TextYAlignment.Center
+    WelcomeText.Parent = Welcome
+
+    self.Welcome = Welcome
 
     UIS.InputBegan:Connect(function(input, gpe)
         if gpe then return end
@@ -61,19 +103,14 @@ function Client:SetVisible(state)
     self.Visible = state
 
     for _, win in ipairs(self.Windows) do
-        local frame = win.Window
-        frame.Visible = true
-
-        TweenService:Create(
-            frame,
-            Theme.Tween,
-            {BackgroundTransparency = state and 0 or 1}
-        ):Play()
-
-        task.delay(0.25, function()
-            frame.Visible = state
-        end)
+        win.Window.Visible = state
     end
+
+    TweenService:Create(self.Welcome, Theme.Tween, {
+        BackgroundTransparency = state and 0 or 1
+    }):Play()
+
+    self.Welcome.Visible = state
 end
 
 -- ======================================================
@@ -87,9 +124,7 @@ function Client:CreateTabWindow(data)
     local selfTab = setmetatable({}, TabWindow)
     selfTab.Client = self
 
-    -- Window
     local Window = Instance.new("Frame")
-    Window.Name = data.Name .. "_Window"
     Window.Size = data.Size or UDim2.fromOffset(345, 480)
     Window.Position = data.Position or UDim2.fromOffset(100, 100)
     Window.BackgroundColor3 = Theme.Background
@@ -101,27 +136,22 @@ function Client:CreateTabWindow(data)
     Instance.new("UICorner", Window).CornerRadius = Theme.Corner
     Instance.new("UIStroke", Window).Color = Theme.Border
 
-    -- Header
     local Header = Instance.new("Frame")
     Header.Size = UDim2.new(1, 0, 0, 42)
     Header.BackgroundColor3 = Theme.Header
-    Header.BorderSizePixel = 0
     Header.Parent = Window
 
     Instance.new("UICorner", Header).CornerRadius = Theme.Corner
 
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, 0, 1, 0)
+    Title.Size = UDim2.fromScale(1, 1)
     Title.BackgroundTransparency = 1
     Title.Text = data.Name
     Title.TextColor3 = Theme.Text
     Title.TextSize = 18
     Title.Font = Enum.Font.GothamSemibold
-    Title.TextXAlignment = Enum.TextXAlignment.Center
-    Title.TextYAlignment = Enum.TextYAlignment.Center
     Title.Parent = Header
 
-    -- Container (prevents overlap)
     local Container = Instance.new("Frame")
     Container.Position = UDim2.fromOffset(10, 52)
     Container.Size = UDim2.new(1, -20, 1, -62)
@@ -130,14 +160,7 @@ function Client:CreateTabWindow(data)
 
     local Layout = Instance.new("UIListLayout")
     Layout.Padding = UDim.new(0, 8)
-    Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     Layout.Parent = Container
-
-    -- Fade in
-    Window.BackgroundTransparency = 1
-    TweenService:Create(Window, Theme.Tween, {
-        BackgroundTransparency = 0
-    }):Play()
 
     selfTab.Window = Window
     selfTab.Container = Container
@@ -147,74 +170,86 @@ function Client:CreateTabWindow(data)
 end
 
 -- ======================================================
--- Button Component
+-- Toggle Component
 -- ======================================================
 
-function TabWindow:CreateButton(data)
-    local Button = {}
+function TabWindow:CreateToggle(data)
+    local Toggle = {}
+    local State = data.State or false
 
     local Frame = Instance.new("Frame")
-    Frame.Size = UDim2.new(1, 0, 0, 44)
+    Frame.Size = UDim2.new(1, 0, 0, 54)
     Frame.BackgroundColor3 = Theme.Module
-    Frame.BorderSizePixel = 0
     Frame.Parent = self.Container
 
     Instance.new("UICorner", Frame).CornerRadius = Theme.Corner
+    Instance.new("UIStroke", Frame).Color = Theme.Border
 
-    local Stroke = Instance.new("UIStroke", Frame)
-    Stroke.Color = Theme.Border
-    Stroke.Transparency = 0.35
+    local Title = Instance.new("TextLabel")
+    Title.Position = UDim2.fromOffset(12, 6)
+    Title.Size = UDim2.new(1, -80, 0, 20)
+    Title.BackgroundTransparency = 1
+    Title.Text = data.Name
+    Title.TextColor3 = Theme.Text
+    Title.Font = Enum.Font.GothamMedium
+    Title.TextSize = 15
+    Title.TextXAlignment = Left
+    Title.Parent = Frame
 
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(1, -16, 1, 0)
-    Label.Position = UDim2.fromOffset(16, 0)
-    Label.BackgroundTransparency = 1
-    Label.Text = data.Name or "Button"
-    Label.TextColor3 = Theme.Text
-    Label.TextSize = 16
-    Label.Font = Enum.Font.GothamMedium
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.TextYAlignment = Enum.TextYAlignment.Center
-    Label.Parent = Frame
+    local Desc = Instance.new("TextLabel")
+    Desc.Position = UDim2.fromOffset(12, 26)
+    Desc.Size = UDim2.new(1, -80, 0, 18)
+    Desc.BackgroundTransparency = 1
+    Desc.Text = data.Description or ""
+    Desc.TextColor3 = Theme.SubText
+    Desc.TextSize = 13
+    Desc.Font = Enum.Font.Gotham
+    Desc.TextXAlignment = Left
+    Desc.Parent = Frame
+
+    local Switch = Instance.new("Frame")
+    Switch.Size = UDim2.fromOffset(36, 18)
+    Switch.Position = UDim2.new(1, -48, 0.5, -9)
+    Switch.BackgroundColor3 = State and Theme.Accent or Theme.Border
+    Switch.Parent = Frame
+
+    Instance.new("UICorner", Switch).CornerRadius = UDim.new(1, 0)
+
+    local Knob = Instance.new("Frame")
+    Knob.Size = UDim2.fromOffset(14, 14)
+    Knob.Position = State and UDim2.fromOffset(20, 2) or UDim2.fromOffset(2, 2)
+    Knob.BackgroundColor3 = Color3.new(1,1,1)
+    Knob.Parent = Switch
+
+    Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
 
     local Click = Instance.new("TextButton")
-    Click.Size = UDim2.fromScale(1, 1)
+    Click.Size = UDim2.fromScale(1,1)
     Click.BackgroundTransparency = 1
     Click.Text = ""
     Click.Parent = Frame
 
-    -- Hover
-    Click.MouseEnter:Connect(function()
-        TweenService:Create(Frame, Theme.Tween, {
-            BackgroundColor3 = Theme.Header
-        }):Play()
-    end)
-
-    Click.MouseLeave:Connect(function()
-        TweenService:Create(Frame, Theme.Tween, {
-            BackgroundColor3 = Theme.Module
-        }):Play()
-    end)
-
-    -- Click animation + function
     Click.MouseButton1Click:Connect(function()
-        TweenService:Create(Frame, TweenInfo.new(0.1), {
-            Size = UDim2.new(1, -6, 0, 40)
+        State = not State
+
+        TweenService:Create(Switch, Theme.Tween, {
+            BackgroundColor3 = State and Theme.Accent or Theme.Border
         }):Play()
 
-        task.delay(0.1, function()
-            TweenService:Create(Frame, Theme.Tween, {
-                Size = UDim2.new(1, 0, 0, 44)
-            }):Play()
-        end)
+        TweenService:Create(Knob, Theme.Tween, {
+            Position = State and UDim2.fromOffset(20, 2) or UDim2.fromOffset(2, 2)
+        }):Play()
 
         if typeof(data.Function) == "function" then
-            task.spawn(data.Function)
+            task.spawn(data.Function, State)
         end
     end)
 
-    Button.Frame = Frame
-    return Button
+    Toggle.Set = function(_, value)
+        State = value
+    end
+
+    return Toggle
 end
 
 -- ======================================================
