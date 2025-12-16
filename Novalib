@@ -56,7 +56,6 @@ function Kozalib:CreateClient(data)
     Welcome.Size = UDim2.fromOffset(260, 70)
     Welcome.Position = UDim2.new(1, -270, 1, -80)
     Welcome.BackgroundColor3 = Theme.Background
-    Welcome.BorderSizePixel = 0
     Welcome.Parent = ScreenGui
 
     Instance.new("UICorner", Welcome).CornerRadius = Theme.Corner
@@ -72,19 +71,17 @@ function Kozalib:CreateClient(data)
         Enum.ThumbnailSize.Size420x420
     )
     Avatar.Parent = Welcome
-
     Instance.new("UICorner", Avatar).CornerRadius = UDim.new(1, 0)
 
     local WelcomeText = Instance.new("TextLabel")
-    WelcomeText.Size = UDim2.new(1, -72, 1, 0)
     WelcomeText.Position = UDim2.fromOffset(72, 0)
+    WelcomeText.Size = UDim2.new(1, -72, 1, 0)
     WelcomeText.BackgroundTransparency = 1
     WelcomeText.Text = "Welcome " .. LocalPlayer.Name
     WelcomeText.TextColor3 = Theme.Text
     WelcomeText.TextSize = 16
     WelcomeText.Font = Enum.Font.GothamSemibold
     WelcomeText.TextXAlignment = Enum.TextXAlignment.Left
-    WelcomeText.TextYAlignment = Enum.TextYAlignment.Center
     WelcomeText.Parent = Welcome
 
     self.Welcome = Welcome
@@ -106,10 +103,6 @@ function Client:SetVisible(state)
         win.Window.Visible = state
     end
 
-    TweenService:Create(self.Welcome, Theme.Tween, {
-        BackgroundTransparency = state and 0 or 1
-    }):Play()
-
     self.Welcome.Visible = state
 end
 
@@ -128,7 +121,6 @@ function Client:CreateTabWindow(data)
     Window.Size = data.Size or UDim2.fromOffset(345, 480)
     Window.Position = data.Position or UDim2.fromOffset(100, 100)
     Window.BackgroundColor3 = Theme.Background
-    Window.BorderSizePixel = 0
     Window.Active = true
     Window.Draggable = true
     Window.Parent = self.ScreenGui
@@ -140,7 +132,6 @@ function Client:CreateTabWindow(data)
     Header.Size = UDim2.new(1, 0, 0, 42)
     Header.BackgroundColor3 = Theme.Header
     Header.Parent = Window
-
     Instance.new("UICorner", Header).CornerRadius = Theme.Corner
 
     local Title = Instance.new("TextLabel")
@@ -170,11 +161,47 @@ function Client:CreateTabWindow(data)
 end
 
 -- ======================================================
+-- Button Component (FIXED)
+-- ======================================================
+
+function TabWindow:CreateButton(data)
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(1, 0, 0, 44)
+    Frame.BackgroundColor3 = Theme.Module
+    Frame.Parent = self.Container
+
+    Instance.new("UICorner", Frame).CornerRadius = Theme.Corner
+    Instance.new("UIStroke", Frame).Color = Theme.Border
+
+    local Label = Instance.new("TextLabel")
+    Label.Position = UDim2.fromOffset(14, 0)
+    Label.Size = UDim2.new(1, -14, 1, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = data.Name or "Button"
+    Label.TextColor3 = Theme.Text
+    Label.Font = Enum.Font.GothamMedium
+    Label.TextSize = 16
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Parent = Frame
+
+    local Click = Instance.new("TextButton")
+    Click.Size = UDim2.fromScale(1, 1)
+    Click.BackgroundTransparency = 1
+    Click.Text = ""
+    Click.Parent = Frame
+
+    Click.MouseButton1Click:Connect(function()
+        if typeof(data.Function) == "function" then
+            task.spawn(data.Function)
+        end
+    end)
+end
+
+-- ======================================================
 -- Toggle Component
 -- ======================================================
 
 function TabWindow:CreateToggle(data)
-    local Toggle = {}
     local State = data.State or false
 
     local Frame = Instance.new("Frame")
@@ -193,7 +220,7 @@ function TabWindow:CreateToggle(data)
     Title.TextColor3 = Theme.Text
     Title.Font = Enum.Font.GothamMedium
     Title.TextSize = 15
-    Title.TextXAlignment = Left
+    Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = Frame
 
     local Desc = Instance.new("TextLabel")
@@ -204,7 +231,7 @@ function TabWindow:CreateToggle(data)
     Desc.TextColor3 = Theme.SubText
     Desc.TextSize = 13
     Desc.Font = Enum.Font.Gotham
-    Desc.TextXAlignment = Left
+    Desc.TextXAlignment = Enum.TextXAlignment.Left
     Desc.Parent = Frame
 
     local Switch = Instance.new("Frame")
@@ -212,19 +239,17 @@ function TabWindow:CreateToggle(data)
     Switch.Position = UDim2.new(1, -48, 0.5, -9)
     Switch.BackgroundColor3 = State and Theme.Accent or Theme.Border
     Switch.Parent = Frame
-
     Instance.new("UICorner", Switch).CornerRadius = UDim.new(1, 0)
 
     local Knob = Instance.new("Frame")
     Knob.Size = UDim2.fromOffset(14, 14)
     Knob.Position = State and UDim2.fromOffset(20, 2) or UDim2.fromOffset(2, 2)
-    Knob.BackgroundColor3 = Color3.new(1,1,1)
+    Knob.BackgroundColor3 = Color3.new(1, 1, 1)
     Knob.Parent = Switch
-
     Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
 
     local Click = Instance.new("TextButton")
-    Click.Size = UDim2.fromScale(1,1)
+    Click.Size = UDim2.fromScale(1, 1)
     Click.BackgroundTransparency = 1
     Click.Text = ""
     Click.Parent = Frame
@@ -244,12 +269,6 @@ function TabWindow:CreateToggle(data)
             task.spawn(data.Function, State)
         end
     end)
-
-    Toggle.Set = function(_, value)
-        State = value
-    end
-
-    return Toggle
 end
 
 -- ======================================================
