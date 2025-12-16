@@ -11,6 +11,7 @@ local TweenService = game:GetService("TweenService")
 local Theme = {
     Background = Color3.fromRGB(18, 18, 18),
     Header = Color3.fromRGB(22, 22, 22),
+    Module = Color3.fromRGB(26, 26, 26),
     Border = Color3.fromRGB(40, 40, 40),
     Text = Color3.fromRGB(230, 230, 230),
 
@@ -86,9 +87,10 @@ function Client:CreateTabWindow(data)
     local selfTab = setmetatable({}, TabWindow)
     selfTab.Client = self
 
+    -- Window
     local Window = Instance.new("Frame")
     Window.Name = data.Name .. "_Window"
-    Window.Size = data.Size or UDim2.fromOffset(345, 480) -- 1.5x scale
+    Window.Size = data.Size or UDim2.fromOffset(345, 480)
     Window.Position = data.Position or UDim2.fromOffset(100, 100)
     Window.BackgroundColor3 = Theme.Background
     Window.BorderSizePixel = 0
@@ -108,7 +110,6 @@ function Client:CreateTabWindow(data)
 
     Instance.new("UICorner", Header).CornerRadius = Theme.Corner
 
-    -- Title
     local Title = Instance.new("TextLabel")
     Title.Size = UDim2.new(1, 0, 1, 0)
     Title.BackgroundTransparency = 1
@@ -120,18 +121,100 @@ function Client:CreateTabWindow(data)
     Title.TextYAlignment = Enum.TextYAlignment.Center
     Title.Parent = Header
 
-    -- Fade-in animation
+    -- Container (prevents overlap)
+    local Container = Instance.new("Frame")
+    Container.Position = UDim2.fromOffset(10, 52)
+    Container.Size = UDim2.new(1, -20, 1, -62)
+    Container.BackgroundTransparency = 1
+    Container.Parent = Window
+
+    local Layout = Instance.new("UIListLayout")
+    Layout.Padding = UDim.new(0, 8)
+    Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    Layout.Parent = Container
+
+    -- Fade in
     Window.BackgroundTransparency = 1
-    TweenService:Create(
-        Window,
-        Theme.Tween,
-        {BackgroundTransparency = 0}
-    ):Play()
+    TweenService:Create(Window, Theme.Tween, {
+        BackgroundTransparency = 0
+    }):Play()
 
     selfTab.Window = Window
-    table.insert(self.Windows, selfTab)
+    selfTab.Container = Container
 
+    table.insert(self.Windows, selfTab)
     return selfTab
+end
+
+-- ======================================================
+-- Button Component
+-- ======================================================
+
+function TabWindow:CreateButton(data)
+    local Button = {}
+
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(1, 0, 0, 44)
+    Frame.BackgroundColor3 = Theme.Module
+    Frame.BorderSizePixel = 0
+    Frame.Parent = self.Container
+
+    Instance.new("UICorner", Frame).CornerRadius = Theme.Corner
+
+    local Stroke = Instance.new("UIStroke", Frame)
+    Stroke.Color = Theme.Border
+    Stroke.Transparency = 0.35
+
+    local Label = Instance.new("TextLabel")
+    Label.Size = UDim2.new(1, -16, 1, 0)
+    Label.Position = UDim2.fromOffset(16, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = data.Name or "Button"
+    Label.TextColor3 = Theme.Text
+    Label.TextSize = 16
+    Label.Font = Enum.Font.GothamMedium
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.TextYAlignment = Enum.TextYAlignment.Center
+    Label.Parent = Frame
+
+    local Click = Instance.new("TextButton")
+    Click.Size = UDim2.fromScale(1, 1)
+    Click.BackgroundTransparency = 1
+    Click.Text = ""
+    Click.Parent = Frame
+
+    -- Hover
+    Click.MouseEnter:Connect(function()
+        TweenService:Create(Frame, Theme.Tween, {
+            BackgroundColor3 = Theme.Header
+        }):Play()
+    end)
+
+    Click.MouseLeave:Connect(function()
+        TweenService:Create(Frame, Theme.Tween, {
+            BackgroundColor3 = Theme.Module
+        }):Play()
+    end)
+
+    -- Click animation + function
+    Click.MouseButton1Click:Connect(function()
+        TweenService:Create(Frame, TweenInfo.new(0.1), {
+            Size = UDim2.new(1, -6, 0, 40)
+        }):Play()
+
+        task.delay(0.1, function()
+            TweenService:Create(Frame, Theme.Tween, {
+                Size = UDim2.new(1, 0, 0, 44)
+            }):Play()
+        end)
+
+        if typeof(data.Function) == "function" then
+            task.spawn(data.Function)
+        end
+    end)
+
+    Button.Frame = Frame
+    return Button
 end
 
 -- ======================================================
